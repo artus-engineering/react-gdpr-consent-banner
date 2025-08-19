@@ -42,7 +42,7 @@ const Example: React.FC<{}> = () => {
                             <DeleteAllCookiesButton />
                         </div>
                         <div className="ngcc-tw-col-span-2">
-                            <CookieConsentGate provider={TrackingCookieProvider}>
+                            <CookieConsentGate cookieProvider={TrackingCookieProvider}>
                                 <p>
                                     This is content, only visible if you accepted the cookies for <b>tebuto_tracking</b>
                                 </p>

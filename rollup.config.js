@@ -18,7 +18,8 @@ function getBuildConfig(output, cssImport) {
             typescript({ tsconfig: './tsconfig.build.json' }),
             postcss({
                 minimize: true,
-                extract: true
+                extract: true,
+                config: true
             }),
             terser({
                 format: {
