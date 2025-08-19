@@ -1,0 +1,12 @@
+# Directories
+.github
+.husky
+.storybook
+.vscode
+example
+public
+
+# Files
+*.json
+*.config.js
+!package.json

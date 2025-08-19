@@ -1,0 +1,167 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CookieConsentGate should render children if consented to provider 1`] = `
+<div>
+  <div>
+    Test
+  </div>
+</div>
+`;
+
+exports[`CookieConsentGate should render gate content if not consented to cookies of provider 1`] = `
+<div>
+  <div
+    class="md:ngcc-tw-p-12 ngcc-tw-p-4 ngcc-tw-rounded-lg ngcc-tw-border ngcc-tw-max-w-5xl ngcc-tw-mx-auto !ngcc-tw-text-left"
+    style="background-color: rgb(236, 240, 241); border-color: #bdc3c7;"
+  >
+    <h2
+      class="ngcc-tw-text-xl ngcc-tw-font-semibold ngcc-tw-mb-4"
+      style="color: rgb(44, 62, 80);"
+    >
+      Your consent is required to view this content
+    </h2>
+    <p
+      class="ngcc-tw-mb-12"
+      style="color: rgb(52, 73, 94);"
+    >
+      Sorry. We can not display this content as it requires your consent for cookies from
+       
+      <b
+        style="color: rgb(52, 73, 94);"
+      >
+        Some Website
+        .
+      </b>
+    </p>
+    <div
+      class="ngcc-tw-mb-12 md:ngcc-tw-p-8 ngcc-tw-p-2 ngcc-tw-rounded-lg"
+      style="background-color: rgba(189, 195, 199, 0.2);"
+    >
+      <div
+        class="ngcc-tw-mb-3 ngcc-tw-pt-3"
+        style="border-color: rgba(189, 195, 199, 0.8);"
+      >
+        <div
+          class="ngcc-tw-flex ngcc-tw-justify-between ngcc-tw-items-center"
+        >
+          <div>
+            <h4
+              class="ngcc-tw-font-bold ngcc-tw-text-base"
+              style="color: rgb(44, 62, 80);"
+            >
+              Some Website
+            </h4>
+            <p
+              class="ngcc-tw-text-xs ngcc-tw-text-justify ngcc-tw-hyphens-auto"
+              style="color: rgb(52, 73, 94);"
+            >
+              We use session cookies to store your session on our website. This cookie is necessary to use the website.
+               
+              <a
+                class="ngcc-tw-underline"
+                href="https://example.com/privacy"
+              >
+                Privacy Policy of Some Website
+              </a>
+            </p>
+          </div>
+          <div
+            class="ngcc-tw-w-24 ngcc-tw-flex ngcc-tw-flex-shrink-0 ngcc-tw-justify-end"
+          >
+            <div
+              style="cursor: not-allowed; opacity: 0.5;"
+            >
+              <input
+                hidden=""
+                readonly=""
+                style="position: fixed; top: 1px; left: 1px; width: 1px; height: 0px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px; display: none;"
+                type="hidden"
+              />
+              <input
+                disabled=""
+                hidden=""
+                name="website"
+                readonly=""
+                style="position: fixed; top: 1px; left: 1px; width: 1px; height: 0px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px; display: none;"
+                type="checkbox"
+                value="on"
+              />
+              <button
+                aria-checked="false"
+                class="ngcc-tw-relative ngcc-tw-my-auto ngcc-tw-inline-flex ngcc-tw-h-6 ngcc-tw-w-11 ngcc-tw-flex-shrink-0 ngcc-tw-rounded-full ngcc-tw-border-2 ngcc-tw-border-transparent 
+                    ngcc-tw-transition-colors ngcc-tw-duration-200 ngcc-tw-ease-in-out ngcc-tw-focus:outline-none ngcc-tw-focus:ring-2 ngcc-tw-focus:ring-green-500 ngcc-tw-focus:ring-offset-2
+                    "
+                data-disabled=""
+                data-headlessui-state="disabled"
+                data-testid="react-gdpr-cookie-consent-switch-button"
+                disabled=""
+                id="headlessui-switch-:r0:"
+                role="switch"
+                style="background-color: rgb(189, 195, 199);"
+                tabindex="0"
+                type="button"
+              >
+                <span
+                  aria-hidden="true"
+                  class="ngcc-tw-pointer-events-none ngcc-tw-inline-block ngcc-tw-h-5 ngcc-tw-w-5 ngcc-tw-transform ngcc-tw-rounded-full ngcc-tw-bg-white ngcc-tw-shadow 
+                    ngcc-tw-ring-0 ngcc-tw-transition ngcc-tw-duration-200 ngcc-tw-ease-in-out
+                    ngcc-tw-translate-x-0"
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+        <div
+          class="mt-4"
+          data-headlessui-state=""
+        >
+          <div
+            aria-expanded="false"
+            class="ngcc-tw-min-w-24 ngcc-tw-flex ngcc-tw-justify-end ngcc-tw-items-center hover:ngcc-tw-cursor-pointer ngcc-tw-mt-4"
+            data-headlessui-state=""
+            id="headlessui-disclosure-button-:r1:"
+          >
+            <p
+              class="ngcc-tw-text-xs"
+              style="color: rgb(52, 73, 94);"
+            >
+              Show details
+            </p>
+            <svg
+              class="ngcc-tw-w-6 ngcc-tw-h-6 ngcc-tw-ml-3"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              style="color: rgb(52, 73, 94);"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <title>
+                Chevron down to expand the section
+              </title>
+              <path
+                d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="ngcc-tw-flex ngcc-tw-justify-end w-full"
+    >
+      <button
+        class="hover:ngcc-tw-scale-105 ngcc-tw-text-primary-600 ngcc-tw-bg-primary-100 ngcc-tw-px-3 ngcc-tw-py-2 md:ngcc-tw-w-max ngcc-tw-w-full ngcc-tw-text-sm ngcc-tw-rounded-lg 
+            ngcc-tw-duration-300 ngcc-tw-font-medium ngcc-tw-opacity-50 ngcc-tw-cursor-not-allowed"
+        disabled=""
+        style="color: rgb(236, 240, 241); background-color: rgb(44, 62, 80);"
+        type="button"
+      >
+        Accept Selected
+      </button>
+    </div>
+  </div>
+</div>
+`;
