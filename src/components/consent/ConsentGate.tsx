@@ -31,18 +31,18 @@ export function ConsentGateContent({ cookieProvider }: { cookieProvider: CookieP
     return (
         <div
             style={{ backgroundColor: style.bgPrimary, borderColor: style.bgSecondary }}
-            className="md:ngcc-tw-p-12 ngcc-tw-p-4 ngcc-tw-rounded-lg ngcc-tw-border ngcc-tw-max-w-5xl ngcc-tw-mx-auto !ngcc-tw-text-left"
+            className="md:p-12 p-4 rounded-lg border max-w-5xl mx-auto !text-left"
         >
-            <h2 style={{ color: style.textPrimary }} className="ngcc-tw-text-xl ngcc-tw-font-semibold ngcc-tw-mb-4">
+            <h2 style={{ color: style.textPrimary }} className="text-xl font-semibold mb-4">
                 {getLabel('headings', 'consentGate')}
             </h2>
-            <p style={{ color: style.textSecondary }} className="ngcc-tw-mb-12">
+            <p style={{ color: style.textSecondary }} className="mb-12">
                 {getLabel('consentGate', 'message')} <b style={{ color: style.textSecondary }}>{cookieProvider.name}.</b>
             </p>
-            <div style={{ backgroundColor: hexToRGBA(style.bgSecondary, 0.2) }} className="ngcc-tw-mb-12 md:ngcc-tw-p-8 ngcc-tw-p-2 ngcc-tw-rounded-lg">
+            <div style={{ backgroundColor: hexToRGBA(style.bgSecondary, 0.2) }} className="mb-12 md:p-8 p-2 rounded-lg">
                 <CookieCategoryComponent provider={cookieProvider} handleCookieToggle={() => setLocalState(!localState)} isEnabled={localState} />
             </div>
-            <div className="ngcc-tw-flex ngcc-tw-justify-end w-full">
+            <div className="flex justify-end w-full">
                 <Button onClick={handleAccept} disabled={!localState} text={'acceptSelectedCookies'} />
             </div>
         </div>

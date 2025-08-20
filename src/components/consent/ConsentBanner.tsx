@@ -32,17 +32,17 @@ export function CookieConsentBanner(): JSX.Element {
 
         switch (numberOfUsedCategories) {
             case 1:
-                return 'md:ngcc-tw-grid-cols-1'
+                return 'md:grid-cols-1'
             case 2:
-                return 'md:ngcc-tw-grid-cols-2'
+                return 'md:grid-cols-2'
             case 3:
-                return 'md:ngcc-tw-grid-cols-3'
+                return 'md:grid-cols-3'
             case 4:
-                return 'md:ngcc-tw-grid-cols-3'
+                return 'md:grid-cols-3'
             case 5:
-                return 'md:ngcc-tw-grid-cols-3'
+                return 'md:grid-cols-3'
             default:
-                return 'md:ngcc-tw-grid-cols-1'
+                return 'md:grid-cols-1'
         }
     }
 
@@ -159,7 +159,7 @@ export function CookieConsentBanner(): JSX.Element {
     if (isClient && !isBannerOpen)
         return (
             <dialog
-                className="ngcc-tw-fixed ngcc-tw-z-[999] ngcc-tw-flex ngcc-tw-bottom-0 ngcc-tw-left-0 ngcc-tw-w-full xl:ngcc-tw-p-4 ngcc-tw-p-2 ngcc-tw-bg-transparent"
+                className="fixed z-[999] flex bottom-0 left-0 w-full xl:p-4 p-2 bg-transparent"
                 aria-labelledby={getLabel('headings', 'banner')}
                 aria-describedby={getLabel('descriptions', 'cookieDetails')}
                 aria-hidden={isBannerOpen ? 'true' : 'false'}
@@ -167,43 +167,43 @@ export function CookieConsentBanner(): JSX.Element {
             >
                 <div
                     style={{ backgroundColor: hexToRGBA(style.bgPrimary, 0.99), borderColor: style.bgSecondary, color: style.textPrimary }}
-                    className="ngcc-tw-w-full ngcc-tw-text-xs ngcc-tw-bg-opacity-[98%] ngcc-tw-px-6 ngcc-tw-py-8 xl:ngcc-tw-p-12 ngcc-tw-rounded-lg ngcc-tw-border ngcc-tw-shadow-lg"
+                    className="w-full text-xs bg-opacity-[98%] px-6 py-8 xl:p-12 rounded-lg border shadow-lg"
                 >
                     {openSettings ? (
-                        <div className="ngcc-tw-max-h-screen ngcc-tw-overflow-auto">
-                            <h2 style={{ color: style.textPrimary }} className="ngcc-tw-text-lg ngcc-tw-font-semibold ngcc-tw-text-white ngcc-tw-mb-3">
+                        <div className="max-h-screen overflow-auto">
+                            <h2 style={{ color: style.textPrimary }} className="text-lg font-semibold text-white mb-3">
                                 {getLabel('headings', 'details')}
                             </h2>
                             {config.crossSubDomainConsent ? (
-                                <p style={{ color: style.textPrimary }} className="ngcc-tw-mb-10 ngcc-tw-text-sm">
+                                <p style={{ color: style.textPrimary }} className="mb-10 text-sm">
                                     Ihre Zustimmung gilt für diese Domains:{' '}
-                                    <b className="ngcc-tw-text-sm" style={{ color: style.textSecondary }}>
+                                    <b className="text-sm" style={{ color: style.textSecondary }}>
                                         {config.crossSubDomainConsent.join(', ')}
                                     </b>
                                 </p>
                             ) : (
                                 <></>
                             )}
-                            <div className="ngcc-tw-mt-6 ngcc-tw-grid ngcc-tw-gap-3 ngcc-tw-overflow-scroll ngcc-tw-max-h-[60vh]">
+                            <div className="mt-6 grid gap-3 overflow-scroll max-h-[60vh]">
                                 {Object.entries(consentState).map(([category, categoryState]) => (
                                     <div
                                         style={{ backgroundColor: hexToRGBA(style.bgSecondary, 0.2) }}
-                                        className="ngcc-tw-p-6 ngcc-tw-rounded-lg ngcc-tw-grid ngcc-tw-gap-3"
+                                        className="p-6 rounded-lg grid gap-3"
                                         key={category}
                                     >
                                         <div
                                             style={{ borderColor: hexToRGBA(style.bgSecondary, 0.8) }}
-                                            className="ngcc-tw-flex ngcc-tw-justify-between ngcc-tw-items-center ngcc-tw-border-b ngcc-tw-pb-4"
+                                            className="flex justify-between items-center border-b pb-4"
                                         >
                                             <div>
-                                                <h3 style={{ color: style.textPrimary }} className="ngcc-tw-font-bold ngcc-tw-text-lg">
+                                                <h3 style={{ color: style.textPrimary }} className="font-bold text-lg">
                                                     {getLabel('cookieCategories', category as CookieCategory)}
                                                 </h3>
-                                                <p style={{ color: style.textSecondary }} className="ngcc-tw-text-sm ngcc-tw-text-justify ngcc-tw-hyphens-auto">
+                                                <p style={{ color: style.textSecondary }} className="text-sm text-justify hyphens-auto">
                                                     {getLabel('cookieCategoryDescriptions', category as CookieCategory)}
                                                 </p>
                                             </div>
-                                            <div className="ngcc-tw-min-w-24 ngcc-tw-flex ngcc-tw-justify-end">
+                                            <div className="min-w-24 flex justify-end">
                                                 <SwitchButton
                                                     bgTrue={style.buttonBgTrue}
                                                     bgFalse={style.buttonBgFalse}
@@ -214,7 +214,7 @@ export function CookieConsentBanner(): JSX.Element {
                                                 />
                                             </div>
                                         </div>
-                                        <div className="ngcc-tw-divide-y ngcc-tw-pb-3">
+                                        <div className="divide-y pb-3">
                                             {Object.entries(categoryState.cookies).map(([cookieId, isEnabled]) => {
                                                 const cookie = cookieProviders.find(cookieProvider => cookieProvider.id === cookieId) as CookieProviderConfig
                                                 return <CookieCategoryComponent key={cookie.id} provider={cookie} handleCookieToggle={handleCookieToggle} isEnabled={isEnabled} />
@@ -223,38 +223,38 @@ export function CookieConsentBanner(): JSX.Element {
                                     </div>
                                 ))}
                             </div>
-                            <div className="ngcc-tw-mt-6 ngcc-tw-flex ngcc-tw-justify-between">
+                            <div className="mt-6 flex justify-between">
                                 <Button onClick={() => setOpenSettings(false)} text="back" />
                                 <Button onClick={handleAcceptDetailed} text="acceptSelectedCookies" />
                             </div>
                         </div>
                     ) : (
                         <>
-                            <div className="xl:ngcc-tw-flex ngcc-tw-grid">
-                                <div className="xl:ngcc-tw-w-1/2">
-                                    <h2 style={{ color: style.textPrimary }} className="ngcc-tw-text-xl ngcc-tw-font-semibold ngcc-tw-mb-6">
+                            <div className="xl:flex grid">
+                                <div className="xl:w-1/2">
+                                    <h2 style={{ color: style.textPrimary }} className="text-xl font-semibold mb-6">
                                         {getLabel('headings', 'banner')}
                                     </h2>
-                                    <p style={{ color: style.textPrimary }} className="ngcc-tw-text-sm  ngcc-tw-text-justify ngcc-tw-hyphens-auto">
+                                    <p style={{ color: style.textPrimary }} className="text-sm  text-justify hyphens-auto">
                                         {getLabel('descriptions', 'cookieDetails')}{' '}
-                                        <a className="ngcc-tw-underline" href={config.cookiePolicyLink}>
+                                        <a className="underline" href={config.cookiePolicyLink}>
                                             {getLabel('links', 'cookiePolicy')}
                                         </a>
                                     </p>
                                 </div>
                                 <div
-                                    className={`ngcc-tw-grid ${overviewGrid()} ngcc-tw-my-12 md:ngcc-tw-divide-x ngcc-tw-gap-6 md:ngcc-tw-gap-0 md:ngcc-tw-justify-evenly xl:ngcc-tw-w-1/2`}
+                                    className={`grid ${overviewGrid()} my-12 md:divide-x gap-6 md:gap-0 md:justify-evenly xl:w-1/2`}
                                 >
                                     {Object.entries(consentState).map(([category, categoryState]) => (
                                         <div
                                             style={{ borderColor: hexToRGBA(style.bgSecondary, 0.6) }}
                                             key={category}
-                                            className={category === 'StrictlyNecessary' ? 'ngcc-tw-cursor-not-allowed ngcc-tw-opacity-70' : ''}
+                                            className={category === 'StrictlyNecessary' ? 'cursor-not-allowed opacity-70' : ''}
                                         >
-                                            <div className="md:ngcc-tw-text-center md:ngcc-tw-inline ngcc-tw-flex ngcc-tw-items-center ngcc-tw-justify-between">
+                                            <div className="md:text-center md:inline flex items-center justify-between">
                                                 <p
                                                     style={{ color: style.textPrimary }}
-                                                    className="md:ngcc-tw-mb-2 ngcc-tw-block md:ngcc-tw-text-sm ngcc-tw-text-base ngcc-tw-self-end"
+                                                    className="md:mb-2 block md:text-sm text-base self-end"
                                                 >
                                                     {getLabel('cookieCategories', category as CookieCategory)}
                                                 </p>
@@ -271,11 +271,11 @@ export function CookieConsentBanner(): JSX.Element {
                                     ))}
                                 </div>
                             </div>
-                            <div className="ngcc-tw-mt-4 md:ngcc-tw-flex ngcc-tw-justify-between ngcc-tw-items-center ngcc-tw-w-full ngcc-tw-flex-col md:ngcc-tw-flex-row">
-                                <div className="md:ngcc-tw-mb-0 ngcc-tw-mb-6 ngcc-tw-grid md:ngcc-tw-flex">
+                            <div className="mt-4 md:flex justify-between items-center w-full flex-col md:flex-row">
+                                <div className="md:mb-0 mb-6 grid md:flex">
                                     <Button onClick={() => setOpenSettings(true)} text="showDetails" />
                                 </div>
-                                <div className="md:ngcc-tw-flex md:ngcc-tw-gap-10 ngcc-tw-grid ngcc-tw-gap-6">
+                                <div className="md:flex md:gap-10 grid gap-6">
                                     <Button onClick={handleReject} text="rejectAllNonNecessaryCookies" />
                                     <Button onClick={handleAcceptSelected} text="acceptSelectedCookies" />
                                     <Button onClick={handleAcceptAll} text="acceptAllCookies" />

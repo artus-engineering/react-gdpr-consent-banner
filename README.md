@@ -1,12 +1,6 @@
-<div align="center">
-  <img alt="Tebuto" src="https://tebuto.de/assets/logo.svg" width="400" />
-</div>
+**Disclaimer**: This library is currently in development and does not yet provide a stable and full feature set.
 
 <p align="center">A flexible cookie consent solution for <a href="https://react.dev" target="_blank">React</a> - built to comply with the GDPR, the ePrivacy Directive, and the CCPA<p align="center">
-
-<div align="center">
-  <a href="https://github.com/tebuto/react-gdpr-cookie-consent/actions/workflows/branch.yaml"><img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/tebuto/react-gdpr-cookie-consent/.github%2Fworkflows%2Fbranch.yaml?label=CI&logo=GitHub"></a>
-</div>
 
 <hr />
 
@@ -34,7 +28,7 @@ This library is a simple and lightweight solution to comply with the GDPR, the e
 * Deferred loading of code until the user has given consent
 * Customizable
 * Multilanguage support (german and english so far, help welcome)
-* Themes (default and tebuto so far)
+* Themes
 * Hooks to create your own components
 * Auto-generate your Cookie-Policy or use Hooks to create your own
 * Track which services are allowed by the user
@@ -57,7 +51,7 @@ This library is a simple and lightweight solution to comply with the GDPR, the e
 ## Installing
 
 This is a [Node.js](https://nodejs.org/en/) module available via
-[GitHub Packages](https://github.com/tebuto/react-gdpr-cookie-consent/pkgs/npm/react-gdpr-cookie-consent).
+[GitHub Packages](https://github.com/artus-engineering/gdpr-cookie-consent/pkgs/npm/react-gdpr-cookie-consent).
 
 First, make sure to be logged in to the GitHub Packages npm registry. To authenticate, run this command and login via username and (classic) personal access token with `packages:read` scope.
 
@@ -68,7 +62,7 @@ npm login --registry=https://npm.pkg.github.com
 Installation is done using the`npm install` command:
 
 ``` bash
-npm install @tebuto/react-gdpr-cookie-consent
+npm install @artus-engineering/react-gdpr-cookie-consent
 ```
 
 ## Getting Started
@@ -80,7 +74,7 @@ You can find more information about the cookie options in the [configuration](#c
 ```ts
 // cookies.ts
 
-import { CookieProviderConfig } from '@tebuto/react-gdpr-cookie-consent'
+import { CookieProviderConfig } from '@artus-engineering/react-gdpr-cookie-consent'
 
 export const YourWebsiteCookieProviderConfig: CookieProviderConfig = {
     id: 'your-website',
@@ -152,7 +146,7 @@ If you use cookies the users have to consent to explicitly, it makes sense to on
 ```tsx
 // ComponentWithConsentRequired.tsx
 
-import { ComponentWithConsentRequired } from '@tebuto/react-gdpr-cookie-consent'
+import { ComponentWithConsentRequired } from '@artus-engineering/react-gdpr-cookie-consent'
 import { GoogleCookieConfig } from 'cookies.ts'
 
 export default function ComponentWithConsentRequired(): JSX.Element {
@@ -173,7 +167,7 @@ Probably you want to have a detailed list of your cookies in the privacy policy.
 ```tsx
 // PrivacyPolicy.tsx
 
-import { CookiePolicy } from '@tebuto/react-gdpr-cookie-consent'
+import { CookiePolicy } from '@artus-engineering/react-gdpr-cookie-consent'
 
 export default function PrivacyPolicy(): JSX.Element {
     return (

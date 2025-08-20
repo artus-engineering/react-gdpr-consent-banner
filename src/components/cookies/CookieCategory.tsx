@@ -14,20 +14,20 @@ export function CookieCategoryComponent({ provider, handleCookieToggle, isEnable
     const style = useStyle()
 
     return (
-        <div style={{ borderColor: hexToRGBA(style.bgSecondary, 0.8) }} className="ngcc-tw-mb-3 ngcc-tw-pt-3" key={provider.id}>
-            <div className="ngcc-tw-flex ngcc-tw-justify-between ngcc-tw-items-center">
+        <div style={{ borderColor: hexToRGBA(style.bgSecondary, 0.8) }} className="mb-3 pt-3" key={provider.id}>
+            <div className="flex justify-between items-center">
                 <div>
-                    <h4 style={{ color: style.textPrimary }} className="ngcc-tw-font-bold ngcc-tw-text-base">
+                    <h4 style={{ color: style.textPrimary }} className="font-bold text-base">
                         {provider.name}
                     </h4>
-                    <p style={{ color: style.textSecondary }} className="ngcc-tw-text-xs ngcc-tw-text-justify ngcc-tw-hyphens-auto">
+                    <p style={{ color: style.textSecondary }} className="text-xs text-justify hyphens-auto">
                         {provider.description}{' '}
-                        <a className="ngcc-tw-underline" href={provider.dataProtectionLink}>
+                        <a className="underline" href={provider.dataProtectionLink}>
                             {`${getLabel('links', 'privacyPolicy')} ${getLabel('common', 'of')} ${provider.name}`}
                         </a>
                     </p>
                 </div>
-                <div className="ngcc-tw-w-24 ngcc-tw-flex ngcc-tw-flex-shrink-0 ngcc-tw-justify-end">
+                <div className="w-24 flex flex-shrink-0 justify-end">
                     <SwitchButton
                         bgTrue={style.buttonBgTrue}
                         bgFalse={style.buttonBgFalse}
@@ -41,8 +41,8 @@ export function CookieCategoryComponent({ provider, handleCookieToggle, isEnable
             <Disclosure as="div" className="mt-4" defaultOpen={false}>
                 {({ open }) => (
                     <>
-                        <DisclosureButton as="div" className="ngcc-tw-min-w-24 ngcc-tw-flex ngcc-tw-justify-end ngcc-tw-items-center hover:ngcc-tw-cursor-pointer ngcc-tw-mt-4">
-                            <p style={{ color: style.textSecondary }} className="ngcc-tw-text-xs">
+                        <DisclosureButton as="div" className="min-w-24 flex justify-end items-center hover:cursor-pointer mt-4">
+                            <p style={{ color: style.textSecondary }} className="text-xs">
                                 {getLabel('details', 'expandCookieDetails')}
                             </p>
                             {open ? (
@@ -52,7 +52,7 @@ export function CookieCategoryComponent({ provider, handleCookieToggle, isEnable
                                     viewBox="0 0 24 24"
                                     strokeWidth={1.5}
                                     stroke="currentColor"
-                                    className="ngcc-tw-w-6 ngcc-tw-h-6 ngcc-tw-ml-3"
+                                    className="w-6 h-6 ml-3"
                                     style={{ color: style.textSecondary }}
                                 >
                                     <title>Chevron up to collapse the section</title>
@@ -65,7 +65,7 @@ export function CookieCategoryComponent({ provider, handleCookieToggle, isEnable
                                     viewBox="0 0 24 24"
                                     strokeWidth="1.5"
                                     stroke="currentColor"
-                                    className="ngcc-tw-w-6 ngcc-tw-h-6 ngcc-tw-ml-3"
+                                    className="w-6 h-6 ml-3"
                                     style={{ color: style.textSecondary }}
                                 >
                                     <title>Chevron down to expand the section</title>
@@ -73,39 +73,39 @@ export function CookieCategoryComponent({ provider, handleCookieToggle, isEnable
                                 </svg>
                             )}
                         </DisclosureButton>
-                        <DisclosurePanel as="div" className="ngcc-tw-grid xl:ngcc-tw-grid-cols-3 lg:ngcc-tw-grid-cols-2 ngcc-tw-gap-2 ngcc-tw-mt-6">
+                        <DisclosurePanel as="div" className="grid xl:grid-cols-3 lg:grid-cols-2 gap-2 mt-6">
                             {provider.cookies.map(cookie => (
                                 <div
                                     style={{ borderColor: hexToRGBA(style.bgSecondary, 0.6), backgroundColor: hexToRGBA(style.bgPrimary, 0.7) }}
-                                    className="ngcc-tw-p-3 ngcc-tw-rounded-lg ngcc-tw-border"
+                                    className="p-3 rounded-lg border"
                                     key={cookie.name}
                                 >
-                                    <div className="ngcc-tw-flex ngcc-tw-justify-between ngcc-tw-gap-6 ">
-                                        <p style={{ color: style.textPrimary }} className="ngcc-tw-inline ngcc-tw-text-xs ngcc-tw-font-medium">
+                                    <div className="flex justify-between gap-6 ">
+                                        <p style={{ color: style.textPrimary }} className="inline text-xs font-medium">
                                             {cookie.purpose}
                                         </p>
                                     </div>
-                                    <div className="ngcc-tw-flex ngcc-tw-justify-between ngcc-tw-gap-6 ngcc-tw-pt-6">
-                                        <p style={{ color: style.textSecondary }} className="ngcc-tw-inline ngcc-tw-text-xs">
+                                    <div className="flex justify-between gap-6 pt-6">
+                                        <p style={{ color: style.textSecondary }} className="inline text-xs">
                                             {getLabel('details', 'cookieName')}
                                         </p>
-                                        <p style={{ color: style.textSecondary }} className="ngcc-tw-inline ngcc-tw-text-xs">
+                                        <p style={{ color: style.textSecondary }} className="inline text-xs">
                                             {cookie.name}
                                         </p>
                                     </div>
-                                    <div className="ngcc-tw-flex ngcc-tw-justify-between ngcc-tw-gap-6">
-                                        <p style={{ color: style.textSecondary }} className="ngcc-tw-inline ngcc-tw-text-xs">
+                                    <div className="flex justify-between gap-6">
+                                        <p style={{ color: style.textSecondary }} className="inline text-xs">
                                             {getLabel('details', 'cookieDuration')}
                                         </p>
-                                        <p style={{ color: style.textSecondary }} className="ngcc-tw-inline ngcc-tw-text-xs">
+                                        <p style={{ color: style.textSecondary }} className="inline text-xs">
                                             {cookie.duration} {getUnit(cookie.duration, cookie.unit)}
                                         </p>
                                     </div>
-                                    <div className="ngcc-tw-flex ngcc-tw-justify-between ngcc-tw-gap-6 ">
-                                        <p style={{ color: style.textSecondary }} className="ngcc-tw-inline ngcc-tw-text-xs">
+                                    <div className="flex justify-between gap-6 ">
+                                        <p style={{ color: style.textSecondary }} className="inline text-xs">
                                             {getLabel('details', 'cookieAccessors')}
                                         </p>
-                                        <p style={{ color: style.textSecondary }} className="ngcc-tw-inline ngcc-tw-text-xs">
+                                        <p style={{ color: style.textSecondary }} className="inline text-xs">
                                             {(cookie.accessors || [provider.name]).join(', ')}
                                         </p>
                                     </div>

@@ -1,11 +1,10 @@
-/** @type {import('tailwindcss').Config} */ module.exports = {
-    prefix: 'ngcc-tw-',
+/** @type {import('tailwindcss').Config} */
+module.exports = {
     content: ['./src/**/*.{js,jsx,ts,tsx}', './example/**/*.{js,jsx,ts,tsx}'],
     theme: {
         extend: {}
     },
-    variants: {
-        extend: {}
-    },
     plugins: []
 }
+
+

@@ -65,6 +65,8 @@ export interface CookieConsentStyleWithDefaults {
     textSecondary: string
     buttonBgTrue: string
     buttonBgFalse: string
+    buttonBg: string
+    buttonText: string
 }
 
 export interface Cookie {

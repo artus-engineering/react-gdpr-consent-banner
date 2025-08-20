@@ -6,7 +6,7 @@ export default function DeleteAllCookiesButton() {
         <button
             type="button"
             onClick={setStrictlyNecessaryCookiesOnly}
-            className="ngcc-tw-bg-gray-900 ngcc-tw-px-3 ngcc-tw-py-2 ngcc-tw-rounded-lg ngcc-tw-font-medium ngcc-tw-w-full ngcc-tw-h-full"
+            className="bg-gray-900 text-white px-3 py-2 rounded-lg font-medium w-full h-full"
         >
             Delete all non-necessary cookies
         </button>

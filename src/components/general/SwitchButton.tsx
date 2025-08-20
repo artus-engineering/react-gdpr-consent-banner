@@ -19,17 +19,17 @@ export function SwitchButton({ toggled, onToggle, disabled, screenReaderLabel, n
                 onChange={onToggle}
                 disabled={disabled}
                 style={{ backgroundColor: toggled ? bgTrue : bgFalse }}
-                className={`ngcc-tw-relative ngcc-tw-my-auto ngcc-tw-inline-flex ngcc-tw-h-6 ngcc-tw-w-11 ngcc-tw-flex-shrink-0 ngcc-tw-rounded-full ngcc-tw-border-2 ngcc-tw-border-transparent 
-                    ngcc-tw-transition-colors ngcc-tw-duration-200 ngcc-tw-ease-in-out ngcc-tw-focus:outline-none ngcc-tw-focus:ring-2 ngcc-tw-focus:ring-green-500 ngcc-tw-focus:ring-offset-2
-                    ${disabled ? '' : 'ngcc-tw-cursor-pointer'}`}
+                className={`relative my-auto inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent 
+                    transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
+                    ${disabled ? '' : 'cursor-pointer'}`}
                 data-testid="react-gdpr-cookie-consent-switch-button"
             >
                 {screenReaderLabel && <span className="sr-only">{screenReaderLabel}</span>}
                 <span
                     aria-hidden="true"
-                    className={`ngcc-tw-pointer-events-none ngcc-tw-inline-block ngcc-tw-h-5 ngcc-tw-w-5 ngcc-tw-transform ngcc-tw-rounded-full ngcc-tw-bg-white ngcc-tw-shadow 
-                    ngcc-tw-ring-0 ngcc-tw-transition ngcc-tw-duration-200 ngcc-tw-ease-in-out
-                    ${toggled ? 'ngcc-tw-translate-x-5' : 'ngcc-tw-translate-x-0'}`}
+                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow 
+                    ring-0 transition duration-200 ease-in-out
+                    ${toggled ? 'translate-x-5' : 'translate-x-0'}`}
                 />
             </Switch>
         </div>

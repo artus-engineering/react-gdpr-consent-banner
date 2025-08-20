@@ -24,10 +24,10 @@ export function CookieConsentModal({ cookieProvider, children }: IConsentModalPr
 
     function Modal() {
         return (
-            <Dialog open={openModal} onClose={() => setOpenModal(false)} className="ngcc-tw-relative ngcc-tw-z-50">
-                <DialogBackdrop className="ngcc-tw-fixed ngcc-tw-inset-0 ngcc-tw-bg-black/30" />
-                <div className="ngcc-tw-fixed ngcc-tw-inset-0 ngcc-tw-flex ngcc-tw-w-screen ngcc-tw-items-center ngcc-tw-justify-center">
-                    <DialogPanel className="ngcc-tw-max-w-5xl ngcc-tw-mx-auto ngcc-tw-my-auto ngcc-tw-overflow-scroll ngcc-tw-max-h-[80vh] ngcc-tw-relative">
+            <Dialog open={openModal} onClose={() => setOpenModal(false)} className="relative z-50">
+                <DialogBackdrop className="fixed inset-0 bg-black/30" />
+                <div className="fixed inset-0 flex w-screen items-center justify-center">
+                    <DialogPanel className="max-w-5xl mx-auto my-auto overflow-scroll max-h-[80vh] relative">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -36,19 +36,19 @@ export function CookieConsentModal({ cookieProvider, children }: IConsentModalPr
                             stroke="currentColor"
                             onClick={() => setOpenModal(false)}
                             style={{ color: style.textPrimary }}
-                            className={'ngcc-tw-absolute ngcc-tw-h-6 ngcc-tw-w-6 ngcc-tw-top-3 ngcc-tw-right-3 '}
+                            className={'absolute h-6 w-6 top-3 right-3 '}
                         >
                             <title>Close Icon</title>
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                         </svg>
-                        <div style={{ backgroundColor: style.bgPrimary, borderColor: style.bgSecondary }} className="ngcc-tw-p-12 ngcc-tw-rounded-lg ngcc-tw-border">
-                            <h2 style={{ color: style.textPrimary }} className="ngcc-tw-text-xl ngcc-tw-font-semibold ngcc-tw-mb-4">
+                        <div style={{ backgroundColor: style.bgPrimary, borderColor: style.bgSecondary }} className="p-12 rounded-lg border">
+                            <h2 style={{ color: style.textPrimary }} className="text-xl font-semibold mb-4">
                                 {getLabel('headings', 'consentGate')}
                             </h2>
-                            <p style={{ color: style.textSecondary }} className="ngcc-tw-mb-12">
+                            <p style={{ color: style.textSecondary }} className="mb-12">
                                 {getLabel('consentGate', 'message')} <b>{cookieProvider.name}.</b>
                             </p>
-                            <div style={{ backgroundColor: hexToRGBA(style.bgSecondary, 0.2) }} className="ngcc-tw-mb-12 ngcc-tw-p-8 ngcc-tw-rounded-lg">
+                            <div style={{ backgroundColor: hexToRGBA(style.bgSecondary, 0.2) }} className="mb-12 p-8 rounded-lg">
                                 <CookieCategoryComponent provider={cookieProvider} handleCookieToggle={() => setIsEnabled(!isEnabled)} isEnabled={isEnabled} />
                             </div>
                             <Button onClick={handleAccept} disabled={!isEnabled} text={'acceptSelectedCookies'} />
@@ -71,7 +71,7 @@ export function CookieConsentModal({ cookieProvider, children }: IConsentModalPr
     return (
         <>
             <Modal />
-            <div onClick={onClick} className={isEnabled ? undefined : 'ngcc-tw-opacity-50'}>
+            <div onClick={onClick} className={isEnabled ? undefined : 'opacity-50'}>
                 {children}
             </div>
         </>
