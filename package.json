@@ -1,10 +1,13 @@
 {
     "name": "@artus-engineering/react-gdpr-cookie-consent",
-    "version": "0.1.1-beta",
+    "version": "0.1.2-beta",
     "description": "A simple and customizable GDPR cookie consent component for React.",
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.js",
     "types": "dist/index.d.ts",
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com"
+    },
     "scripts": {
         "dev": "rollup -c --watch",
         "build": "rollup -c --bundleConfigAsCjs",
@@ -12,6 +15,8 @@
         "test:watch": "jest --watch",
         "test:consent-hooks": "jest consentHooks.test.ts",
         "test:coverage": "jest --coverage --watchAll=false",
+        "test:import": "node scripts/test-import.js",
+        "test:all": "npm run test && npm run test:import",
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build",
         "prepare": "husky",
@@ -19,7 +24,7 @@
         "lint": "biome lint .",
         "lint:fix": "biome check --apply ."
     },
-    "keywords": [],
+    "keywords": ["gdpr", "cookie", "consent", "react", "privacy", "compliance"],
     "author": "Yannic Schröer <yannic@schroeer.tech>",
     "license": "ISC",
     "peerDependencies": {
@@ -96,7 +101,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/artus-engineering/react-gdpr-cookie-consent.git"
+        "url": "https://github.com/artus-engineering/react-gdpr-consent-banner.git"
     },
     "dependencies": {
         "@types/prismjs": "^1.26.5",

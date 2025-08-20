@@ -1,5 +1,3 @@
-import './styles/index.css'
-
 export * from './components'
 export * from './consentHooks'
 export * from './hooks'

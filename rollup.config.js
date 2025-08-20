@@ -19,16 +19,17 @@ function getBuildConfig(output, cssImport) {
             postcss({
                 minimize: true,
                 extract: true,
-                config: true
+                config: true,
+                inject: false // Don't inject CSS into the bundle
             }),
             terser({
                 format: {
-                    preamble: `"use client";${cssImport}`
+                    preamble: `"use client";`
                 }
             }),
             analyze({ summaryOnly: true })
         ],
-        external: [/\.stories\.tsx$/]
+        external: [/\.stories\.tsx$/, /\.css$/]
     }
 }
 
@@ -38,16 +39,14 @@ export default [
             file: pkg.main,
             format: 'cjs',
             sourcemap: true
-        },
-        "require('./index.css');"
+        }
     ),
     getBuildConfig(
         {
             file: pkg.module,
             format: 'esm',
             sourcemap: true
-        },
-        'import"./index.css";'
+        }
     ),
     {
         input: 'src/index.ts',
