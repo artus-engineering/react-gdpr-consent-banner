@@ -45,8 +45,18 @@ const Example: React.FC<{}> = () => {
                 },
                 dataProtectionLink: 'https://policies.google.com/privacy',
                 cookies: [
-                    { name: '_ga', duration: 2, unit: 'years', purpose: { enUS: 'Distinguish unique users for analytics', deDE: 'Unterscheidet eindeutige Benutzer für Analysen' } },
-                    { name: '_gid', duration: 1, unit: 'days', purpose: { enUS: 'Distinguish unique users for analytics', deDE: 'Unterscheidet eindeutige Benutzer für Analysen' } },
+                    {
+                        name: '_ga',
+                        duration: 2,
+                        unit: 'years',
+                        purpose: { enUS: 'Distinguish unique users for analytics', deDE: 'Unterscheidet eindeutige Benutzer für Analysen' }
+                    },
+                    {
+                        name: '_gid',
+                        duration: 1,
+                        unit: 'days',
+                        purpose: { enUS: 'Distinguish unique users for analytics', deDE: 'Unterscheidet eindeutige Benutzer für Analysen' }
+                    },
                     { name: '_ga_*', duration: 2, unit: 'years', purpose: { enUS: 'Store and count pageviews for GA4', deDE: 'Speichert und zählt Seitenaufrufe für GA4' } }
                 ]
             },
@@ -64,7 +74,12 @@ const Example: React.FC<{}> = () => {
                 dataProtectionLink: 'https://policies.google.com/privacy',
                 cookies: [
                     { name: '_gcl_*', duration: 90, unit: 'days', purpose: { enUS: 'Conversion tracking and attribution', deDE: 'Konversionsverfolgung und Zuschreibung' } },
-                    { name: '_gac_*', duration: 90, unit: 'days', purpose: { enUS: 'Google Ads cookie for conversion tracking', deDE: 'Google Ads-Cookie für Konversionsverfolgung' } },
+                    {
+                        name: '_gac_*',
+                        duration: 90,
+                        unit: 'days',
+                        purpose: { enUS: 'Google Ads cookie for conversion tracking', deDE: 'Google Ads-Cookie für Konversionsverfolgung' }
+                    },
                     { name: '_gat_*', duration: 1, unit: 'days', purpose: { enUS: 'Used to throttle request rate', deDE: 'Wird verwendet, um die Anforderungsrate zu begrenzen' } }
                 ]
             },

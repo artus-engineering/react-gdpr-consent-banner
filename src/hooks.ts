@@ -148,6 +148,7 @@ export function useCookieState({ cookieProvider }: { cookieProvider: CookieProvi
  */
 export function useConsentHooks() {
     const config = useConfig('useConsentHooks')
+    const { auditService } = useCookieConsentContext('useConsentHooks')
 
     /**
      * Execute consent hooks when consent is given or withdrawn
@@ -185,6 +186,12 @@ export function useConsentHooks() {
             cookies: cookieUtils,
             gtag: (window as any).gtag,
             dataLayer: (window as any).dataLayer
+        }
+
+        // Log audit event if audit service is configured
+        if (auditService) {
+            const action = hasConsent ? 'accept' : 'reject'
+            await auditService.logConsentChange(action, category, consentState, previousState)
         }
 
         // Execute appropriate hooks

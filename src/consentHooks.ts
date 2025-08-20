@@ -400,8 +400,6 @@ export function createGoogleTagManagerHook(gtmId: string): ConsentHook[] {
                 document.body.appendChild(noscript)
             }
         }
-
-
     }
 
     // Initialize GTM immediately (this should run before any consent hooks)
@@ -597,8 +595,6 @@ export function createGranularGoogleTagManagerHook(gtmId: string): ConsentHook[]
                 document.body.appendChild(noscript)
             }
         }
-
-
     }
 
     // Initialize GTM immediately
@@ -624,8 +620,6 @@ export function createGranularGoogleTagManagerHook(gtmId: string): ConsentHook[]
                     event: 'analytics_storage_granted',
                     consent_parameter: 'analytics_storage'
                 })
-
-
             }
         },
         {
@@ -651,8 +645,6 @@ export function createGranularGoogleTagManagerHook(gtmId: string): ConsentHook[]
                     context.cookies.remove(cookie)
                     context.cookies.remove(cookie, { domain: `.${window.location.hostname}` })
                 })
-
-
             }
         },
 
@@ -673,8 +665,6 @@ export function createGranularGoogleTagManagerHook(gtmId: string): ConsentHook[]
                     event: 'ad_storage_granted',
                     consent_parameter: 'ad_storage'
                 })
-
-
             }
         },
         {
@@ -700,8 +690,6 @@ export function createGranularGoogleTagManagerHook(gtmId: string): ConsentHook[]
                     context.cookies.remove(cookie)
                     context.cookies.remove(cookie, { domain: `.${window.location.hostname}` })
                 })
-
-
             }
         },
 
@@ -722,8 +710,6 @@ export function createGranularGoogleTagManagerHook(gtmId: string): ConsentHook[]
                     event: 'ad_user_data_granted',
                     consent_parameter: 'ad_user_data'
                 })
-
-
             }
         },
         {
@@ -742,8 +728,6 @@ export function createGranularGoogleTagManagerHook(gtmId: string): ConsentHook[]
                     event: 'ad_user_data_denied',
                     consent_parameter: 'ad_user_data'
                 })
-
-
             }
         },
 
@@ -764,8 +748,6 @@ export function createGranularGoogleTagManagerHook(gtmId: string): ConsentHook[]
                     event: 'ad_personalization_granted',
                     consent_parameter: 'ad_personalization'
                 })
-
-
             }
         },
         {
@@ -791,8 +773,6 @@ export function createGranularGoogleTagManagerHook(gtmId: string): ConsentHook[]
                     context.cookies.remove(cookie)
                     context.cookies.remove(cookie, { domain: `.${window.location.hostname}` })
                 })
-
-
             }
         }
     ]

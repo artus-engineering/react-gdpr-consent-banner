@@ -91,6 +91,9 @@ export interface CookieConsentBannerConfig {
 
     // Consent Hook System - Flexible integration for any tool
     consentHooks?: ConsentHook[]
+
+    // GDPR Audit Trail Configuration
+    audit?: AuditConfig
 }
 
 export interface CookieConsentBannerConfigWithDefaults extends CookieConsentBannerConfig {
@@ -128,3 +131,29 @@ export interface CookieProviderConfig {
 }
 
 export interface CookieBannerTheme extends CookieConsentStyleWithDefaults {}
+
+// GDPR Audit Trail Types
+export interface AuditConfig {
+    url: string
+    userId: string
+    additionalData?: Record<string, any>
+}
+
+export interface ConsentAuditEvent {
+    userId: string
+    timestamp: string
+    action: 'accept' | 'reject' | 'change'
+    category: CookieCategory
+    previousState?: Record<CookieCategory, boolean>
+    currentState: Record<CookieCategory, boolean>
+    userAgent: string
+    ipAddress?: string
+    sessionId?: string
+    additionalData?: Record<string, any>
+}
+
+export interface ConsentAuditPayload {
+    event: ConsentAuditEvent
+    websiteName: string
+    domain: string
+}

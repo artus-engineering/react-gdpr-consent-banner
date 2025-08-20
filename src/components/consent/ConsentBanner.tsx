@@ -10,7 +10,7 @@ export function CookieConsentBanner(): JSX.Element {
     const style = useStyle()
     const cookieProviders = useCookieProviders()
     const setStrictlyNecessaryCookiesOnly = useSetStrictlyNecessaryCookiesOnly()
-    const { isBannerOpen, setIsBannerOpen } = useCookieConsentContext()
+    const { isBannerOpen, setIsBannerOpen, auditService } = useCookieConsentContext()
     const [openSettings, setOpenSettings] = useState<boolean>(false)
     const [consentState, setConsentState] = useState<CookieConsentState>(getCookieConsentState)
     const [isClient, setIsClient] = useState(false)
@@ -136,6 +136,16 @@ export function CookieConsentBanner(): JSX.Element {
         setCookieConsentDisplayed(config.domain, config.cookiesValidForDays)
         setIsBannerOpen(true)
 
+        // Log audit event for accept selected
+        if (auditService) {
+            const currentState = {
+                Essential: true,
+                Analytics: consentState.Analytics.enabled,
+                Marketing: consentState.Marketing.enabled
+            }
+            auditService.logConsentChange('change', 'Essential', currentState)
+        }
+
         // Execute consent hooks for accepted categories
         Object.entries(consentState).forEach(([category, categoryState]) => {
             if (categoryState.enabled && category !== 'Essential') {
@@ -150,6 +160,16 @@ export function CookieConsentBanner(): JSX.Element {
         setSelectedCookies()
         setCookieConsentDisplayed(config.domain, config.cookiesValidForDays)
         setIsBannerOpen(true)
+
+        // Log audit event for accept detailed
+        if (auditService) {
+            const currentState = {
+                Essential: true,
+                Analytics: consentState.Analytics.enabled,
+                Marketing: consentState.Marketing.enabled
+            }
+            auditService.logConsentChange('change', 'Essential', currentState)
+        }
 
         // Execute consent hooks for accepted categories
         Object.entries(consentState).forEach(([category, categoryState]) => {
@@ -166,6 +186,16 @@ export function CookieConsentBanner(): JSX.Element {
         setCookieConsentDisplayed(config.domain, config.cookiesValidForDays)
         setIsBannerOpen(true)
 
+        // Log audit event for accept all
+        if (auditService) {
+            const currentState = {
+                Essential: true,
+                Analytics: true,
+                Marketing: true
+            }
+            auditService.logConsentChange('accept', 'Essential', currentState)
+        }
+
         // Execute consent hooks for all categories
         acceptConsent('Analytics')
         acceptConsent('Marketing')
@@ -175,6 +205,16 @@ export function CookieConsentBanner(): JSX.Element {
         setCookieConsentDisplayed(config.domain, config.cookiesValidForDays)
         setStrictlyNecessaryCookiesOnly()
         setIsBannerOpen(true)
+
+        // Log audit event for reject all
+        if (auditService) {
+            const currentState = {
+                Essential: true,
+                Analytics: false,
+                Marketing: false
+            }
+            auditService.logConsentChange('reject', 'Essential', currentState)
+        }
 
         // Execute consent hooks for rejected categories
         rejectConsent('Analytics')
@@ -291,8 +331,8 @@ export function CookieConsentBanner(): JSX.Element {
                                     <Button onClick={() => setOpenSettings(true)} text="showDetails" />
                                 </div>
                                 <div className="md:flex md:gap-10 grid gap-6">
-                                    <Button  onClick={handleReject} text="rejectAllNonNecessaryCookies" />
-                                    <Button  onClick={handleAcceptSelected} text="acceptSelectedCookies" />
+                                    <Button onClick={handleReject} text="rejectAllNonNecessaryCookies" />
+                                    <Button onClick={handleAcceptSelected} text="acceptSelectedCookies" />
                                     <Button onClick={handleAcceptAll} text="acceptAllCookies" />
                                 </div>
                             </div>

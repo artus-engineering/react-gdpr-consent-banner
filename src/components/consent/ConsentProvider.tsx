@@ -5,6 +5,7 @@ import { isServer } from '../../functions'
 import { ConsentHookContext, CookieCategory, CookieConsentBannerConfig } from '../../types'
 import { CookieConsentBanner } from './ConsentBanner'
 import { ConsentStateProviderContext } from './context'
+import { createAuditService } from '../../auditService'
 
 interface ConsentProviderProps {
     children: React.ReactNode
@@ -28,6 +29,9 @@ export function CookieConsentProvider({ children, config, includeCookieBanner = 
     const [isBannerOpen, setIsBannerOpen] = useState<boolean>(hasCookieBannerBeenShown())
 
     const openBanner = useCallback(() => setIsBannerOpen(false), [])
+
+    // Create audit service if configured
+    const auditService = createAuditService(config.audit, config.websiteName, config.domain)
 
     // Initialize consent hooks system
     useEffect(() => {
@@ -75,7 +79,7 @@ export function CookieConsentProvider({ children, config, includeCookieBanner = 
     }, [config])
 
     return (
-        <ConsentStateProviderContext.Provider value={{ isBannerOpen, setIsBannerOpen, openBanner, config }}>
+        <ConsentStateProviderContext.Provider value={{ isBannerOpen, setIsBannerOpen, openBanner, config, auditService }}>
             {children}
             {includeCookieBanner && <CookieConsentBanner />}
         </ConsentStateProviderContext.Provider>
