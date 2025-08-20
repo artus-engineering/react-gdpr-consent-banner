@@ -39,6 +39,6 @@ jobs:
         run: pnpm run build
 
       - name: Publish to npm
-        run: npm publish
+        run: pnpm publish --tag beta
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
