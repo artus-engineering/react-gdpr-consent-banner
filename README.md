@@ -1,3 +1,6 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=artus-engineering_react-gdpr-consent-banner&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=artus-engineering_react-gdpr-consent-banner)
+[![Tests](https://github.com/artus-engineering/react-gdpr-consent-banner/actions/workflows/branch.yaml/badge.svg)](https://github.com/artus-engineering/react-gdpr-consent-banner/actions/workflows/branch.yaml)
+
 **Disclaimer**: This library is currently in development and does not yet provide a stable and full feature set.
 
 <p align="center">A flexible cookie consent solution for <a href="https://react.dev" target="_blank">React</a> - built to comply with the GDPR, the ePrivacy Directive, and the CCPA<p align="center">
