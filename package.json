@@ -1,6 +1,6 @@
 {
     "name": "@artus-engineering/react-gdpr-cookie-consent",
-    "version": "0.1.4-beta",
+    "version": "0.1.5-beta",
     "description": "A simple and customizable GDPR cookie consent component for React.",
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.js",
