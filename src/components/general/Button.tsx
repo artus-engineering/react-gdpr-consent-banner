@@ -14,7 +14,7 @@ export function Button({ onClick, text, disabled = false }: IButtonProps) {
         <button
             type="button"
             disabled={disabled}
-            style={{ color: style.buttonText, backgroundColor: style.buttonBg }}
+            style={{ color: style.buttonText, backgroundColor: style.primaryColor }}
             className={`hover:scale-105 px-3 py-2 md:w-max w-full text-sm rounded-lg 
             duration-300 font-medium ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             onClick={onClick}

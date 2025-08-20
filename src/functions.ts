@@ -1,7 +1,8 @@
 import { CONSENT_DIALOG_HAS_BEEN_DISPLAYED, CONSENT_DIALOG_HAS_BEEN_DISPLAYED_VALUE, COOKIE_SUFFIX, COOKIE_VALUE_FALSE, COOKIE_VALUE_TRUE } from './constants'
 import { useConfig } from './hooks'
 import { getLanguageLabels } from './translations'
-import { CookieProviderConfig, SectionKeys, TranslationSections, Unit } from './types'
+import { CookieProviderConfig, SectionKeys, TranslationSections, Unit, SupportedLanguage } from './types'
+import { getLocalizedText } from './i18n'
 
 /**
  * Check if the code is running on the server.
@@ -123,6 +124,17 @@ export function getLabel<S extends TranslationSections, K extends SectionKeys<S>
 
     const defaultText = getLanguageLabels(lang)
     return defaultText[section][key] as string
+}
+
+/**
+ * Get localized text for cookie descriptions and purposes
+ *
+ * @param text The text to localize (string or object with language keys)
+ * @returns Localized text based on current language configuration
+ */
+export function getLocalizedCookieText(text: string | Record<SupportedLanguage, string>): string {
+    const { lang = 'enUS' } = useConfig()
+    return getLocalizedText(text, lang)
 }
 
 /**

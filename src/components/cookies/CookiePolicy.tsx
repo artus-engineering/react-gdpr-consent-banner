@@ -1,4 +1,4 @@
-import { getLabel, getUnit } from '../../functions'
+import { getLabel, getUnit, getLocalizedCookieText } from '../../functions'
 import { useCookieProvidersByCategory } from '../../hooks'
 import { CookieCategory } from '../../types'
 
@@ -14,9 +14,9 @@ export function CookiePolicy() {
                         <div className="mb-6">
                             <h4 className="text-lg font-semibold">{provider.name}</h4>
                             <p>
-                                {provider.description} Mehr informationen dazu finden Sie in der{' '}
+                                {getLocalizedCookieText(provider.description)} {getLabel('details', 'moreInfoText')}{' '}
                                 <a className="text-primary-500 underline" href={provider.dataProtectionLink}>
-                                    Datenschutzerklärung von {provider.name}
+                                    {getLabel('details', 'privacyPolicyOf')} {provider.serviceProvider || provider.name}
                                 </a>
                             </p>
                         </div>
@@ -37,7 +37,7 @@ export function CookiePolicy() {
                                             <td className="border-r p-2">
                                                 {cookie.duration} {getUnit(cookie.duration, cookie.unit)}
                                             </td>
-                                            <td className="border-r p-2">{cookie.purpose}</td>
+                                            <td className="border-r p-2">{getLocalizedCookieText(cookie.purpose)}</td>
                                             <td className="p-2">{(cookie.accessors || [provider.name]).join(', ')}</td>
                                         </tr>
                                     ))}

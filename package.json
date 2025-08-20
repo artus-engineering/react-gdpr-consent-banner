@@ -8,7 +8,10 @@
     "scripts": {
         "dev": "webpack serve --config webpack.config.js",
         "build": "rollup -c --bundleConfigAsCjs",
-        "test": "jest",
+        "test": "jest --watchAll=false",
+        "test:watch": "jest --watch",
+        "test:consent-hooks": "jest consentHooks.test.ts",
+        "test:coverage": "jest --coverage --watchAll=false",
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build",
         "prepare": "husky",
@@ -101,6 +104,8 @@
         "url": "https://github.com/artus-engineering/react-gdpr-cookie-consent.git"
     },
     "dependencies": {
+        "@types/prismjs": "^1.26.5",
+        "prismjs": "^1.30.0",
         "react-scripts": "^5.0.1"
     }
 }

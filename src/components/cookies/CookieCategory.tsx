@@ -1,5 +1,5 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
-import { getLabel, getUnit, hexToRGBA } from '../../functions'
+import { getLabel, getUnit, hexToRGBA, getLocalizedCookieText } from '../../functions'
 import { useStyle } from '../../hooks'
 import { CookieProviderConfig } from '../../types'
 import { SwitchButton } from '../general'
@@ -21,20 +21,20 @@ export function CookieCategoryComponent({ provider, handleCookieToggle, isEnable
                         {provider.name}
                     </h4>
                     <p style={{ color: style.textSecondary }} className="text-xs text-justify hyphens-auto">
-                        {provider.description}{' '}
+                        {getLocalizedCookieText(provider.description)}{' '}
                         <a className="underline" href={provider.dataProtectionLink}>
-                            {`${getLabel('links', 'privacyPolicy')} ${getLabel('common', 'of')} ${provider.name}`}
+                            {`${getLabel('links', 'privacyPolicy')} ${getLabel('common', 'of')} ${provider.serviceProvider || provider.name}`}
                         </a>
                     </p>
                 </div>
                 <div className="w-24 flex flex-shrink-0 justify-end">
                     <SwitchButton
-                        bgTrue={style.buttonBgTrue}
-                        bgFalse={style.buttonBgFalse}
+                        bgTrue={style.primaryColor}
+                        bgFalse={style.bgSecondary}
                         toggled={isEnabled}
                         onToggle={() => handleCookieToggle(provider.category, provider.id)}
                         name={provider.id}
-                        disabled={provider.category === 'StrictlyNecessary'}
+                        disabled={provider.category === 'Essential'}
                     />
                 </div>
             </div>
@@ -82,7 +82,7 @@ export function CookieCategoryComponent({ provider, handleCookieToggle, isEnable
                                 >
                                     <div className="flex justify-between gap-6 ">
                                         <p style={{ color: style.textPrimary }} className="inline text-xs font-medium">
-                                            {cookie.purpose}
+                                            {getLocalizedCookieText(cookie.purpose)}
                                         </p>
                                     </div>
                                     <div className="flex justify-between gap-6 pt-6">

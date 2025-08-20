@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getCookieSelection, getLabel, hexToRGBA, persistCookieSelection, setCookieConsentDisplayed } from '../../functions'
-import { useConfig, useCookieConsentContext, useCookieProviders, useSetStrictlyNecessaryCookiesOnly, useStyle } from '../../hooks'
+import { useConfig, useConsentHooks, useCookieConsentContext, useCookieProviders, useSetStrictlyNecessaryCookiesOnly, useStyle } from '../../hooks'
 import { CookieCategory, CookieConsentState, CookieProviderConfig } from '../../types'
 import { CookieCategoryComponent } from '../cookies'
 import { Button, SwitchButton } from '../general'
@@ -14,6 +14,7 @@ export function CookieConsentBanner(): JSX.Element {
     const [openSettings, setOpenSettings] = useState<boolean>(false)
     const [consentState, setConsentState] = useState<CookieConsentState>(getCookieConsentState)
     const [isClient, setIsClient] = useState(false)
+    const { acceptConsent, rejectConsent } = useConsentHooks()
 
     /** Resolves pre-rendering issues with react */
     useEffect(() => setIsClient(true), [])
@@ -73,9 +74,9 @@ export function CookieConsentBanner(): JSX.Element {
     function getCookieConsentState(): CookieConsentState {
         return cookieProviders.reduce((acc, cookie) => {
             if (!acc[cookie.category]) {
-                acc[cookie.category] = { enabled: cookie.category === 'StrictlyNecessary', cookies: {} }
+                acc[cookie.category] = { enabled: cookie.category === 'Essential', cookies: {} }
             }
-            acc[cookie.category].cookies[cookie.id] = cookie.category === 'StrictlyNecessary' || getCookieSelection(cookie)
+            acc[cookie.category].cookies[cookie.id] = cookie.category === 'Essential' || getCookieSelection(cookie)
             acc[cookie.category].enabled = Object.values(acc[cookie.category].cookies).every(value => value)
             return acc
         }, {} as CookieConsentState)
@@ -134,24 +135,50 @@ export function CookieConsentBanner(): JSX.Element {
         setSelectedCookies()
         setCookieConsentDisplayed(config.domain, config.cookiesValidForDays)
         setIsBannerOpen(true)
+
+        // Execute consent hooks for accepted categories
+        Object.entries(consentState).forEach(([category, categoryState]) => {
+            if (categoryState.enabled && category !== 'Essential') {
+                acceptConsent(category as CookieCategory)
+            } else if (!categoryState.enabled && category !== 'Essential') {
+                rejectConsent(category as CookieCategory)
+            }
+        })
     }
 
     function handleAcceptDetailed() {
         setSelectedCookies()
         setCookieConsentDisplayed(config.domain, config.cookiesValidForDays)
         setIsBannerOpen(true)
+
+        // Execute consent hooks for accepted categories
+        Object.entries(consentState).forEach(([category, categoryState]) => {
+            if (categoryState.enabled && category !== 'Essential') {
+                acceptConsent(category as CookieCategory)
+            } else if (!categoryState.enabled && category !== 'Essential') {
+                rejectConsent(category as CookieCategory)
+            }
+        })
     }
 
     function handleAcceptAll() {
         setAllCookiesAccepted()
         setCookieConsentDisplayed(config.domain, config.cookiesValidForDays)
         setIsBannerOpen(true)
+
+        // Execute consent hooks for all categories
+        acceptConsent('Analytics')
+        acceptConsent('Marketing')
     }
 
     function handleReject() {
         setCookieConsentDisplayed(config.domain, config.cookiesValidForDays)
         setStrictlyNecessaryCookiesOnly()
         setIsBannerOpen(true)
+
+        // Execute consent hooks for rejected categories
+        rejectConsent('Analytics')
+        rejectConsent('Marketing')
     }
 
     if (!isClient || isBannerOpen) return <></>
@@ -198,12 +225,12 @@ export function CookieConsentBanner(): JSX.Element {
                                             </div>
                                             <div className="min-w-24 flex justify-end">
                                                 <SwitchButton
-                                                    bgTrue={style.buttonBgTrue}
-                                                    bgFalse={style.buttonBgFalse}
+                                                    bgTrue={style.primaryColor}
+                                                    bgFalse={style.bgSecondary}
                                                     toggled={categoryState.enabled}
                                                     onToggle={() => handleCategoryToggle(category)}
                                                     name={category}
-                                                    disabled={category === 'StrictlyNecessary'}
+                                                    disabled={category === 'Essential'}
                                                 />
                                             </div>
                                         </div>
@@ -240,19 +267,19 @@ export function CookieConsentBanner(): JSX.Element {
                                         <div
                                             style={{ borderColor: hexToRGBA(style.bgSecondary, 0.6) }}
                                             key={category}
-                                            className={category === 'StrictlyNecessary' ? 'cursor-not-allowed opacity-70' : ''}
+                                            className={category === 'Essential' ? 'cursor-not-allowed opacity-70' : ''}
                                         >
                                             <div className="md:text-center md:inline flex items-center justify-between">
                                                 <p style={{ color: style.textPrimary }} className="md:mb-2 block md:text-sm text-base self-end">
                                                     {getLabel('cookieCategories', category as CookieCategory)}
                                                 </p>
                                                 <SwitchButton
-                                                    bgTrue={style.buttonBgTrue}
-                                                    bgFalse={style.buttonBgFalse}
+                                                    bgTrue={style.primaryColor}
+                                                    bgFalse={style.bgSecondary}
                                                     toggled={categoryState.enabled}
                                                     onToggle={() => handleCategoryToggle(category)}
                                                     name={category}
-                                                    disabled={category === 'StrictlyNecessary'}
+                                                    disabled={category === 'Essential'}
                                                 />
                                             </div>
                                         </div>
@@ -264,8 +291,8 @@ export function CookieConsentBanner(): JSX.Element {
                                     <Button onClick={() => setOpenSettings(true)} text="showDetails" />
                                 </div>
                                 <div className="md:flex md:gap-10 grid gap-6">
-                                    <Button onClick={handleReject} text="rejectAllNonNecessaryCookies" />
-                                    <Button onClick={handleAcceptSelected} text="acceptSelectedCookies" />
+                                    <Button  onClick={handleReject} text="rejectAllNonNecessaryCookies" />
+                                    <Button  onClick={handleAcceptSelected} text="acceptSelectedCookies" />
                                     <Button onClick={handleAcceptAll} text="acceptAllCookies" />
                                 </div>
                             </div>

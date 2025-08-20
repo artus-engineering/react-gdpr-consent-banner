@@ -15,12 +15,12 @@ describe('CookieConsentGate', () => {
     const provider: CookieProviderConfig = {
         name: 'Some Website',
         id: 'website',
-        category: 'StrictlyNecessary',
+        category: 'Essential',
         description: 'We use session cookies to store your session on our website. This cookie is necessary to use the website.',
         dataProtectionLink: 'https://example.com/privacy',
         cookies: [
             {
-                name: 'tebuto_app_session',
+                name: 'app_session',
                 duration: 7,
                 unit: 'days',
                 purpose: 'Store the session'
@@ -50,6 +50,17 @@ describe('CookieConsentGate', () => {
     it('should render gate content if not consented to cookies of provider', () => {
         useCookieStateMock.mockReturnValue({ isEnabled: false, setIsEnabled: setIsEnabledMock })
         const { container } = render(<CookieConsentGate cookieProvider={provider}>{children}</CookieConsentGate>)
+        expect(container).toMatchSnapshot()
+    })
+
+    it('should use serviceProvider when available', () => {
+        const providerWithServiceProvider: CookieProviderConfig = {
+            ...provider,
+            name: 'Google Analytics & Ads',
+            serviceProvider: 'Google'
+        }
+        useCookieStateMock.mockReturnValue({ isEnabled: false, setIsEnabled: setIsEnabledMock })
+        const { container } = render(<CookieConsentGate cookieProvider={providerWithServiceProvider}>{children}</CookieConsentGate>)
         expect(container).toMatchSnapshot()
     })
 })

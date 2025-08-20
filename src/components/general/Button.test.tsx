@@ -31,7 +31,7 @@ describe('Button', () => {
         useStyleMock.mockReturnValue({
             ...DefaultTheme,
             buttonText: '#def',
-            buttonBg: '#abc'
+            primaryColor: '#abc'
         })
 
         const { container } = render(<Button onClick={jest.fn()} text={text} />)
@@ -124,7 +124,7 @@ describe('Button', () => {
         const customTheme = {
             ...DefaultTheme,
             buttonText: '#ffffff',
-            buttonBg: '#000000'
+            primaryColor: '#000000'
         }
         useStyleMock.mockReturnValue(customTheme)
 

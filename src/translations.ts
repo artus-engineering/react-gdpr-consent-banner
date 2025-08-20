@@ -27,7 +27,9 @@ const cookieConsentTranslations: Record<SupportedLanguage, CookieConsentLabels> 
             cookieName: 'Name',
             cookieDuration: 'Speicherdauer',
             cookieAccessors: 'Zugriff möglich durch',
-            cookiePurpose: 'Zweck'
+            cookiePurpose: 'Zweck',
+            moreInfoText: 'Mehr informationen dazu finden Sie in der',
+            privacyPolicyOf: 'Datenschutzerklärung von'
         },
         links: {
             privacyPolicy: 'Datenschutzerklärung',
@@ -46,12 +48,9 @@ const cookieConsentTranslations: Record<SupportedLanguage, CookieConsentLabels> 
             sessionPlural: 'Sitzungen'
         },
         cookieCategories: {
-            StrictlyNecessary: 'Notwendig',
-            Preferences: 'Präferenzen',
-            Statistics: 'Statistiken',
-            Marketing: 'Marketing',
-            Functional: 'Funktional',
-            NotClassified: 'Nicht klassifiziert'
+            Essential: 'Notwendig',
+            Analytics: 'Analytik',
+            Marketing: 'Marketing'
         },
         cookiePolicy: {
             autoCookiePurpose: 'Merkt die Auswahl der Cookie-Einwilligung des Benutzers.',
@@ -61,15 +60,12 @@ const cookieConsentTranslations: Record<SupportedLanguage, CookieConsentLabels> 
             message: 'Entschuldigung. Wir können diesen Inhalt nicht anzeigen. Wir benötigen Ihre Zustimmung für Cookies von'
         },
         cookieCategoryDescriptions: {
-            StrictlyNecessary: 'Zwingend erforderliche Cookies ermöglichen wesentliche Dienste und Funktionen, einschließlich Identitätsprüfung, Standortsicherheit usw.',
-            Preferences:
-                'Präferenz-Cookies ermöglichen einer Website, sich an Informationen zu erinnern, die das Verhalten oder Aussehen der Website verändern, wie Ihre bevorzugte Sprache oder die Region, in der Sie sich befinden.',
-            Statistics: 'Statistik-Cookies helfen Website-Besitzern zu verstehen, wie Besucher mit Websites interagieren, indem sie Informationen anonym sammeln und melden.',
-            Functional:
-                'Funktionale Cookies ermöglichen es der Webseite Dienste von Drittanbietern bereitzustellen und fortgeschrittene Funktionalitäten bereitzustellen. Beispielsweise eingebettete Videos, Karten oder Zahlungen.',
+            Essential:
+                'Zwingend erforderliche Cookies ermöglichen wesentliche Website-Funktionalität, einschließlich Sicherheit, Authentifizierung und grundlegende Operationen. Diese können nicht deaktiviert werden.',
+            Analytics:
+                'Analytik-Cookies helfen uns zu verstehen, wie Besucher unsere Website nutzen, indem sie Informationen über Seitenbesuche, Verweildauer und Benutzerinteraktionen sammeln. Diese Daten helfen uns, unsere Dienste zu verbessern.',
             Marketing:
-                'Marketing-Cookies werden verwendet, um Besucher über Websites hinweg zu verfolgen. Die Absicht ist es, Anzeigen zu zeigen, die für den einzelnen Benutzer relevant und ansprechend sind und damit für Publisher und Drittanbieter-Werbetreibende wertvoller sind.',
-            NotClassified: 'Cookies, die keiner anderen Kategorie zugeordnet sind. Sie werden für Analyse- und Marketingzwecke verwendet.'
+                'Marketing-Cookies verfolgen Ihre Aktivitäten auf verschiedenen Websites, um ein Profil Ihrer Interessen zu erstellen und Ihnen relevante Werbung auf anderen Seiten zu zeigen.'
         }
     },
     enUS: {
@@ -98,7 +94,9 @@ const cookieConsentTranslations: Record<SupportedLanguage, CookieConsentLabels> 
             cookieName: 'Name',
             cookieDuration: 'Storage Duration',
             cookieAccessors: 'Accessible By',
-            cookiePurpose: 'Purpose'
+            cookiePurpose: 'Purpose',
+            moreInfoText: 'More information can be found in the',
+            privacyPolicyOf: 'Privacy Policy of'
         },
         links: {
             privacyPolicy: 'Privacy Policy',
@@ -117,12 +115,9 @@ const cookieConsentTranslations: Record<SupportedLanguage, CookieConsentLabels> 
             sessionPlural: 'Sessions'
         },
         cookieCategories: {
-            StrictlyNecessary: 'Strictly Necessary',
-            Preferences: 'Preferences',
-            Statistics: 'Statistics',
-            Marketing: 'Marketing',
-            Functional: 'Functional',
-            NotClassified: 'Not Classified'
+            Essential: 'Essential',
+            Analytics: 'Analytics',
+            Marketing: 'Marketing'
         },
         cookiePolicy: {
             autoCookiePurpose: "Remember the user's cookie consent selection.",
@@ -132,14 +127,10 @@ const cookieConsentTranslations: Record<SupportedLanguage, CookieConsentLabels> 
             message: 'Sorry. We can not display this content as it requires your consent for cookies from'
         },
         cookieCategoryDescriptions: {
-            StrictlyNecessary: 'Strictly necessary cookies enable essential services and functionality, including identity verification, site security, etc.',
-            Preferences:
-                'Preference cookies enable a website to remember information that changes the way the website behaves or looks, like your preferred language or the region that you are in.',
-            Statistics: 'Statistic cookies help website owners to understand how visitors interact with websites by collecting and reporting information anonymously.',
-            Functional: 'Functional cookies enable the website to provide enhanced functionality and personalization. For example, embedded videos, maps or payments.',
-            Marketing:
-                'Marketing cookies are used to track visitors across websites. The intention is to display ads that are relevant and engaging for the individual user and thereby more valuable for publishers and third party advertisers.',
-            NotClassified: 'Cookies that do not belong to any other category. They are used for analytics and marketing purposes.'
+            Essential: 'Essential cookies enable core website functionality, including security, authentication, and basic operations. These cannot be disabled.',
+            Analytics:
+                'Analytics cookies help us understand how visitors use our website by collecting information about page visits, time spent, and user interactions. This data helps us improve our services.',
+            Marketing: 'Marketing cookies track your activity across websites to build a profile of your interests and show you relevant advertisements on other sites.'
         }
     }
 }

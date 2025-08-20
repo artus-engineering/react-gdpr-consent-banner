@@ -13,12 +13,12 @@ export default {
 const WebsiteCookieProvider: CookieProvider = {
     name: 'Some Website',
     id: 'website',
-    category: 'StrictlyNecessary',
+    category: 'Essential',
     description: 'We use session cookies to store your session on our website. This cookie is necessary to use the website.',
     dataProtectionLink: 'https://example.com/privacy',
     cookies: [
         {
-            name: 'tebuto_app_session',
+            name: 'app_session',
             duration: 7,
             unit: 'days',
             purpose: 'Store the session'
@@ -35,7 +35,7 @@ const WebsiteCookieProvider: CookieProvider = {
 const TrackingCookieProvider: CookieProvider = {
     name: 'Some Tracking Service',
     id: 'tracking',
-    category: 'Statistics',
+    category: 'Analytics',
     description: 'We use Some Tracking Service to collect anonymous statistics about the use of our website. This helps us to improve the website.',
     dataProtectionLink: 'https://example.com/privacy',
     cookies: [
