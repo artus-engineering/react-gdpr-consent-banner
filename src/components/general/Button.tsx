@@ -1,15 +1,19 @@
 import { getLabel } from '../../functions'
 import { useStyle } from '../../hooks'
-import { ButtonSubSection } from '../../types'
+import { ButtonSubSection, CookieConsentBannerConfigWithDefaults } from '../../types'
 
 interface IButtonProps {
     onClick: () => void
     text: ButtonSubSection
     disabled?: boolean
+    config?: CookieConsentBannerConfigWithDefaults
 }
 
-export function Button({ onClick, text, disabled = false }: IButtonProps) {
+export function Button({ onClick, text, disabled = false, config }: IButtonProps) {
     const style = useStyle()
+    const defaultConfig = { lang: 'enUS' as const }
+    const buttonConfig = config || defaultConfig
+
     return (
         <button
             type="button"
@@ -19,7 +23,7 @@ export function Button({ onClick, text, disabled = false }: IButtonProps) {
             duration-300 font-medium ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             onClick={onClick}
         >
-            {getLabel('buttons', text)}
+            {getLabel('buttons', text, buttonConfig)}
         </button>
     )
 }

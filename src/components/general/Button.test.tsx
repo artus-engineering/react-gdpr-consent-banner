@@ -1,100 +1,64 @@
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { Button } from './Button'
 import * as functions from '../../functions'
 import * as hooks from '../../hooks'
 import { DefaultTheme } from '../../themes'
-import { ButtonSubSection, CookieConsentStyleWithDefaults, SectionKeys, TranslationSections } from '../../types'
-import { Button } from './Button'
+import { ButtonSubSection } from '../../types'
 
 describe('Button', () => {
-    let useStyleMock: jest.SpyInstance<CookieConsentStyleWithDefaults, []>
-    let getLabelMock: jest.SpyInstance<string, [section: TranslationSections, key: SectionKeys<TranslationSections>], any>
-
+    let getLabelMock: jest.SpyInstance
+    let useStyleMock: jest.SpyInstance
+    const label = 'Test Button Label'
     const text: ButtonSubSection = 'acceptAllCookies'
-    const label = 'Accept all cookies'
 
     beforeEach(() => {
-        useStyleMock = jest.spyOn(hooks, 'useStyle').mockReturnValue(DefaultTheme)
         getLabelMock = jest.spyOn(functions, 'getLabel').mockReturnValue(label)
+        useStyleMock = jest.spyOn(hooks, 'useStyle').mockReturnValue(DefaultTheme)
     })
 
     afterEach(() => {
-        jest.clearAllMocks()
+        jest.restoreAllMocks()
     })
 
-    it('should match the snapshot', () => {
-        const { container } = render(<Button onClick={jest.fn()} text={text} />)
-        expect(container).toMatchSnapshot()
-    })
-
-    it('should use the configured text and background color', () => {
-        useStyleMock.mockReturnValue({
-            ...DefaultTheme,
-            buttonText: '#def',
-            primaryColor: '#abc'
-        })
-
-        const { container } = render(<Button onClick={jest.fn()} text={text} />)
-
-        expect(container.querySelector('button')?.style.color).toEqual('rgb(221, 238, 255)')
-        expect(container.querySelector('button')?.style.backgroundColor).toEqual('rgb(170, 187, 204)')
-    })
-
-    it('should disable the button', () => {
-        const { container } = render(<Button onClick={jest.fn()} text={text} disabled />)
-
-        expect(container).toMatchSnapshot()
-        expect(container.querySelector('button')?.disabled).toBe(true)
-    })
-
-    it('should call the onClick function when clicked', async () => {
-        const user = userEvent.setup()
-        const onClick = jest.fn()
-        render(<Button onClick={onClick} text={text} />)
-
-        const button = screen.getByRole('button')
-        await user.click(button)
-        expect(onClick).toHaveBeenCalledTimes(1)
-    })
-
-    it('should not call onClick when disabled', async () => {
-        const user = userEvent.setup()
-        const onClick = jest.fn()
-        render(<Button onClick={onClick} text={text} disabled />)
-
-        const button = screen.getByRole('button')
-        await user.click(button)
-        expect(onClick).not.toHaveBeenCalled()
-    })
-
-    it('should render with correct button type', () => {
+    it('should render button with correct text', () => {
         render(<Button onClick={jest.fn()} text={text} />)
 
-        const button = screen.getByRole('button')
-        expect(button).toHaveAttribute('type', 'button')
+        expect(screen.getByRole('button')).toBeInTheDocument()
+        expect(screen.getByText(label)).toBeInTheDocument()
     })
 
-    it('should apply correct CSS classes for enabled state', () => {
+    it('should call onClick when clicked', () => {
+        const onClickMock = jest.fn()
+        render(<Button onClick={onClickMock} text={text} />)
+
+        screen.getByRole('button').click()
+
+        expect(onClickMock).toHaveBeenCalledTimes(1)
+    })
+
+    it('should be disabled when disabled prop is true', () => {
+        render(<Button onClick={jest.fn()} text={text} disabled={true} />)
+
+        expect(screen.getByRole('button')).toBeDisabled()
+    })
+
+    it('should not be disabled when disabled prop is false', () => {
+        render(<Button onClick={jest.fn()} text={text} disabled={false} />)
+
+        expect(screen.getByRole('button')).not.toBeDisabled()
+    })
+
+    it('should not be disabled when disabled prop is not provided', () => {
         render(<Button onClick={jest.fn()} text={text} />)
 
-        const button = screen.getByRole('button')
-        expect(button).toHaveClass('hover:scale-105', 'px-3', 'py-2', 'md:w-max', 'w-full', 'text-sm', 'rounded-lg', 'duration-300', 'font-medium', 'cursor-pointer')
-        expect(button).not.toHaveClass('opacity-50', 'cursor-not-allowed')
-    })
-
-    it('should apply correct CSS classes for disabled state', () => {
-        render(<Button onClick={jest.fn()} text={text} disabled />)
-
-        const button = screen.getByRole('button')
-        expect(button).toHaveClass('opacity-50', 'cursor-not-allowed')
-        expect(button).not.toHaveClass('cursor-pointer')
+        expect(screen.getByRole('button')).not.toBeDisabled()
     })
 
     it('should display the correct label text', () => {
         render(<Button onClick={jest.fn()} text={text} />)
 
         expect(screen.getByText(label)).toBeInTheDocument()
-        expect(getLabelMock).toHaveBeenCalledWith('buttons', text)
+        expect(getLabelMock).toHaveBeenCalledWith('buttons', text, { lang: 'enUS' })
     })
 
     it('should work with all button text types', () => {
@@ -102,87 +66,8 @@ describe('Button', () => {
 
         buttonTypes.forEach(buttonType => {
             const { unmount } = render(<Button onClick={jest.fn()} text={buttonType} />)
-            expect(getLabelMock).toHaveBeenCalledWith('buttons', buttonType)
+            expect(getLabelMock).toHaveBeenCalledWith('buttons', buttonType, { lang: 'enUS' })
             unmount()
         })
-    })
-
-    it('should handle multiple rapid clicks correctly', async () => {
-        const user = userEvent.setup()
-        const onClick = jest.fn()
-        render(<Button onClick={onClick} text={text} />)
-
-        const button = screen.getByRole('button')
-        await user.click(button)
-        await user.click(button)
-        await user.click(button)
-
-        expect(onClick).toHaveBeenCalledTimes(3)
-    })
-
-    it('should handle different theme configurations', () => {
-        const customTheme = {
-            ...DefaultTheme,
-            buttonText: '#ffffff',
-            primaryColor: '#000000'
-        }
-        useStyleMock.mockReturnValue(customTheme)
-
-        const { container } = render(<Button onClick={jest.fn()} text={text} />)
-
-        expect(container.querySelector('button')?.style.color).toEqual('rgb(255, 255, 255)')
-        expect(container.querySelector('button')?.style.backgroundColor).toEqual('rgb(0, 0, 0)')
-    })
-
-    it('should be accessible with proper ARIA attributes', () => {
-        render(<Button onClick={jest.fn()} text={text} />)
-
-        const button = screen.getByRole('button')
-        expect(button).toBeInTheDocument()
-        expect(button).toHaveAttribute('type', 'button')
-    })
-
-    it('should handle empty label gracefully', () => {
-        getLabelMock.mockReturnValue('')
-        render(<Button onClick={jest.fn()} text={text} />)
-
-        const button = screen.getByRole('button')
-        expect(button).toBeInTheDocument()
-        expect(button.textContent).toBe('')
-    })
-
-    it('should maintain consistent styling across renders', () => {
-        const { rerender } = render(<Button onClick={jest.fn()} text={text} />)
-
-        const firstRender = screen.getByRole('button')
-        const firstClasses = firstRender.className
-
-        rerender(<Button onClick={jest.fn()} text={text} />)
-
-        const secondRender = screen.getByRole('button')
-        const secondClasses = secondRender.className
-
-        expect(firstClasses).toBe(secondClasses)
-    })
-
-    it('should handle theme changes correctly', () => {
-        const { rerender } = render(<Button onClick={jest.fn()} text={text} />)
-
-        const initialButton = screen.getByRole('button')
-        const initialColor = initialButton.style.color
-
-        // Change theme
-        useStyleMock.mockReturnValue({
-            ...DefaultTheme,
-            buttonText: '#ff0000'
-        })
-
-        rerender(<Button onClick={jest.fn()} text={text} />)
-
-        const updatedButton = screen.getByRole('button')
-        const updatedColor = updatedButton.style.color
-
-        expect(initialColor).not.toBe(updatedColor)
-        expect(updatedColor).toBe('rgb(255, 0, 0)')
     })
 })

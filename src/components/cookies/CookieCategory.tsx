@@ -1,6 +1,6 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { getLabel, getUnit, hexToRGBA, getLocalizedCookieText } from '../../functions'
-import { useStyle } from '../../hooks'
+import { useConfig, useStyle } from '../../hooks'
 import { CookieProviderConfig } from '../../types'
 import { SwitchButton } from '../general'
 
@@ -12,6 +12,7 @@ interface ICookieCategory {
 
 export function CookieCategoryComponent({ provider, handleCookieToggle, isEnabled }: ICookieCategory) {
     const style = useStyle()
+    const config = useConfig()
 
     return (
         <div style={{ borderColor: hexToRGBA(style.bgSecondary, 0.8) }} className="mb-3 pt-3" key={provider.id}>
@@ -23,7 +24,7 @@ export function CookieCategoryComponent({ provider, handleCookieToggle, isEnable
                     <p style={{ color: style.textSecondary }} className="text-xs text-justify hyphens-auto">
                         {getLocalizedCookieText(provider.description)}{' '}
                         <a className="underline" href={provider.dataProtectionLink}>
-                            {`${getLabel('links', 'privacyPolicy')} ${getLabel('common', 'of')} ${provider.serviceProvider || provider.name}`}
+                            {`${getLabel('links', 'privacyPolicy', config)} ${getLabel('common', 'of', config)} ${provider.serviceProvider || provider.name}`}
                         </a>
                     </p>
                 </div>
@@ -43,7 +44,7 @@ export function CookieCategoryComponent({ provider, handleCookieToggle, isEnable
                     <>
                         <DisclosureButton as="div" className="min-w-24 flex justify-end items-center hover:cursor-pointer mt-4">
                             <p style={{ color: style.textSecondary }} className="text-xs">
-                                {getLabel('details', 'expandCookieDetails')}
+                                {getLabel('details', 'expandCookieDetails', config)}
                             </p>
                             {open ? (
                                 <svg
@@ -87,7 +88,7 @@ export function CookieCategoryComponent({ provider, handleCookieToggle, isEnable
                                     </div>
                                     <div className="flex justify-between gap-6 pt-6">
                                         <p style={{ color: style.textSecondary }} className="inline text-xs">
-                                            {getLabel('details', 'cookieName')}
+                                            {getLabel('details', 'cookieName', config)}
                                         </p>
                                         <p style={{ color: style.textSecondary }} className="inline text-xs">
                                             {cookie.name}
@@ -95,15 +96,15 @@ export function CookieCategoryComponent({ provider, handleCookieToggle, isEnable
                                     </div>
                                     <div className="flex justify-between gap-6">
                                         <p style={{ color: style.textSecondary }} className="inline text-xs">
-                                            {getLabel('details', 'cookieDuration')}
+                                            {getLabel('details', 'cookieDuration', config)}
                                         </p>
                                         <p style={{ color: style.textSecondary }} className="inline text-xs">
-                                            {cookie.duration} {getUnit(cookie.duration, cookie.unit)}
+                                            {cookie.duration} {getUnit(cookie.duration, cookie.unit, config)}
                                         </p>
                                     </div>
                                     <div className="flex justify-between gap-6 ">
                                         <p style={{ color: style.textSecondary }} className="inline text-xs">
-                                            {getLabel('details', 'cookieAccessors')}
+                                            {getLabel('details', 'cookieAccessors', config)}
                                         </p>
                                         <p style={{ color: style.textSecondary }} className="inline text-xs">
                                             {(cookie.accessors || [provider.name]).join(', ')}

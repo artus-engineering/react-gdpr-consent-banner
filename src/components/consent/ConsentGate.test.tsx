@@ -35,11 +35,32 @@ describe('CookieConsentGate', () => {
     }
     const children = <div>Test</div>
 
+    const mockConfig = {
+        domain,
+        cookiesValidForDays,
+        lang: 'enUS' as const,
+        providers: [],
+        cookiePolicyLink: '',
+        websiteName: '',
+        labels: {
+            headings: {
+                consentGate: 'Consent Required'
+            },
+            consentGate: {
+                message: 'This content requires consent for'
+            }
+        }
+    }
+
     beforeEach(() => {
         setIsEnabledMock = jest.fn()
-        useConfigMock = jest.spyOn(hooks, 'useConfig').mockReturnValue({ domain, cookiesValidForDays } as CookieConsentBannerConfigWithDefaults)
+        useConfigMock = jest.spyOn(hooks, 'useConfig').mockReturnValue(mockConfig as CookieConsentBannerConfigWithDefaults)
         useStyleMock = jest.spyOn(hooks, 'useStyle').mockReturnValue(DefaultTheme)
         useCookieStateMock = jest.spyOn(hooks, 'useCookieState').mockReturnValue({ isEnabled: true, setIsEnabled: setIsEnabledMock })
+    })
+
+    afterEach(() => {
+        jest.restoreAllMocks()
     })
 
     it('should render children if consented to provider', () => {

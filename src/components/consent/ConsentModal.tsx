@@ -43,10 +43,10 @@ export function CookieConsentModal({ cookieProvider, children }: IConsentModalPr
                         </svg>
                         <div style={{ backgroundColor: style.bgPrimary, borderColor: style.bgSecondary }} className="p-12 rounded-lg border">
                             <h2 style={{ color: style.textPrimary }} className="text-xl font-semibold mb-4">
-                                {getLabel('headings', 'consentGate')}
+                                {getLabel('headings', 'consentGate', config)}
                             </h2>
                             <p style={{ color: style.textSecondary }} className="mb-12">
-                                {getLabel('consentGate', 'message')} <b>{cookieProvider.name}.</b>
+                                {getLabel('consentGate', 'message', config)} <b>{cookieProvider.name}.</b>
                             </p>
                             <div style={{ backgroundColor: hexToRGBA(style.bgSecondary, 0.2) }} className="mb-12 p-8 rounded-lg">
                                 <CookieCategoryComponent provider={cookieProvider} handleCookieToggle={() => setIsEnabled(!isEnabled)} isEnabled={isEnabled} />

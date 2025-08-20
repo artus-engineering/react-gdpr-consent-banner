@@ -1,7 +1,6 @@
 import { CONSENT_DIALOG_HAS_BEEN_DISPLAYED, CONSENT_DIALOG_HAS_BEEN_DISPLAYED_VALUE, COOKIE_SUFFIX, COOKIE_VALUE_FALSE, COOKIE_VALUE_TRUE } from './constants'
-import { useConfig } from './hooks'
 import { getLanguageLabels } from './translations'
-import { CookieProviderConfig, SectionKeys, TranslationSections, Unit, SupportedLanguage } from './types'
+import { CookieProviderConfig, SectionKeys, TranslationSections, Unit, SupportedLanguage, CookieConsentBannerConfigWithDefaults } from './types'
 import { getLocalizedText } from './i18n'
 
 /**
@@ -14,7 +13,7 @@ export function isServer(): boolean {
 }
 
 /**
- * Set a cookie.
+ * Set a cookie with proper security settings.
  *
  * @param key The key of the cookie.
  * @param value The value of the cookie.
@@ -113,10 +112,11 @@ export function lightenHexColor(hex: string, degree: number): string {
  *
  * @param section The section of the labels
  * @param key The key of the label
+ * @param config The configuration object containing labels and language
  * @returns {string} The text of the label
  */
-export function getLabel<S extends TranslationSections, K extends SectionKeys<S>>(section: S, key: K): string {
-    const { labels, lang = 'enUS' } = useConfig()
+export function getLabel<S extends TranslationSections, K extends SectionKeys<S>>(section: S, key: K, config: { labels?: any; lang?: SupportedLanguage }): string {
+    const { labels, lang = 'enUS' } = config
     const customText = labels?.[section]?.[key]
     if (customText) {
         return customText as string
@@ -130,10 +130,10 @@ export function getLabel<S extends TranslationSections, K extends SectionKeys<S>
  * Get localized text for cookie descriptions and purposes
  *
  * @param text The text to localize (string or object with language keys)
+ * @param lang The language to use
  * @returns Localized text based on current language configuration
  */
-export function getLocalizedCookieText(text: string | Record<SupportedLanguage, string>): string {
-    const { lang = 'enUS' } = useConfig()
+export function getLocalizedCookieText(text: string | Record<SupportedLanguage, string>, lang: SupportedLanguage = 'enUS'): string {
     return getLocalizedText(text, lang)
 }
 
@@ -142,11 +142,12 @@ export function getLocalizedCookieText(text: string | Record<SupportedLanguage, 
  *
  * @param number The duration
  * @param unit The unit
+ * @param config The configuration object containing labels and language
  * @returns {string} The unit in singular or plural form
  */
-export function getUnit(number: number, unit: Unit): string {
+export function getUnit(number: number, unit: Unit, config: { labels?: any; lang?: SupportedLanguage }): string {
     if (number > 1) {
-        return getLabel('units', `${unit}Plural` as Unit)
+        return getLabel('units', `${unit}Plural` as Unit, config)
     }
-    return getLabel('units', unit)
+    return getLabel('units', unit, config)
 }

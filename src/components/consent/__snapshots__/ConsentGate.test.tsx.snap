@@ -18,13 +18,13 @@ exports[`CookieConsentGate should render gate content if not consented to cookie
       class="text-xl font-semibold mb-4"
       style="color: rgb(44, 62, 80);"
     >
-      Your consent is required to view this content
+      Consent Required
     </h2>
     <p
       class="mb-12"
       style="color: rgb(52, 73, 94);"
     >
-      Sorry. We can not display this content as it requires your consent for cookies from
+      This content requires consent for
        
       <b
         style="color: rgb(52, 73, 94);"
@@ -176,13 +176,13 @@ exports[`CookieConsentGate should use serviceProvider when available 1`] = `
       class="text-xl font-semibold mb-4"
       style="color: rgb(44, 62, 80);"
     >
-      Your consent is required to view this content
+      Consent Required
     </h2>
     <p
       class="mb-12"
       style="color: rgb(52, 73, 94);"
     >
-      Sorry. We can not display this content as it requires your consent for cookies from
+      This content requires consent for
        
       <b
         style="color: rgb(52, 73, 94);"

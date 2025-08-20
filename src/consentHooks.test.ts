@@ -1,4 +1,4 @@
-import { consentHookManager, createGranularGoogleTagManagerHook } from './consentHooks'
+import { consentHookManager, createGoogleTagManagerHook } from './consentHooks'
 import { ConsentHookContext } from './types'
 
 // Mock window.dataLayer and global types for Jest
@@ -68,7 +68,7 @@ describe('Google Consent Mode v2 Tests', () => {
 
     describe('GTM Initialization', () => {
         it('should initialize GTM with default denied consent state', () => {
-            const hooks = createGranularGoogleTagManagerHook('GTM-TEST123')
+            const hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
 
             // GTM should be initialized immediately with default denied state
             expect(window.dataLayer).toContainEqual('consent')
@@ -86,7 +86,7 @@ describe('Google Consent Mode v2 Tests', () => {
         })
 
         it('should load GTM script with correct container ID', () => {
-            createGranularGoogleTagManagerHook('GTM-TEST123')
+            createGoogleTagManagerHook('GTM-TEST123', { granular: true })
 
             expect(document.createElement).toHaveBeenCalledWith('script')
             expect(mockAppendChild).toHaveBeenCalled()
@@ -99,11 +99,11 @@ describe('Google Consent Mode v2 Tests', () => {
 
         it('should not initialize GTM twice', () => {
             // First initialization
-            createGranularGoogleTagManagerHook('GTM-TEST123')
+            createGoogleTagManagerHook('GTM-TEST123', { granular: true })
             const firstDataLayerLength = window.dataLayer.length
 
             // Second initialization should not add more events (due to check for existing gtm.js event)
-            createGranularGoogleTagManagerHook('GTM-TEST123')
+            createGoogleTagManagerHook('GTM-TEST123', { granular: true })
             expect(window.dataLayer.length).toBeGreaterThanOrEqual(firstDataLayerLength)
         })
     })
@@ -113,7 +113,7 @@ describe('Google Consent Mode v2 Tests', () => {
         let mockContext: ConsentHookContext
 
         beforeEach(() => {
-            hooks = createGranularGoogleTagManagerHook('GTM-TEST123')
+            hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
             mockContext = {
                 category: 'Analytics',
                 consentState: { Analytics: false, Marketing: false, Essential: true },
@@ -184,7 +184,7 @@ describe('Google Consent Mode v2 Tests', () => {
         let mockContext: ConsentHookContext
 
         beforeEach(() => {
-            hooks = createGranularGoogleTagManagerHook('GTM-TEST123')
+            hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
             mockContext = {
                 category: 'Marketing',
                 consentState: { Analytics: false, Marketing: false, Essential: true },
@@ -243,7 +243,7 @@ describe('Google Consent Mode v2 Tests', () => {
         let mockContext: ConsentHookContext
 
         beforeEach(() => {
-            hooks = createGranularGoogleTagManagerHook('GTM-TEST123')
+            hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
             mockContext = {
                 category: 'Marketing',
                 consentState: { Analytics: false, Marketing: false, Essential: true },
@@ -300,7 +300,7 @@ describe('Google Consent Mode v2 Tests', () => {
         let mockContext: ConsentHookContext
 
         beforeEach(() => {
-            hooks = createGranularGoogleTagManagerHook('GTM-TEST123')
+            hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
             mockContext = {
                 category: 'Marketing',
                 consentState: { Analytics: false, Marketing: false, Essential: true },
@@ -353,7 +353,7 @@ describe('Google Consent Mode v2 Tests', () => {
 
     describe('Hook Manager Integration', () => {
         it('should register granular GTM hooks with consent hook manager', async () => {
-            const hooks = createGranularGoogleTagManagerHook('GTM-TEST123')
+            const hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
 
             // Register hooks
             consentHookManager.registerHooks(hooks)
@@ -386,7 +386,7 @@ describe('Google Consent Mode v2 Tests', () => {
         })
 
         it('should handle mixed consent scenarios correctly', async () => {
-            const hooks = createGranularGoogleTagManagerHook('GTM-TEST123')
+            const hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
             consentHookManager.registerHooks(hooks)
 
             window.dataLayer = []
@@ -446,7 +446,7 @@ describe('Google Consent Mode v2 Tests', () => {
 
     describe('Consent Mode v2 Compliance', () => {
         it('should include all required consent mode v2 parameters', () => {
-            const hooks = createGranularGoogleTagManagerHook('GTM-TEST123')
+            const hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
 
             // Check initialization includes all v2 parameters
             expect(window.dataLayer).toContainEqual(
@@ -461,7 +461,7 @@ describe('Google Consent Mode v2 Tests', () => {
         })
 
         it('should use proper gtag consent API format', async () => {
-            const hooks = createGranularGoogleTagManagerHook('GTM-TEST123')
+            const hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
             const analyticsHook = hooks.find(h => h.id === 'gtm-analytics-storage')
             expect(analyticsHook).toBeDefined()
 

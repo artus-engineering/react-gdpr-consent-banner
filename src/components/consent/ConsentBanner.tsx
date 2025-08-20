@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { getCookieSelection, getLabel, hexToRGBA, persistCookieSelection, setCookieConsentDisplayed } from '../../functions'
-import { useConfig, useConsentHooks, useCookieConsentContext, useCookieProviders, useSetStrictlyNecessaryCookiesOnly, useStyle } from '../../hooks'
+import { getCookieSelection, getLabel, hexToRGBA, persistCookieSelection, setCookieConsentDisplayed, getUnit } from '../../functions'
+import { useConfig, useCookieConsentContext, useCookieProviders, useSetStrictlyNecessaryCookiesOnly, useStyle } from '../../hooks'
 import { CookieCategory, CookieConsentState, CookieProviderConfig } from '../../types'
 import { CookieCategoryComponent } from '../cookies'
 import { Button, SwitchButton } from '../general'
@@ -14,7 +14,6 @@ export function CookieConsentBanner(): JSX.Element {
     const [openSettings, setOpenSettings] = useState<boolean>(false)
     const [consentState, setConsentState] = useState<CookieConsentState>(getCookieConsentState)
     const [isClient, setIsClient] = useState(false)
-    const { acceptConsent, rejectConsent } = useConsentHooks()
 
     /** Resolves pre-rendering issues with react */
     useEffect(() => setIsClient(true), [])
@@ -108,22 +107,20 @@ export function CookieConsentBanner(): JSX.Element {
 
     /**
      * Function to handle the cookie toggle
-     *
-     * @param category
-     * @param cookieId
+     * @param category The category of the cookie
+     * @param cookieId The id of the cookie
      */
     function handleCookieToggle(category: string, cookieId: string) {
         setConsentState(prevState => {
+            const newCookieState = !prevState[category as CookieCategory].cookies[cookieId]
             const newCookiesState = {
                 ...prevState[category as CookieCategory].cookies,
-                [cookieId]: !prevState[category as CookieCategory].cookies[cookieId]
+                [cookieId]: newCookieState
             }
             const newEnabledState = Object.values(newCookiesState).every(value => value)
-
             return {
                 ...prevState,
                 [category]: {
-                    ...prevState[category as CookieCategory],
                     enabled: newEnabledState,
                     cookies: newCookiesState
                 }
@@ -131,188 +128,173 @@ export function CookieConsentBanner(): JSX.Element {
         })
     }
 
-    function handleAcceptSelected() {
-        setSelectedCookies()
-        setCookieConsentDisplayed(config.domain, config.cookiesValidForDays)
-        setIsBannerOpen(true)
-
-        // Log audit event for accept selected
-        if (auditService) {
-            const currentState = {
-                Essential: true,
-                Analytics: consentState.Analytics.enabled,
-                Marketing: consentState.Marketing.enabled
-            }
-            auditService.logConsentChange('change', 'Essential', currentState)
-        }
-
-        // Execute consent hooks for accepted categories
-        Object.entries(consentState).forEach(([category, categoryState]) => {
-            if (categoryState.enabled && category !== 'Essential') {
-                acceptConsent(category as CookieCategory)
-            } else if (!categoryState.enabled && category !== 'Essential') {
-                rejectConsent(category as CookieCategory)
-            }
-        })
-    }
-
-    function handleAcceptDetailed() {
-        setSelectedCookies()
-        setCookieConsentDisplayed(config.domain, config.cookiesValidForDays)
-        setIsBannerOpen(true)
-
-        // Log audit event for accept detailed
-        if (auditService) {
-            const currentState = {
-                Essential: true,
-                Analytics: consentState.Analytics.enabled,
-                Marketing: consentState.Marketing.enabled
-            }
-            auditService.logConsentChange('change', 'Essential', currentState)
-        }
-
-        // Execute consent hooks for accepted categories
-        Object.entries(consentState).forEach(([category, categoryState]) => {
-            if (categoryState.enabled && category !== 'Essential') {
-                acceptConsent(category as CookieCategory)
-            } else if (!categoryState.enabled && category !== 'Essential') {
-                rejectConsent(category as CookieCategory)
-            }
-        })
-    }
-
+    /**
+     * Function to handle the accept all cookies action
+     */
     function handleAcceptAll() {
         setAllCookiesAccepted()
         setCookieConsentDisplayed(config.domain, config.cookiesValidForDays)
-        setIsBannerOpen(true)
-
-        // Log audit event for accept all
-        if (auditService) {
-            const currentState = {
-                Essential: true,
-                Analytics: true,
-                Marketing: true
-            }
-            auditService.logConsentChange('accept', 'Essential', currentState)
-        }
-
-        // Execute consent hooks for all categories
-        acceptConsent('Analytics')
-        acceptConsent('Marketing')
+        setIsBannerOpen(false)
     }
 
-    function handleReject() {
-        setCookieConsentDisplayed(config.domain, config.cookiesValidForDays)
+    /**
+     * Function to handle the reject all non-necessary cookies action
+     */
+    function handleRejectAll() {
         setStrictlyNecessaryCookiesOnly()
-        setIsBannerOpen(true)
+        setCookieConsentDisplayed(config.domain, config.cookiesValidForDays)
+        setIsBannerOpen(false)
+    }
 
-        // Log audit event for reject all
-        if (auditService) {
-            const currentState = {
-                Essential: true,
-                Analytics: false,
-                Marketing: false
+    /**
+     * Function to handle the accept selected cookies action
+     */
+    function handleAcceptSelected() {
+        setSelectedCookies()
+        setCookieConsentDisplayed(config.domain, config.cookiesValidForDays)
+        setIsBannerOpen(false)
+    }
+
+    /**
+     * Function to handle the category toggle in the overview
+     * @param category The category to toggle
+     */
+    function handleCategoryToggleOverview(category: string) {
+        setConsentState(prevState => {
+            const newEnabledState = !prevState[category as CookieCategory].enabled
+            const newCookiesState = Object.keys(prevState[category as CookieCategory].cookies).reduce(
+                (acc, cookieId) => {
+                    acc[cookieId] = newEnabledState
+                    return acc
+                },
+                {} as { [cookieId: string]: boolean }
+            )
+            return {
+                ...prevState,
+                [category]: {
+                    enabled: newEnabledState,
+                    cookies: newCookiesState
+                }
             }
-            auditService.logConsentChange('reject', 'Essential', currentState)
-        }
+        })
+    }
 
-        // Execute consent hooks for rejected categories
-        rejectConsent('Analytics')
-        rejectConsent('Marketing')
+    /**
+     * Function to handle the accept all cookies action in the overview
+     */
+    function handleAcceptAllOverview() {
+        setConsentState(prevState => {
+            const newState = { ...prevState }
+            Object.keys(newState).forEach(category => {
+                newState[category as CookieCategory] = {
+                    enabled: true,
+                    cookies: Object.keys(newState[category as CookieCategory].cookies).reduce(
+                        (acc, cookieId) => {
+                            acc[cookieId] = true
+                            return acc
+                        },
+                        {} as { [cookieId: string]: boolean }
+                    )
+                }
+            })
+            return newState
+        })
+    }
+
+    /**
+     * Function to handle the reject all non-necessary cookies action in the overview
+     */
+    function handleRejectAllOverview() {
+        setConsentState(prevState => {
+            const newState = { ...prevState }
+            Object.keys(newState).forEach(category => {
+                if (category !== 'Essential') {
+                    newState[category as CookieCategory] = {
+                        enabled: false,
+                        cookies: Object.keys(newState[category as CookieCategory].cookies).reduce(
+                            (acc, cookieId) => {
+                                acc[cookieId] = false
+                                return acc
+                            },
+                            {} as { [cookieId: string]: boolean }
+                        )
+                    }
+                }
+            })
+            return newState
+        })
     }
 
     if (!isClient || isBannerOpen) return <></>
 
-    if (isClient && !isBannerOpen)
-        return (
-            <dialog
-                className="fixed z-[999] flex bottom-0 left-0 w-full xl:p-4 p-2 bg-transparent"
-                aria-labelledby={getLabel('headings', 'banner')}
-                aria-describedby={getLabel('descriptions', 'cookieDetails')}
-                aria-hidden={isBannerOpen ? 'true' : 'false'}
-                data-nosnippet
-            >
-                <div
-                    style={{ backgroundColor: hexToRGBA(style.bgPrimary, 0.99), borderColor: style.bgSecondary, color: style.textPrimary }}
-                    className="w-full text-xs bg-opacity-[98%] px-6 py-8 xl:p-12 rounded-lg border shadow-lg"
-                >
-                    {openSettings ? (
-                        <div className="max-h-screen overflow-auto">
-                            <h2 style={{ color: style.textPrimary }} className="text-lg font-semibold text-white mb-3">
-                                {getLabel('headings', 'details')}
-                            </h2>
-                            {config.crossSubDomainConsent ? (
-                                <p style={{ color: style.textPrimary }} className="mb-10 text-sm">
-                                    Ihre Zustimmung gilt für diese Domains:{' '}
-                                    <b className="text-sm" style={{ color: style.textSecondary }}>
-                                        {config.crossSubDomainConsent.join(', ')}
-                                    </b>
-                                </p>
-                            ) : (
-                                <></>
-                            )}
-                            <div className="mt-6 grid gap-3 overflow-scroll max-h-[60vh]">
-                                {Object.entries(consentState).map(([category, categoryState]) => (
-                                    <div style={{ backgroundColor: hexToRGBA(style.bgSecondary, 0.2) }} className="p-6 rounded-lg grid gap-3" key={category}>
-                                        <div style={{ borderColor: hexToRGBA(style.bgSecondary, 0.8) }} className="flex justify-between items-center border-b pb-4">
-                                            <div>
-                                                <h3 style={{ color: style.textPrimary }} className="font-bold text-lg">
-                                                    {getLabel('cookieCategories', category as CookieCategory)}
-                                                </h3>
-                                                <p style={{ color: style.textSecondary }} className="text-sm text-justify hyphens-auto">
-                                                    {getLabel('cookieCategoryDescriptions', category as CookieCategory)}
-                                                </p>
-                                            </div>
-                                            <div className="min-w-24 flex justify-end">
-                                                <SwitchButton
-                                                    bgTrue={style.primaryColor}
-                                                    bgFalse={style.bgSecondary}
-                                                    toggled={categoryState.enabled}
-                                                    onToggle={() => handleCategoryToggle(category)}
-                                                    name={category}
-                                                    disabled={category === 'Essential'}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="divide-y pb-3">
-                                            {Object.entries(categoryState.cookies).map(([cookieId, isEnabled]) => {
-                                                const cookie = cookieProviders.find(cookieProvider => cookieProvider.id === cookieId) as CookieProviderConfig
-                                                return <CookieCategoryComponent key={cookie.id} provider={cookie} handleCookieToggle={handleCookieToggle} isEnabled={isEnabled} />
-                                            })}
-                                        </div>
+    return (
+        <>
+            {isClient && isBannerOpen && (
+                <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center" style={{ backgroundColor: hexToRGBA(style.bgPrimary, 0.5) }}>
+                    <div className="w-full max-w-4xl mx-4 mb-4 sm:mb-0 rounded-lg shadow-lg" style={{ backgroundColor: style.bgPrimary }}>
+                        {!openSettings ? (
+                            <div className="p-6">
+                                <div className="flex items-start justify-between">
+                                    <div className="flex-1">
+                                        <h2 className="text-lg font-semibold mb-2" style={{ color: style.textPrimary }}>
+                                            {getLabel('headings', 'banner', config)}
+                                        </h2>
+                                        <p className="text-sm mb-4" style={{ color: style.textSecondary }}>
+                                            {getLabel('descriptions', 'cookieDetails', config)}
+                                        </p>
                                     </div>
-                                ))}
-                            </div>
-                            <div className="mt-6 flex justify-between">
-                                <Button onClick={() => setOpenSettings(false)} text="back" />
-                                <Button onClick={handleAcceptDetailed} text="acceptSelectedCookies" />
-                            </div>
-                        </div>
-                    ) : (
-                        <>
-                            <div className="xl:flex grid">
-                                <div className="xl:w-1/2">
-                                    <h2 style={{ color: style.textPrimary }} className="text-xl font-semibold mb-6">
-                                        {getLabel('headings', 'banner')}
-                                    </h2>
-                                    <p style={{ color: style.textPrimary }} className="text-sm  text-justify hyphens-auto">
-                                        {getLabel('descriptions', 'cookieDetails')}{' '}
-                                        <a className="underline" href={config.cookiePolicyLink}>
-                                            {getLabel('links', 'cookiePolicy')}
-                                        </a>
-                                    </p>
                                 </div>
-                                <div className={`grid ${overviewGrid()} my-12 md:divide-x gap-6 md:gap-0 md:justify-evenly xl:w-1/2`}>
+
+                                <div className={`grid gap-4 ${overviewGrid()}`}>
                                     {Object.entries(consentState).map(([category, categoryState]) => (
-                                        <div
-                                            style={{ borderColor: hexToRGBA(style.bgSecondary, 0.6) }}
-                                            key={category}
-                                            className={category === 'Essential' ? 'cursor-not-allowed opacity-70' : ''}
-                                        >
-                                            <div className="md:text-center md:inline flex items-center justify-between">
-                                                <p style={{ color: style.textPrimary }} className="md:mb-2 block md:text-sm text-base self-end">
-                                                    {getLabel('cookieCategories', category as CookieCategory)}
-                                                </p>
+                                        <div key={category} className="border rounded-lg p-4" style={{ borderColor: style.bgSecondary }}>
+                                            <div className="flex items-center justify-between mb-4">
+                                                <h3 className="font-medium" style={{ color: style.textPrimary }}>
+                                                    {getLabel('cookieCategories', category as CookieCategory, config)}
+                                                </h3>
+                                                <SwitchButton
+                                                    bgTrue={style.primaryColor}
+                                                    bgFalse={style.bgSecondary}
+                                                    toggled={categoryState.enabled}
+                                                    onToggle={() => handleCategoryToggleOverview(category)}
+                                                    name={category}
+                                                    disabled={category === 'Essential'}
+                                                />
+                                            </div>
+                                            <p className="text-sm mb-4" style={{ color: style.textSecondary }}>
+                                                {getLabel('cookieCategoryDescriptions', category as CookieCategory, config)}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                                    <Button onClick={handleRejectAll} text="rejectAllNonNecessaryCookies" />
+                                    <Button onClick={handleAcceptSelected} text="acceptSelectedCookies" />
+                                    <Button onClick={handleAcceptAllOverview} text="acceptAllCookies" />
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="p-6">
+                                <div className="flex items-start justify-between mb-6">
+                                    <h2 className="text-lg font-semibold" style={{ color: style.textPrimary }}>
+                                        {getLabel('headings', 'details', config)}
+                                    </h2>
+                                    <button type="button" onClick={() => setOpenSettings(false)} className="text-gray-400 hover:text-gray-600" aria-label="Close settings">
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <title>Close settings</title>
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div className="space-y-6">
+                                    {Object.entries(consentState).map(([category, categoryState]) => (
+                                        <div key={category} className="border rounded-lg p-4" style={{ borderColor: style.bgSecondary }}>
+                                            <div className="flex items-center justify-between mb-4">
+                                                <h3 className="font-medium" style={{ color: style.textPrimary }}>
+                                                    {getLabel('cookieCategories', category as CookieCategory, config)}
+                                                </h3>
                                                 <SwitchButton
                                                     bgTrue={style.primaryColor}
                                                     bgFalse={style.bgSecondary}
@@ -321,26 +303,32 @@ export function CookieConsentBanner(): JSX.Element {
                                                     name={category}
                                                     disabled={category === 'Essential'}
                                                 />
+                                            </div>
+                                            <p className="text-sm mb-4" style={{ color: style.textSecondary }}>
+                                                {getLabel('cookieCategoryDescriptions', category as CookieCategory, config)}
+                                            </p>
+                                            <div className="space-y-3">
+                                                {Object.entries(categoryState.cookies).map(([cookieId, isEnabled]) => {
+                                                    const provider = cookieProviders.find(p => p.id === cookieId)
+                                                    if (!provider) return null
+                                                    return (
+                                                        <CookieCategoryComponent key={cookieId} provider={provider} handleCookieToggle={handleCookieToggle} isEnabled={isEnabled} />
+                                                    )
+                                                })}
                                             </div>
                                         </div>
                                     ))}
                                 </div>
-                            </div>
-                            <div className="mt-4 md:flex justify-between items-center w-full flex-col md:flex-row">
-                                <div className="md:mb-0 mb-6 grid md:flex">
-                                    <Button onClick={() => setOpenSettings(true)} text="showDetails" />
-                                </div>
-                                <div className="md:flex md:gap-10 grid gap-6">
-                                    <Button onClick={handleReject} text="rejectAllNonNecessaryCookies" />
-                                    <Button onClick={handleAcceptSelected} text="acceptSelectedCookies" />
-                                    <Button onClick={handleAcceptAll} text="acceptAllCookies" />
-                                </div>
-                            </div>
-                        </>
-                    )}
-                </div>
-            </dialog>
-        )
 
-    return <></>
+                                <div className="mt-6 flex justify-between">
+                                    <Button onClick={() => setOpenSettings(false)} text="back" />
+                                    <Button onClick={handleAcceptSelected} text="acceptSelectedCookies" />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+        </>
+    )
 }

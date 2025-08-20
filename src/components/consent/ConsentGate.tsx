@@ -31,10 +31,10 @@ export function ConsentGateContent({ cookieProvider }: { cookieProvider: CookieP
     return (
         <div style={{ backgroundColor: style.bgPrimary, borderColor: style.bgSecondary }} className="md:p-12 p-4 rounded-lg border max-w-5xl mx-auto !text-left">
             <h2 style={{ color: style.textPrimary }} className="text-xl font-semibold mb-4">
-                {getLabel('headings', 'consentGate')}
+                {getLabel('headings', 'consentGate', config)}
             </h2>
             <p style={{ color: style.textSecondary }} className="mb-12">
-                {getLabel('consentGate', 'message')} <b style={{ color: style.textSecondary }}>{cookieProvider.name}.</b>
+                {getLabel('consentGate', 'message', config)} <b style={{ color: style.textSecondary }}>{cookieProvider.name}.</b>
             </p>
             <div style={{ backgroundColor: hexToRGBA(style.bgSecondary, 0.2) }} className="mb-12 md:p-8 p-2 rounded-lg">
                 <CookieCategoryComponent provider={cookieProvider} handleCookieToggle={() => setLocalState(!localState)} isEnabled={localState} />

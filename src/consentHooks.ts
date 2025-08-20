@@ -360,7 +360,14 @@ export function createFacebookPixelHook(pixelId: string): ConsentHook[] {
  * This properly implements Google Consent Mode v2 through GTM dataLayer
  * Each consent parameter can be controlled individually by the user
  */
-export function createGoogleTagManagerHook(gtmId: string): ConsentHook[] {
+export function createGoogleTagManagerHook(
+    gtmId: string,
+    options?: {
+        granular?: boolean
+    }
+): ConsentHook[] {
+    const { granular = false } = options || {}
+
     // Initialize GTM immediately on page load with default denied consent
     // This is the correct implementation according to Google's documentation
     const initializeGTM = () => {
@@ -407,6 +414,169 @@ export function createGoogleTagManagerHook(gtmId: string): ConsentHook[] {
         initializeGTM()
     }
 
+    if (granular) {
+        // Granular consent control - individual parameters
+        return [
+            // Analytics Storage (analytics_storage) - Individual parameter
+            {
+                id: 'gtm-analytics-storage',
+                category: 'Analytics',
+                type: 'onAccept',
+                description: 'Grant analytics_storage consent parameter in GTM',
+                execute: async (context: ConsentHookContext) => {
+                    window.dataLayer = window.dataLayer || []
+                    window.dataLayer.push('consent', 'update', {
+                        analytics_storage: 'granted'
+                    })
+                    window.dataLayer.push({
+                        event: 'analytics_storage_granted',
+                        consent_parameter: 'analytics_storage'
+                    })
+                }
+            },
+            {
+                id: 'gtm-analytics-storage-reject',
+                category: 'Analytics',
+                type: 'onReject',
+                description: 'Deny analytics_storage consent parameter in GTM',
+                execute: async (context: ConsentHookContext) => {
+                    window.dataLayer = window.dataLayer || []
+                    window.dataLayer.push('consent', 'update', {
+                        analytics_storage: 'denied'
+                    })
+                    window.dataLayer.push({
+                        event: 'analytics_storage_denied',
+                        consent_parameter: 'analytics_storage'
+                    })
+
+                    // Remove analytics cookies
+                    const analyticsCookies = ['_ga', '_gid', '_ga_*']
+                    analyticsCookies.forEach(cookie => {
+                        context.cookies.remove(cookie)
+                        context.cookies.remove(cookie, { domain: `.${window.location.hostname}` })
+                    })
+                }
+            },
+
+            // Ad Storage (ad_storage) - Individual parameter
+            {
+                id: 'gtm-ad-storage',
+                category: 'Marketing',
+                type: 'onAccept',
+                description: 'Grant ad_storage consent parameter in GTM',
+                execute: async (context: ConsentHookContext) => {
+                    window.dataLayer = window.dataLayer || []
+                    window.dataLayer.push('consent', 'update', {
+                        ad_storage: 'granted'
+                    })
+                    window.dataLayer.push({
+                        event: 'ad_storage_granted',
+                        consent_parameter: 'ad_storage'
+                    })
+                }
+            },
+            {
+                id: 'gtm-ad-storage-reject',
+                category: 'Marketing',
+                type: 'onReject',
+                description: 'Deny ad_storage consent parameter in GTM',
+                execute: async (context: ConsentHookContext) => {
+                    window.dataLayer = window.dataLayer || []
+                    window.dataLayer.push('consent', 'update', {
+                        ad_storage: 'denied'
+                    })
+                    window.dataLayer.push({
+                        event: 'ad_storage_denied',
+                        consent_parameter: 'ad_storage'
+                    })
+
+                    // Remove ad storage cookies
+                    const adCookies = ['_gcl_*', '_gac_*', '_gat_*']
+                    adCookies.forEach(cookie => {
+                        context.cookies.remove(cookie)
+                        context.cookies.remove(cookie, { domain: `.${window.location.hostname}` })
+                    })
+                }
+            },
+
+            // Ad User Data (ad_user_data) - Individual parameter
+            {
+                id: 'gtm-ad-user-data',
+                category: 'Marketing',
+                type: 'onAccept',
+                description: 'Grant ad_user_data consent parameter in GTM',
+                execute: async (context: ConsentHookContext) => {
+                    window.dataLayer = window.dataLayer || []
+                    window.dataLayer.push('consent', 'update', {
+                        ad_user_data: 'granted'
+                    })
+                    window.dataLayer.push({
+                        event: 'ad_user_data_granted',
+                        consent_parameter: 'ad_user_data'
+                    })
+                }
+            },
+            {
+                id: 'gtm-ad-user-data-reject',
+                category: 'Marketing',
+                type: 'onReject',
+                description: 'Deny ad_user_data consent parameter in GTM',
+                execute: async (context: ConsentHookContext) => {
+                    window.dataLayer = window.dataLayer || []
+                    window.dataLayer.push('consent', 'update', {
+                        ad_user_data: 'denied'
+                    })
+                    window.dataLayer.push({
+                        event: 'ad_user_data_denied',
+                        consent_parameter: 'ad_user_data'
+                    })
+                }
+            },
+
+            // Ad Personalization (ad_personalization) - Individual parameter
+            {
+                id: 'gtm-ad-personalization',
+                category: 'Marketing',
+                type: 'onAccept',
+                description: 'Grant ad_personalization consent parameter in GTM',
+                execute: async (context: ConsentHookContext) => {
+                    window.dataLayer = window.dataLayer || []
+                    window.dataLayer.push('consent', 'update', {
+                        ad_personalization: 'granted'
+                    })
+                    window.dataLayer.push({
+                        event: 'ad_personalization_granted',
+                        consent_parameter: 'ad_personalization'
+                    })
+                }
+            },
+            {
+                id: 'gtm-ad-personalization-reject',
+                category: 'Marketing',
+                type: 'onReject',
+                description: 'Deny ad_personalization consent parameter in GTM',
+                execute: async (context: ConsentHookContext) => {
+                    window.dataLayer = window.dataLayer || []
+                    window.dataLayer.push('consent', 'update', {
+                        ad_personalization: 'denied'
+                    })
+                    window.dataLayer.push({
+                        event: 'ad_personalization_denied',
+                        consent_parameter: 'ad_personalization'
+                    })
+
+                    // Remove personalization cookies
+                    const personalizationCookies = ['__gads', '__gpi']
+                    personalizationCookies.forEach(cookie => {
+                        context.cookies.remove(cookie)
+                        context.cookies.remove(cookie, { domain: `.${window.location.hostname}` })
+                    })
+                }
+            }
+        ]
+    }
+
+    // Standard consent control - category-based
     return [
         {
             id: 'google-tag-manager-analytics-accept',
@@ -415,13 +585,10 @@ export function createGoogleTagManagerHook(gtmId: string): ConsentHook[] {
             description: 'Grant analytics consent in GTM',
             execute: async (context: ConsentHookContext) => {
                 window.dataLayer = window.dataLayer || []
-                // Use proper gtag consent API as per Google documentation
                 window.dataLayer.push('consent', 'update', {
                     analytics_storage: 'granted',
                     functionality_storage: 'granted'
                 })
-
-                // Fire custom event for GTM triggers
                 window.dataLayer.push({
                     event: 'analytics_consent_granted'
                 })
@@ -434,13 +601,10 @@ export function createGoogleTagManagerHook(gtmId: string): ConsentHook[] {
             description: 'Deny analytics consent in GTM',
             execute: async (context: ConsentHookContext) => {
                 window.dataLayer = window.dataLayer || []
-                // Use proper gtag consent API as per Google documentation
                 window.dataLayer.push('consent', 'update', {
                     analytics_storage: 'denied',
                     functionality_storage: 'denied'
                 })
-
-                // Fire custom event for GTM triggers
                 window.dataLayer.push({
                     event: 'analytics_consent_denied'
                 })
@@ -460,14 +624,11 @@ export function createGoogleTagManagerHook(gtmId: string): ConsentHook[] {
             description: 'Grant marketing consent in GTM',
             execute: async (context: ConsentHookContext) => {
                 window.dataLayer = window.dataLayer || []
-                // Use proper gtag consent API with consent mode v2 parameters
                 window.dataLayer.push('consent', 'update', {
                     ad_storage: 'granted',
                     ad_user_data: 'granted',
                     ad_personalization: 'granted'
                 })
-
-                // Fire custom event for marketing triggers
                 window.dataLayer.push({
                     event: 'marketing_consent_granted'
                 })
@@ -480,14 +641,11 @@ export function createGoogleTagManagerHook(gtmId: string): ConsentHook[] {
             description: 'Deny marketing consent in GTM',
             execute: async (context: ConsentHookContext) => {
                 window.dataLayer = window.dataLayer || []
-                // Use proper gtag consent API with consent mode v2 parameters
                 window.dataLayer.push('consent', 'update', {
                     ad_storage: 'denied',
                     ad_user_data: 'denied',
                     ad_personalization: 'denied'
                 })
-
-                // Fire custom event for marketing triggers
                 window.dataLayer.push({
                     event: 'marketing_consent_denied'
                 })
@@ -551,229 +709,5 @@ export function createCustomToolHook(
     return hooks
 }
 
-/**
- * Granular Google Tag Manager consent hook with individual parameter control
- * This allows users to grant/deny each consent parameter individually:
- * - analytics_storage (Analytics category)
- * - ad_storage, ad_user_data, ad_personalization (Marketing category - separate providers)
- */
-export function createGranularGoogleTagManagerHook(gtmId: string): ConsentHook[] {
-    // Initialize GTM immediately on page load with default denied consent
-    const initializeGTM = () => {
-        if (window.dataLayer?.find((item: any) => item.event === 'gtm.js')) {
-            return // Already initialized
-        }
-
-        // Initialize dataLayer
-        window.dataLayer = window.dataLayer || []
-
-        // CRITICAL: Set default consent state BEFORE loading GTM
-        window.dataLayer.push('consent', 'default', {
-            ad_storage: 'denied',
-            analytics_storage: 'denied',
-            ad_user_data: 'denied',
-            ad_personalization: 'denied',
-            functionality_storage: 'denied',
-            personalization_storage: 'denied',
-            security_storage: 'granted',
-            wait_for_update: 500
-        })
-
-        // Load GTM script
-        const existingScript = document.querySelector(`script[src*="googletagmanager.com/gtm.js?id=${gtmId}"]`)
-        if (!existingScript) {
-            const script = document.createElement('script')
-            script.async = true
-            script.src = `https://www.googletagmanager.com/gtm.js?id=${gtmId}`
-            document.head.appendChild(script)
-
-            // Add noscript fallback
-            const existingNoscript = document.querySelector(`noscript iframe[src*="googletagmanager.com/ns.html?id=${gtmId}"]`)
-            if (!existingNoscript) {
-                const noscript = document.createElement('noscript')
-                noscript.innerHTML = `<iframe src="https://www.googletagmanager.com/ns.html?id=${gtmId}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`
-                document.body.appendChild(noscript)
-            }
-        }
-    }
-
-    // Initialize GTM immediately
-    if (typeof window !== 'undefined') {
-        initializeGTM()
-    }
-
-    return [
-        // Analytics Storage (analytics_storage) - Individual parameter
-        {
-            id: 'gtm-analytics-storage',
-            category: 'Analytics',
-            type: 'onAccept',
-            description: 'Grant analytics_storage consent parameter in GTM',
-            execute: async (context: ConsentHookContext) => {
-                window.dataLayer = window.dataLayer || []
-
-                window.dataLayer.push('consent', 'update', {
-                    analytics_storage: 'granted'
-                })
-
-                window.dataLayer.push({
-                    event: 'analytics_storage_granted',
-                    consent_parameter: 'analytics_storage'
-                })
-            }
-        },
-        {
-            id: 'gtm-analytics-storage-reject',
-            category: 'Analytics',
-            type: 'onReject',
-            description: 'Deny analytics_storage consent parameter in GTM',
-            execute: async (context: ConsentHookContext) => {
-                window.dataLayer = window.dataLayer || []
-
-                window.dataLayer.push('consent', 'update', {
-                    analytics_storage: 'denied'
-                })
-
-                window.dataLayer.push({
-                    event: 'analytics_storage_denied',
-                    consent_parameter: 'analytics_storage'
-                })
-
-                // Remove analytics cookies
-                const analyticsCookies = ['_ga', '_gid', '_ga_*']
-                analyticsCookies.forEach(cookie => {
-                    context.cookies.remove(cookie)
-                    context.cookies.remove(cookie, { domain: `.${window.location.hostname}` })
-                })
-            }
-        },
-
-        // Ad Storage (ad_storage) - Individual parameter
-        {
-            id: 'gtm-ad-storage',
-            category: 'Marketing',
-            type: 'onAccept',
-            description: 'Grant ad_storage consent parameter in GTM',
-            execute: async (context: ConsentHookContext) => {
-                window.dataLayer = window.dataLayer || []
-
-                window.dataLayer.push('consent', 'update', {
-                    ad_storage: 'granted'
-                })
-
-                window.dataLayer.push({
-                    event: 'ad_storage_granted',
-                    consent_parameter: 'ad_storage'
-                })
-            }
-        },
-        {
-            id: 'gtm-ad-storage-reject',
-            category: 'Marketing',
-            type: 'onReject',
-            description: 'Deny ad_storage consent parameter in GTM',
-            execute: async (context: ConsentHookContext) => {
-                window.dataLayer = window.dataLayer || []
-
-                window.dataLayer.push('consent', 'update', {
-                    ad_storage: 'denied'
-                })
-
-                window.dataLayer.push({
-                    event: 'ad_storage_denied',
-                    consent_parameter: 'ad_storage'
-                })
-
-                // Remove ad storage cookies
-                const adCookies = ['_gcl_*', '_gac_*', '_gat_*']
-                adCookies.forEach(cookie => {
-                    context.cookies.remove(cookie)
-                    context.cookies.remove(cookie, { domain: `.${window.location.hostname}` })
-                })
-            }
-        },
-
-        // Ad User Data (ad_user_data) - Individual parameter
-        {
-            id: 'gtm-ad-user-data',
-            category: 'Marketing',
-            type: 'onAccept',
-            description: 'Grant ad_user_data consent parameter in GTM',
-            execute: async (context: ConsentHookContext) => {
-                window.dataLayer = window.dataLayer || []
-
-                window.dataLayer.push('consent', 'update', {
-                    ad_user_data: 'granted'
-                })
-
-                window.dataLayer.push({
-                    event: 'ad_user_data_granted',
-                    consent_parameter: 'ad_user_data'
-                })
-            }
-        },
-        {
-            id: 'gtm-ad-user-data-reject',
-            category: 'Marketing',
-            type: 'onReject',
-            description: 'Deny ad_user_data consent parameter in GTM',
-            execute: async (context: ConsentHookContext) => {
-                window.dataLayer = window.dataLayer || []
-
-                window.dataLayer.push('consent', 'update', {
-                    ad_user_data: 'denied'
-                })
-
-                window.dataLayer.push({
-                    event: 'ad_user_data_denied',
-                    consent_parameter: 'ad_user_data'
-                })
-            }
-        },
-
-        // Ad Personalization (ad_personalization) - Individual parameter
-        {
-            id: 'gtm-ad-personalization',
-            category: 'Marketing',
-            type: 'onAccept',
-            description: 'Grant ad_personalization consent parameter in GTM',
-            execute: async (context: ConsentHookContext) => {
-                window.dataLayer = window.dataLayer || []
-
-                window.dataLayer.push('consent', 'update', {
-                    ad_personalization: 'granted'
-                })
-
-                window.dataLayer.push({
-                    event: 'ad_personalization_granted',
-                    consent_parameter: 'ad_personalization'
-                })
-            }
-        },
-        {
-            id: 'gtm-ad-personalization-reject',
-            category: 'Marketing',
-            type: 'onReject',
-            description: 'Deny ad_personalization consent parameter in GTM',
-            execute: async (context: ConsentHookContext) => {
-                window.dataLayer = window.dataLayer || []
-
-                window.dataLayer.push('consent', 'update', {
-                    ad_personalization: 'denied'
-                })
-
-                window.dataLayer.push({
-                    event: 'ad_personalization_denied',
-                    consent_parameter: 'ad_personalization'
-                })
-
-                // Remove personalization cookies
-                const personalizationCookies = ['__gads', '__gpi']
-                personalizationCookies.forEach(cookie => {
-                    context.cookies.remove(cookie)
-                    context.cookies.remove(cookie, { domain: `.${window.location.hostname}` })
-                })
-            }
-        }
-    ]
-}
+// Legacy function names for backward compatibility
+export const createGranularGoogleTagManagerHook = (gtmId: string) => createGoogleTagManagerHook(gtmId, { granular: true })
