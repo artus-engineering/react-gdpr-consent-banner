@@ -77,9 +77,7 @@ export default function HomePage() {
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-between h-16">
                             <div className="flex items-center">
-                                <h1 className="text-xl font-semibold text-gray-900">
-                                    GDPR Cookie Consent Example
-                                </h1>
+                                <h1 className="text-xl font-semibold text-gray-900">GDPR Cookie Consent Example</h1>
                             </div>
                         </div>
                     </div>
@@ -89,19 +87,13 @@ export default function HomePage() {
                     <div className="px-4 py-6 sm:px-0">
                         <div className="bg-white overflow-hidden shadow rounded-lg">
                             <div className="px-4 py-5 sm:p-6">
-                                <h2 className="text-lg font-medium text-gray-900 mb-4">
-                                    Welcome to our GDPR-compliant website
-                                </h2>
-                                
+                                <h2 className="text-lg font-medium text-gray-900 mb-4">Welcome to our GDPR-compliant website</h2>
+
                                 <div className="prose max-w-none">
-                                    <p className="text-gray-600 mb-4">
-                                        This example demonstrates a GDPR-compliant cookie consent system with audit trail functionality.
-                                    </p>
-                                    
+                                    <p className="text-gray-600 mb-4">This example demonstrates a GDPR-compliant cookie consent system with audit trail functionality.</p>
+
                                     <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-6">
-                                        <h3 className="text-sm font-medium text-blue-800 mb-2">
-                                            Features Implemented:
-                                        </h3>
+                                        <h3 className="text-sm font-medium text-blue-800 mb-2">Features Implemented:</h3>
                                         <ul className="text-sm text-blue-700 space-y-1">
                                             <li>• GDPR-compliant cookie consent banner</li>
                                             <li>• Audit trail for all consent changes</li>
@@ -112,22 +104,28 @@ export default function HomePage() {
                                     </div>
 
                                     <div className="bg-green-50 border border-green-200 rounded-md p-4 mb-6">
-                                        <h3 className="text-sm font-medium text-green-800 mb-2">
-                                            GDPR Compliance:
-                                        </h3>
+                                        <h3 className="text-sm font-medium text-green-800 mb-2">GDPR Compliance:</h3>
                                         <ul className="text-sm text-green-700 space-y-1">
-                                            <li>• <strong>Strictly Necessary:</strong> User ID generation for audit trail</li>
-                                            <li>• <strong>Consent Categories:</strong> Analytics and Marketing</li>
-                                            <li>• <strong>Audit Trail:</strong> Complete record of consent changes</li>
-                                            <li>• <strong>Data Minimization:</strong> Only essential data collected</li>
-                                            <li>• <strong>Transparency:</strong> Clear consent options and audit logs</li>
+                                            <li>
+                                                • <strong>Strictly Necessary:</strong> User ID generation for audit trail
+                                            </li>
+                                            <li>
+                                                • <strong>Consent Categories:</strong> Analytics and Marketing
+                                            </li>
+                                            <li>
+                                                • <strong>Audit Trail:</strong> Complete record of consent changes
+                                            </li>
+                                            <li>
+                                                • <strong>Data Minimization:</strong> Only essential data collected
+                                            </li>
+                                            <li>
+                                                • <strong>Transparency:</strong> Clear consent options and audit logs
+                                            </li>
                                         </ul>
                                     </div>
 
                                     <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
-                                        <h3 className="text-sm font-medium text-yellow-800 mb-2">
-                                            How to Test:
-                                        </h3>
+                                        <h3 className="text-sm font-medium text-yellow-800 mb-2">How to Test:</h3>
                                         <ol className="text-sm text-yellow-700 space-y-1">
                                             <li>1. Open browser developer tools</li>
                                             <li>2. Go to Network tab</li>

@@ -17,16 +17,14 @@ export function getUserIdFromClientCookies(): string | null {
     if (typeof window === 'undefined') {
         return null
     }
-    
+
     const cookies = document.cookie.split(';')
-    const userIdCookie = cookies.find(cookie => 
-        cookie.trim().startsWith(`${USER_ID_COOKIE}=`)
-    )
-    
+    const userIdCookie = cookies.find(cookie => cookie.trim().startsWith(`${USER_ID_COOKIE}=`))
+
     if (userIdCookie) {
         return userIdCookie.split('=')[1]
     }
-    
+
     return null
 }
 
@@ -35,5 +33,5 @@ export function getUserIdFromClientCookies(): string | null {
  */
 export function generateUserId(): string {
     // Simple UUID-like generation for fallback
-    return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
+    return `user_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`
 }

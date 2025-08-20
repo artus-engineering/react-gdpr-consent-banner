@@ -40,7 +40,7 @@ describe('AuditService', () => {
             expect(mockFetch).toHaveBeenCalledWith('/api/gdpr/audit', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
                 body: expect.stringContaining('"action":"accept"')
             })
@@ -95,9 +95,7 @@ describe('AuditService', () => {
             }
 
             // Should not throw error
-            await expect(
-                auditService.logConsentChange('accept', 'Analytics', currentState)
-            ).resolves.toBeUndefined()
+            await expect(auditService.logConsentChange('accept', 'Analytics', currentState)).resolves.toBeUndefined()
         })
 
         it('should handle non-ok responses gracefully', async () => {
@@ -114,9 +112,7 @@ describe('AuditService', () => {
             }
 
             // Should not throw error
-            await expect(
-                auditService.logConsentChange('accept', 'Analytics', currentState)
-            ).resolves.toBeUndefined()
+            await expect(auditService.logConsentChange('accept', 'Analytics', currentState)).resolves.toBeUndefined()
         })
     })
 

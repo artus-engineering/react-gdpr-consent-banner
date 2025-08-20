@@ -61,9 +61,9 @@ export class AuditService {
         const response = await fetch(this.config.url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify(payload),
+            body: JSON.stringify(payload)
         })
 
         if (!response.ok) {
@@ -77,12 +77,12 @@ export class AuditService {
     private getSessionId(): string {
         const sessionKey = 'gdpr_audit_session_id'
         let sessionId = sessionStorage.getItem(sessionKey)
-        
+
         if (!sessionId) {
             sessionId = this.generateSessionId()
             sessionStorage.setItem(sessionKey, sessionId)
         }
-        
+
         return sessionId
     }
 
@@ -90,18 +90,14 @@ export class AuditService {
      * Generate a unique session ID
      */
     private generateSessionId(): string {
-        return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        return `session_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`
     }
 }
 
 /**
  * Create an audit service instance if audit is configured
  */
-export function createAuditService(
-    auditConfig: AuditConfig | undefined,
-    websiteName: string,
-    domain: string
-): AuditService | null {
+export function createAuditService(auditConfig: AuditConfig | undefined, websiteName: string, domain: string): AuditService | null {
     if (!auditConfig || !auditConfig.url || !auditConfig.userId) {
         return null
     }

@@ -3,13 +3,13 @@ import { Pool } from 'pg'
 // Database connection pool
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 })
 
 // Initialize database schema
 export async function initDatabase() {
     const client = await pool.connect()
-    
+
     try {
         // Create consent audit logs table
         await client.query(`
@@ -30,20 +30,20 @@ export async function initDatabase() {
                 created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
             )
         `)
-        
+
         // Create indexes for better query performance
         await client.query(`
             CREATE INDEX IF NOT EXISTS idx_consent_audit_user_id ON consent_audit_logs(user_id)
         `)
-        
+
         await client.query(`
             CREATE INDEX IF NOT EXISTS idx_consent_audit_timestamp ON consent_audit_logs(timestamp)
         `)
-        
+
         await client.query(`
             CREATE INDEX IF NOT EXISTS idx_consent_audit_category ON consent_audit_logs(category)
         `)
-        
+
         console.log('Database schema initialized successfully')
     } catch (error) {
         console.error('Error initializing database schema:', error)
@@ -69,7 +69,7 @@ export async function insertConsentAuditLog(data: {
     additionalData?: Record<string, any>
 }) {
     const client = await pool.connect()
-    
+
     try {
         const query = `
             INSERT INTO consent_audit_logs (
@@ -79,7 +79,7 @@ export async function insertConsentAuditLog(data: {
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
             RETURNING id
         `
-        
+
         const values = [
             data.userId,
             data.timestamp,
@@ -94,7 +94,7 @@ export async function insertConsentAuditLog(data: {
             data.domain,
             data.additionalData ? JSON.stringify(data.additionalData) : null
         ]
-        
+
         const result = await client.query(query, values)
         return result.rows[0].id
     } catch (error) {
@@ -108,7 +108,7 @@ export async function insertConsentAuditLog(data: {
 // Get consent audit logs for a user
 export async function getConsentAuditLogs(userId: string, limit = 100) {
     const client = await pool.connect()
-    
+
     try {
         const query = `
             SELECT * FROM consent_audit_logs 
@@ -116,7 +116,7 @@ export async function getConsentAuditLogs(userId: string, limit = 100) {
             ORDER BY timestamp DESC 
             LIMIT $2
         `
-        
+
         const result = await client.query(query, [userId, limit])
         return result.rows
     } catch (error) {
@@ -128,13 +128,9 @@ export async function getConsentAuditLogs(userId: string, limit = 100) {
 }
 
 // Get consent audit logs for a date range
-export async function getConsentAuditLogsByDateRange(
-    startDate: string, 
-    endDate: string, 
-    limit = 1000
-) {
+export async function getConsentAuditLogsByDateRange(startDate: string, endDate: string, limit = 1000) {
     const client = await pool.connect()
-    
+
     try {
         const query = `
             SELECT * FROM consent_audit_logs 
@@ -142,7 +138,7 @@ export async function getConsentAuditLogsByDateRange(
             ORDER BY timestamp DESC 
             LIMIT $3
         `
-        
+
         const result = await client.query(query, [startDate, endDate, limit])
         return result.rows
     } catch (error) {

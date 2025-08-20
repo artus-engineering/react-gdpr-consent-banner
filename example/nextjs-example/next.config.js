@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     experimental: {
-        appDir: true,
+        appDir: true
     },
     // Enable middleware
     async headers() {
@@ -11,20 +11,20 @@ const nextConfig = {
                 headers: [
                     {
                         key: 'Access-Control-Allow-Origin',
-                        value: '*',
+                        value: '*'
                     },
                     {
                         key: 'Access-Control-Allow-Methods',
-                        value: 'GET, POST, OPTIONS',
+                        value: 'GET, POST, OPTIONS'
                     },
                     {
                         key: 'Access-Control-Allow-Headers',
-                        value: 'Content-Type, x-gdpr-user-id, x-client-ip',
-                    },
-                ],
-            },
+                        value: 'Content-Type, x-gdpr-user-id, x-client-ip'
+                    }
+                ]
+            }
         ]
-    },
+    }
 }
 
 module.exports = nextConfig
