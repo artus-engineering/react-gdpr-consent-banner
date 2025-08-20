@@ -34,20 +34,16 @@ function getBuildConfig(output, cssImport) {
 }
 
 export default [
-    getBuildConfig(
-        {
-            file: pkg.main,
-            format: 'cjs',
-            sourcemap: true
-        }
-    ),
-    getBuildConfig(
-        {
-            file: pkg.module,
-            format: 'esm',
-            sourcemap: true
-        }
-    ),
+    getBuildConfig({
+        file: pkg.main,
+        format: 'cjs',
+        sourcemap: true
+    }),
+    getBuildConfig({
+        file: pkg.module,
+        format: 'esm',
+        sourcemap: true
+    }),
     {
         input: 'src/index.ts',
         output: [{ file: 'dist/index.d.ts', format: 'esm' }],
