@@ -29,10 +29,7 @@ export function ConsentGateContent({ cookieProvider }: { cookieProvider: CookieP
     }
 
     return (
-        <div
-            style={{ backgroundColor: style.bgPrimary, borderColor: style.bgSecondary }}
-            className="md:p-12 p-4 rounded-lg border max-w-5xl mx-auto !text-left"
-        >
+        <div style={{ backgroundColor: style.bgPrimary, borderColor: style.bgSecondary }} className="md:p-12 p-4 rounded-lg border max-w-5xl mx-auto !text-left">
             <h2 style={{ color: style.textPrimary }} className="text-xl font-semibold mb-4">
                 {getLabel('headings', 'consentGate')}
             </h2>

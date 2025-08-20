@@ -186,15 +186,8 @@ export function CookieConsentBanner(): JSX.Element {
                             )}
                             <div className="mt-6 grid gap-3 overflow-scroll max-h-[60vh]">
                                 {Object.entries(consentState).map(([category, categoryState]) => (
-                                    <div
-                                        style={{ backgroundColor: hexToRGBA(style.bgSecondary, 0.2) }}
-                                        className="p-6 rounded-lg grid gap-3"
-                                        key={category}
-                                    >
-                                        <div
-                                            style={{ borderColor: hexToRGBA(style.bgSecondary, 0.8) }}
-                                            className="flex justify-between items-center border-b pb-4"
-                                        >
+                                    <div style={{ backgroundColor: hexToRGBA(style.bgSecondary, 0.2) }} className="p-6 rounded-lg grid gap-3" key={category}>
+                                        <div style={{ borderColor: hexToRGBA(style.bgSecondary, 0.8) }} className="flex justify-between items-center border-b pb-4">
                                             <div>
                                                 <h3 style={{ color: style.textPrimary }} className="font-bold text-lg">
                                                     {getLabel('cookieCategories', category as CookieCategory)}
@@ -242,9 +235,7 @@ export function CookieConsentBanner(): JSX.Element {
                                         </a>
                                     </p>
                                 </div>
-                                <div
-                                    className={`grid ${overviewGrid()} my-12 md:divide-x gap-6 md:gap-0 md:justify-evenly xl:w-1/2`}
-                                >
+                                <div className={`grid ${overviewGrid()} my-12 md:divide-x gap-6 md:gap-0 md:justify-evenly xl:w-1/2`}>
                                     {Object.entries(consentState).map(([category, categoryState]) => (
                                         <div
                                             style={{ borderColor: hexToRGBA(style.bgSecondary, 0.6) }}
@@ -252,10 +243,7 @@ export function CookieConsentBanner(): JSX.Element {
                                             className={category === 'StrictlyNecessary' ? 'cursor-not-allowed opacity-70' : ''}
                                         >
                                             <div className="md:text-center md:inline flex items-center justify-between">
-                                                <p
-                                                    style={{ color: style.textPrimary }}
-                                                    className="md:mb-2 block md:text-sm text-base self-end"
-                                                >
+                                                <p style={{ color: style.textPrimary }} className="md:mb-2 block md:text-sm text-base self-end">
                                                     {getLabel('cookieCategories', category as CookieCategory)}
                                                 </p>
                                                 <SwitchButton

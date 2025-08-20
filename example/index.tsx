@@ -17,8 +17,7 @@ const Example: React.FC<{}> = () => {
             buttonBgTrue: '#5b55f5',
             buttonBgFalse: '#dddddd',
             buttonBg: '#5b55f5',
-            buttonText: '#ffffff',
-            
+            buttonText: '#ffffff'
         },
         lang: language,
         websiteName: 'React Cookie Consent Banner Demo',
@@ -32,37 +31,33 @@ const Example: React.FC<{}> = () => {
             <CookieConsentProvider config={config}>
                 <div className="min-h-screen">
                     <div className="grid grid-cols-4 min-h-screen">
-                    <div className="flex flex-col gap-8 h-full border-gray-200 border-r p-12 bg-gray-50">
-                        <h1 className="text-2xl font-medium">React Cookie Consent Banner Demo</h1>
-                        <div>
-                            <h3 className="text-lg font-medium">Select Language</h3>
-                            <select
-                                className="border border-gray-500 rounded-lg p-3"
-                                value={language}
-                                onChange={e => setLanguage(e.currentTarget.value as SupportedLanguage)}
-                            >
-                                <option value="deDE">Deutsch</option>
-                                <option value="enUS">English</option>
-                            </select>
+                        <div className="flex flex-col gap-8 h-full border-gray-200 border-r p-12 bg-gray-50">
+                            <h1 className="text-2xl font-medium">React Cookie Consent Banner Demo</h1>
+                            <div>
+                                <h3 className="text-lg font-medium">Select Language</h3>
+                                <select className="border border-gray-500 rounded-lg p-3" value={language} onChange={e => setLanguage(e.currentTarget.value as SupportedLanguage)}>
+                                    <option value="deDE">Deutsch</option>
+                                    <option value="enUS">English</option>
+                                </select>
+                            </div>
+                            <div className="grid gap-6 mb-12">
+                                <ShowAgainButton />
+                                <DeleteAllCookiesButton />
+                            </div>
                         </div>
-                        <div className="grid gap-6 mb-12">
-                            <ShowAgainButton />
-                            <DeleteAllCookiesButton />
-                        </div>
-                    </div>
-                    <div className="mt-12 grid grid-cols-2 gap-8 col-span-3">
-                        <div className="col-span-2">
-                            <CookieConsentGate cookieProvider={TrackingCookieProvider}>
-                                <p>
-                                    This is content, only visible if you accepted the cookies for <b>tracking</b>
-                                </p>
-                                <div>
-                                    <CookiePolicy />
-                                </div>
-                            </CookieConsentGate>
+                        <div className="mt-12 grid grid-cols-2 gap-8 col-span-3">
+                            <div className="col-span-2">
+                                <CookieConsentGate cookieProvider={TrackingCookieProvider}>
+                                    <p>
+                                        This is content, only visible if you accepted the cookies for <b>tracking</b>
+                                    </p>
+                                    <div>
+                                        <CookiePolicy />
+                                    </div>
+                                </CookieConsentGate>
+                            </div>
                         </div>
                     </div>
-                </div>
                 </div>
             </CookieConsentProvider>
         </React.StrictMode>
