@@ -61,7 +61,7 @@ export function useConfig(parentHookName?: string): CookieConsentBannerConfigWit
 export function useStyle(): CookieConsentStyleWithDefaults {
     const { config } = useCookieConsentContext('useStyle')
 
-    config.theme = {
+    const theme: CookieConsentStyleWithDefaults = {
         bgPrimary: config.theme?.bgPrimary || DefaultTheme.bgPrimary,
         bgSecondary: config.theme?.bgSecondary || DefaultTheme.bgSecondary,
         textPrimary: config.theme?.textPrimary || DefaultTheme.textPrimary,
@@ -70,7 +70,7 @@ export function useStyle(): CookieConsentStyleWithDefaults {
         buttonText: config.theme?.buttonText || DefaultTheme.buttonText
     }
 
-    return config.theme as CookieConsentStyleWithDefaults
+    return theme
 }
 
 /**
@@ -143,9 +143,28 @@ export function useCookieState({ cookieProvider }: { cookieProvider: CookieProvi
     const cookieName = cookieAccessor(cookieProvider)
     const cookieValue = useCookieListener(cookieName)
     const consentGiven = cookieValue === COOKIE_VALUE_TRUE
-    const [isEnabled, setIsEnabled] = useState(consentGiven)
+    const [manualValue, setManualValue] = useState<boolean | null>(null)
 
-    useEffect(() => setIsEnabled(consentGiven), [cookieValue, consentGiven])
+    const isEnabled = manualValue !== null ? manualValue : consentGiven
+
+    const setIsEnabled = (value: boolean | ((prev: boolean) => boolean)) => {
+        if (typeof value === 'function') {
+            setManualValue(prev => {
+                const currentValue = prev !== null ? prev : consentGiven
+                const newValue = value(currentValue)
+                if (newValue === consentGiven) {
+                    return null
+                }
+                return newValue
+            })
+        } else {
+            if (value === consentGiven) {
+                setManualValue(null)
+            } else {
+                setManualValue(value)
+            }
+        }
+    }
 
     return { isEnabled, setIsEnabled }
 }
