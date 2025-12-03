@@ -49,6 +49,7 @@ const cookieConsentTranslations: Record<SupportedLanguage, CookieConsentLabels> 
         },
         cookieCategories: {
             Essential: 'Notwendig',
+            Functional: 'Funktional',
             Analytics: 'Analytik',
             Marketing: 'Marketing'
         },
@@ -61,7 +62,9 @@ const cookieConsentTranslations: Record<SupportedLanguage, CookieConsentLabels> 
         },
         cookieCategoryDescriptions: {
             Essential:
-                'Zwingend erforderliche Cookies ermöglichen wesentliche Website-Funktionalität, einschließlich Sicherheit, Authentifizierung und grundlegende Operationen. Diese können nicht deaktiviert werden.',
+                'Zwingend erforderliche Cookies ermöglichen wesentliche Dienste und Funktionen, einschließlich Identitätsprüfung, Standortsicherheit usw.',
+            Functional:
+                'Funktionale Cookies ermöglichen es der Webseite Dienste von Drittanbietern bereitzustellen und fortgeschrittene Funktionalitäten bereitzustellen. Beispielsweise eingebettete Videos, Karten oder Zahlungen.',
             Analytics:
                 'Analytik-Cookies helfen uns zu verstehen, wie Besucher unsere Website nutzen, indem sie Informationen über Seitenbesuche, Verweildauer und Benutzerinteraktionen sammeln. Diese Daten helfen uns, unsere Dienste zu verbessern.',
             Marketing:
@@ -116,6 +119,7 @@ const cookieConsentTranslations: Record<SupportedLanguage, CookieConsentLabels> 
         },
         cookieCategories: {
             Essential: 'Essential',
+            Functional: 'Functional',
             Analytics: 'Analytics',
             Marketing: 'Marketing'
         },
@@ -128,6 +132,7 @@ const cookieConsentTranslations: Record<SupportedLanguage, CookieConsentLabels> 
         },
         cookieCategoryDescriptions: {
             Essential: 'Essential cookies enable core website functionality, including security, authentication, and basic operations. These cannot be disabled.',
+            Functional: 'Functional cookies enable the website to provide third-party services and advanced functionality. For example, embedded videos, maps, or payments.',
             Analytics:
                 'Analytics cookies help us understand how visitors use our website by collecting information about page visits, time spent, and user interactions. This data helps us improve our services.',
             Marketing: 'Marketing cookies track your activity across websites to build a profile of your interests and show you relevant advertisements on other sites.'

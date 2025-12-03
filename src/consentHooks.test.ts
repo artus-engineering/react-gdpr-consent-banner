@@ -116,8 +116,8 @@ describe('Google Consent Mode v2 Tests', () => {
             hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
             mockContext = {
                 category: 'Analytics',
-                consentState: { Analytics: false, Marketing: false, Essential: true },
-                previousState: { Analytics: false, Marketing: false, Essential: true },
+                consentState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
+                previousState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
                 cookies: {
                     set: mockCookieSet,
                     get: mockCookieGet,
@@ -187,8 +187,8 @@ describe('Google Consent Mode v2 Tests', () => {
             hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
             mockContext = {
                 category: 'Marketing',
-                consentState: { Analytics: false, Marketing: false, Essential: true },
-                previousState: { Analytics: false, Marketing: false, Essential: true },
+                consentState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
+                previousState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
                 cookies: {
                     set: mockCookieSet,
                     get: mockCookieGet,
@@ -246,8 +246,8 @@ describe('Google Consent Mode v2 Tests', () => {
             hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
             mockContext = {
                 category: 'Marketing',
-                consentState: { Analytics: false, Marketing: false, Essential: true },
-                previousState: { Analytics: false, Marketing: false, Essential: true },
+                consentState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
+                previousState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
                 cookies: {
                     set: mockCookieSet,
                     get: mockCookieGet,
@@ -303,8 +303,8 @@ describe('Google Consent Mode v2 Tests', () => {
             hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
             mockContext = {
                 category: 'Marketing',
-                consentState: { Analytics: false, Marketing: false, Essential: true },
-                previousState: { Analytics: false, Marketing: false, Essential: true },
+                consentState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
+                previousState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
                 cookies: {
                     set: mockCookieSet,
                     get: mockCookieGet,
@@ -361,8 +361,8 @@ describe('Google Consent Mode v2 Tests', () => {
             // Mock consent state changes
             const mockContext: ConsentHookContext = {
                 category: 'Analytics',
-                consentState: { Analytics: true, Marketing: false, Essential: true },
-                previousState: { Analytics: false, Marketing: false, Essential: true },
+                consentState: { Analytics: true, Marketing: false, Essential: true, Functional: false },
+                previousState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
                 cookies: {
                     set: mockCookieSet,
                     get: mockCookieGet,
@@ -394,8 +394,8 @@ describe('Google Consent Mode v2 Tests', () => {
             // User grants Analytics but denies Marketing
             const analyticsContext: ConsentHookContext = {
                 category: 'Analytics',
-                consentState: { Analytics: true, Marketing: false, Essential: true },
-                previousState: { Analytics: false, Marketing: false, Essential: true },
+                consentState: { Analytics: true, Marketing: false, Essential: true, Functional: false },
+                previousState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
                 cookies: { set: mockCookieSet, get: mockCookieGet, remove: mockCookieRemove },
                 gtag: jest.fn(),
                 dataLayer: window.dataLayer
@@ -403,8 +403,8 @@ describe('Google Consent Mode v2 Tests', () => {
 
             const marketingContext: ConsentHookContext = {
                 category: 'Marketing',
-                consentState: { Analytics: true, Marketing: false, Essential: true },
-                previousState: { Analytics: false, Marketing: false, Essential: true },
+                consentState: { Analytics: true, Marketing: false, Essential: true, Functional: false },
+                previousState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
                 cookies: { set: mockCookieSet, get: mockCookieGet, remove: mockCookieRemove },
                 gtag: jest.fn(),
                 dataLayer: window.dataLayer
@@ -469,8 +469,8 @@ describe('Google Consent Mode v2 Tests', () => {
 
             const mockContext: ConsentHookContext = {
                 category: 'Analytics',
-                consentState: { Analytics: false, Marketing: false, Essential: true },
-                previousState: { Analytics: false, Marketing: false, Essential: true },
+                consentState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
+                previousState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
                 cookies: { set: mockCookieSet, get: mockCookieGet, remove: mockCookieRemove },
                 gtag: jest.fn(),
                 dataLayer: window.dataLayer

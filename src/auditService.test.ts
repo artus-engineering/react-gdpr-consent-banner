@@ -31,6 +31,7 @@ describe('AuditService', () => {
 
             const currentState = {
                 Essential: true,
+                Functional: false,
                 Analytics: true,
                 Marketing: false
             }
@@ -55,12 +56,14 @@ describe('AuditService', () => {
 
             const currentState = {
                 Essential: true,
+                Functional: false,
                 Analytics: false,
                 Marketing: true
             }
 
             const previousState = {
                 Essential: true,
+                Functional: false,
                 Analytics: true,
                 Marketing: false
             }
@@ -90,6 +93,7 @@ describe('AuditService', () => {
 
             const currentState = {
                 Essential: true,
+                Functional: false,
                 Analytics: true,
                 Marketing: false
             }
@@ -107,6 +111,7 @@ describe('AuditService', () => {
 
             const currentState = {
                 Essential: true,
+                Functional: false,
                 Analytics: true,
                 Marketing: false
             }

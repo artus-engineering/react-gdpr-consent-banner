@@ -54,7 +54,7 @@ describe('CookieConsentGate', () => {
 
     beforeEach(() => {
         setIsEnabledMock = jest.fn()
-        useConfigMock = jest.spyOn(hooks, 'useConfig').mockReturnValue(mockConfig as CookieConsentBannerConfigWithDefaults)
+        useConfigMock = jest.spyOn(hooks, 'useConfig').mockReturnValue(mockConfig as unknown as CookieConsentBannerConfigWithDefaults)
         useStyleMock = jest.spyOn(hooks, 'useStyle').mockReturnValue(DefaultTheme)
         useCookieStateMock = jest.spyOn(hooks, 'useCookieState').mockReturnValue({ isEnabled: true, setIsEnabled: setIsEnabledMock })
     })

@@ -2,25 +2,30 @@ import commonjs from '@rollup/plugin-commonjs'
 import terser from '@rollup/plugin-terser'
 import typescript from '@rollup/plugin-typescript'
 import analyze from 'rollup-plugin-analyzer'
-import dts from 'rollup-plugin-dts'
+import dtsPlugin from 'rollup-plugin-dts'
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import postcss from 'rollup-plugin-postcss'
+import pkg from './package.json' with { type: 'json' }
 
-const pkg = require('./package.json')
+// Handle both ESM and CJS imports for dts plugin
+const dts = dtsPlugin.default || dtsPlugin
 
-function getBuildConfig(output, cssImport) {
+function getBuildConfig(output) {
     return {
         input: 'src/index.ts',
         output: [output],
         plugins: [
             peerDepsExternal(),
             commonjs(),
-            typescript({ tsconfig: './tsconfig.build.json' }),
+            typescript({ 
+                tsconfig: './tsconfig.build.json',
+                exclude: ['**/*.test.ts', '**/*.test.tsx', '**/__tests__/**', '**/__snapshots__/**']
+            }),
             postcss({
                 minimize: true,
                 extract: true,
                 config: true,
-                inject: false // Don't inject CSS into the bundle
+                inject: false
             }),
             terser({
                 format: {
@@ -47,7 +52,7 @@ export default [
     {
         input: 'src/index.ts',
         output: [{ file: 'dist/index.d.ts', format: 'esm' }],
-        plugins: [dts.default()],
+        plugins: [dts()],
         external: [/\.css$/]
     }
 ]

@@ -22,8 +22,8 @@ export type UnitSubSection = 'session' | 'days' | 'weeks' | 'months' | 'years' |
 export type CookiePolicy = 'autoCookiePurpose' | 'autoCookieDescription'
 export type ConsentGateSubSection = 'message'
 export type SectionKeys<S extends TranslationSections> = keyof CookieConsentLabels[S]
-// Simplified to 3 essential categories
-export type CookieCategory = 'Essential' | 'Analytics' | 'Marketing'
+// Cookie categories for GDPR compliance
+export type CookieCategory = 'Essential' | 'Functional' | 'Analytics' | 'Marketing'
 export type CookieConsentState = Record<CookieCategory, { enabled: boolean; cookies: { [cookieId: string]: boolean } }>
 export type CookieProvidersByCategory = Record<CookieCategory, CookieProviderConfig[]>
 

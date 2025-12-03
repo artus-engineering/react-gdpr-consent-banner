@@ -2,176 +2,73 @@
 
 exports[`SwitchButton should match the snapshot when disabled 1`] = `
 <div>
-  <div
-    style="cursor: not-allowed; opacity: 0.5;"
+  <button
+    aria-checked="true"
+    aria-label="Test Switch Button"
+    data-testid="react-gdpr-cookie-consent-switch-button"
+    disabled=""
+    role="switch"
+    style="position: relative; display: inline-flex; align-items: center; height: 24px; width: 44px; flex-shrink: 0; border-radius: 9999px; padding: 2px; cursor: not-allowed; opacity: 0.5; transition: background-color 200ms ease-in-out;"
+    type="button"
   >
-    <input
-      hidden=""
-      readonly=""
-      style="position: fixed; top: 1px; left: 1px; width: 1px; height: 0px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px; display: none;"
-      type="hidden"
+    <span
+      aria-hidden="true"
+      style="display: inline-block; height: 20px; width: 20px; border-radius: 9999px; background-color: rgb(255, 255, 255); box-shadow: 0 1px 3px rgba(0,0,0,0.2); transform: translateX(20px); transition: transform 200ms ease-in-out; pointer-events: none;"
     />
-    <input
-      checked=""
-      disabled=""
-      hidden=""
-      name="Test Switch Button"
-      readonly=""
-      style="position: fixed; top: 1px; left: 1px; width: 1px; height: 0px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px; display: none;"
-      type="checkbox"
-      value="on"
-    />
-    <button
-      aria-checked="true"
-      class="relative my-auto inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent 
-                    transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
-                    "
-      data-checked=""
-      data-disabled=""
-      data-headlessui-state="checked disabled"
-      data-testid="react-gdpr-cookie-consent-switch-button"
-      disabled=""
-      id="headlessui-switch-«r3»"
-      role="switch"
-      tabindex="0"
-      type="button"
-    >
-      <span
-        aria-hidden="true"
-        class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow 
-                    ring-0 transition duration-200 ease-in-out
-                    translate-x-5"
-      />
-    </button>
-  </div>
+  </button>
 </div>
 `;
 
 exports[`SwitchButton should match the snapshot when not toggled 1`] = `
 <div>
-  <div>
-    <input
-      hidden=""
-      readonly=""
-      style="position: fixed; top: 1px; left: 1px; width: 1px; height: 0px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px; display: none;"
-      type="hidden"
+  <button
+    aria-checked="false"
+    aria-label="Test Switch Button"
+    data-testid="react-gdpr-cookie-consent-switch-button"
+    role="switch"
+    style="position: relative; display: inline-flex; align-items: center; height: 24px; width: 44px; flex-shrink: 0; border-radius: 9999px; padding: 2px; cursor: pointer; opacity: 1; transition: background-color 200ms ease-in-out;"
+    type="button"
+  >
+    <span
+      aria-hidden="true"
+      style="display: inline-block; height: 20px; width: 20px; border-radius: 9999px; background-color: rgb(255, 255, 255); box-shadow: 0 1px 3px rgba(0,0,0,0.2); transform: translateX(0); transition: transform 200ms ease-in-out; pointer-events: none;"
     />
-    <input
-      hidden=""
-      name="Test Switch Button"
-      readonly=""
-      style="position: fixed; top: 1px; left: 1px; width: 1px; height: 0px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px; display: none;"
-      type="checkbox"
-      value="on"
-    />
-    <button
-      aria-checked="false"
-      class="relative my-auto inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent 
-                    transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
-                    cursor-pointer"
-      data-headlessui-state=""
-      data-testid="react-gdpr-cookie-consent-switch-button"
-      id="headlessui-switch-«r2»"
-      role="switch"
-      tabindex="0"
-      type="button"
-    >
-      <span
-        aria-hidden="true"
-        class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow 
-                    ring-0 transition duration-200 ease-in-out
-                    translate-x-0"
-      />
-    </button>
-  </div>
+  </button>
 </div>
 `;
 
 exports[`SwitchButton should match the snapshot with minimal configuration 1`] = `
 <div>
-  <div>
-    <input
-      hidden=""
-      readonly=""
-      style="position: fixed; top: 1px; left: 1px; width: 1px; height: 0px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px; display: none;"
-      type="hidden"
+  <button
+    aria-checked="true"
+    aria-label="Test Switch Button"
+    data-testid="react-gdpr-cookie-consent-switch-button"
+    role="switch"
+    style="position: relative; display: inline-flex; align-items: center; height: 24px; width: 44px; flex-shrink: 0; border-radius: 9999px; padding: 2px; cursor: pointer; opacity: 1; transition: background-color 200ms ease-in-out;"
+    type="button"
+  >
+    <span
+      aria-hidden="true"
+      style="display: inline-block; height: 20px; width: 20px; border-radius: 9999px; background-color: rgb(255, 255, 255); box-shadow: 0 1px 3px rgba(0,0,0,0.2); transform: translateX(20px); transition: transform 200ms ease-in-out; pointer-events: none;"
     />
-    <input
-      checked=""
-      hidden=""
-      name="Test Switch Button"
-      readonly=""
-      style="position: fixed; top: 1px; left: 1px; width: 1px; height: 0px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px; display: none;"
-      type="checkbox"
-      value="on"
-    />
-    <button
-      aria-checked="true"
-      class="relative my-auto inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent 
-                    transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
-                    cursor-pointer"
-      data-checked=""
-      data-headlessui-state="checked"
-      data-testid="react-gdpr-cookie-consent-switch-button"
-      id="headlessui-switch-«r0»"
-      role="switch"
-      tabindex="0"
-      type="button"
-    >
-      <span
-        aria-hidden="true"
-        class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow 
-                    ring-0 transition duration-200 ease-in-out
-                    translate-x-5"
-      />
-    </button>
-  </div>
+  </button>
 </div>
 `;
 
 exports[`SwitchButton should match the snapshot with screen reader label 1`] = `
 <div>
-  <div>
-    <input
-      hidden=""
-      readonly=""
-      style="position: fixed; top: 1px; left: 1px; width: 1px; height: 0px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px; display: none;"
-      type="hidden"
+  <button
+    aria-checked="true"
+    aria-label="Test Label"
+    data-testid="react-gdpr-cookie-consent-switch-button"
+    role="switch"
+    style="position: relative; display: inline-flex; align-items: center; height: 24px; width: 44px; flex-shrink: 0; border-radius: 9999px; padding: 2px; cursor: pointer; opacity: 1; transition: background-color 200ms ease-in-out;"
+    type="button"
+  >
+    <span
+      aria-hidden="true"
+      style="display: inline-block; height: 20px; width: 20px; border-radius: 9999px; background-color: rgb(255, 255, 255); box-shadow: 0 1px 3px rgba(0,0,0,0.2); transform: translateX(20px); transition: transform 200ms ease-in-out; pointer-events: none;"
     />
-    <input
-      checked=""
-      hidden=""
-      name="Test Switch Button"
-      readonly=""
-      style="position: fixed; top: 1px; left: 1px; width: 1px; height: 0px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px; display: none;"
-      type="checkbox"
-      value="on"
-    />
-    <button
-      aria-checked="true"
-      class="relative my-auto inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent 
-                    transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
-                    cursor-pointer"
-      data-checked=""
-      data-headlessui-state="checked"
-      data-testid="react-gdpr-cookie-consent-switch-button"
-      id="headlessui-switch-«r1»"
-      role="switch"
-      tabindex="0"
-      type="button"
-    >
-      <span
-        class="sr-only"
-      >
-        Test Label
-      </span>
-      <span
-        aria-hidden="true"
-        class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow 
-                    ring-0 transition duration-200 ease-in-out
-                    translate-x-5"
-      />
-    </button>
-  </div>
+  </button>
 </div>
 `;

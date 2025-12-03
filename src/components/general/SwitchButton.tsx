@@ -1,5 +1,3 @@
-import { Switch } from '@headlessui/react'
-
 interface IToggleButtonProps {
     toggled: boolean
     onToggle: (enabled: boolean) => void
@@ -12,26 +10,44 @@ interface IToggleButtonProps {
 
 export function SwitchButton({ toggled, onToggle, disabled, screenReaderLabel, name, bgTrue, bgFalse }: IToggleButtonProps) {
     return (
-        <div style={disabled ? { cursor: 'not-allowed', opacity: 0.5 } : {}}>
-            <Switch
-                name={name}
-                checked={toggled}
-                onChange={onToggle}
-                disabled={disabled}
-                style={{ backgroundColor: toggled ? bgTrue : bgFalse }}
-                className={`relative my-auto inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent 
-                    transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
-                    ${disabled ? '' : 'cursor-pointer'}`}
-                data-testid="react-gdpr-cookie-consent-switch-button"
-            >
-                {screenReaderLabel && <span className="sr-only">{screenReaderLabel}</span>}
-                <span
-                    aria-hidden="true"
-                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow 
-                    ring-0 transition duration-200 ease-in-out
-                    ${toggled ? 'translate-x-5' : 'translate-x-0'}`}
-                />
-            </Switch>
-        </div>
+        <button
+            type="button"
+            role="switch"
+            aria-checked={toggled}
+            aria-label={screenReaderLabel || name}
+            disabled={disabled}
+            onClick={() => !disabled && onToggle(!toggled)}
+            data-testid="react-gdpr-cookie-consent-switch-button"
+            style={{
+                position: 'relative',
+                display: 'inline-flex',
+                alignItems: 'center',
+                height: '24px',
+                width: '44px',
+                flexShrink: 0,
+                borderRadius: '9999px',
+                border: 'none',
+                padding: '2px',
+                backgroundColor: toggled ? bgTrue : bgFalse,
+                cursor: disabled ? 'not-allowed' : 'pointer',
+                opacity: disabled ? 0.5 : 1,
+                transition: 'background-color 200ms ease-in-out',
+            }}
+        >
+            <span
+                aria-hidden="true"
+                style={{
+                    display: 'inline-block',
+                    height: '20px',
+                    width: '20px',
+                    borderRadius: '9999px',
+                    backgroundColor: '#ffffff',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                    transform: toggled ? 'translateX(20px)' : 'translateX(0)',
+                    transition: 'transform 200ms ease-in-out',
+                    pointerEvents: 'none',
+                }}
+            />
+        </button>
     )
 }
