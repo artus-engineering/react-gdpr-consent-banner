@@ -8,7 +8,15 @@ interface IToggleButtonProps {
     disabled?: boolean
 }
 
-export function SwitchButton({ toggled, onToggle, disabled, screenReaderLabel, name, bgTrue, bgFalse }: IToggleButtonProps) {
+export function SwitchButton({
+    toggled,
+    onToggle,
+    disabled,
+    screenReaderLabel,
+    name,
+    bgTrue,
+    bgFalse
+}: IToggleButtonProps) {
     return (
         <button
             type="button"
@@ -31,7 +39,7 @@ export function SwitchButton({ toggled, onToggle, disabled, screenReaderLabel, n
                 backgroundColor: toggled ? bgTrue : bgFalse,
                 cursor: disabled ? 'not-allowed' : 'pointer',
                 opacity: disabled ? 0.5 : 1,
-                transition: 'background-color 200ms ease-in-out',
+                transition: 'background-color 200ms ease-in-out'
             }}
         >
             <span
@@ -45,7 +53,7 @@ export function SwitchButton({ toggled, onToggle, disabled, screenReaderLabel, n
                     boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
                     transform: toggled ? 'translateX(20px)' : 'translateX(0)',
                     transition: 'transform 200ms ease-in-out',
-                    pointerEvents: 'none',
+                    pointerEvents: 'none'
                 }}
             />
         </button>

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { insertConsentAuditLog } from '../../../../lib/db'
 import { ConsentAuditPayload } from '../../../../../src/types'
+import { insertConsentAuditLog } from '../../../../lib/db'
 
 export async function POST(request: NextRequest) {
     try {

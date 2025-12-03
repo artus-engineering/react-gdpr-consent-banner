@@ -1,7 +1,13 @@
-import { CONSENT_DIALOG_HAS_BEEN_DISPLAYED, CONSENT_DIALOG_HAS_BEEN_DISPLAYED_VALUE, COOKIE_SUFFIX, COOKIE_VALUE_FALSE, COOKIE_VALUE_TRUE } from './constants'
-import { getLanguageLabels } from './translations'
-import { CookieProviderConfig, SectionKeys, TranslationSections, Unit, SupportedLanguage, CookieConsentBannerConfigWithDefaults } from './types'
+import {
+    CONSENT_DIALOG_HAS_BEEN_DISPLAYED,
+    CONSENT_DIALOG_HAS_BEEN_DISPLAYED_VALUE,
+    COOKIE_SUFFIX,
+    COOKIE_VALUE_FALSE,
+    COOKIE_VALUE_TRUE
+} from './constants'
 import { getLocalizedText } from './i18n'
+import { getLanguageLabels } from './translations'
+import { CookieProviderConfig, SectionKeys, SupportedLanguage, TranslationSections, Unit } from './types'
 
 /**
  * Check if the code is running on the server.
@@ -45,7 +51,12 @@ export function setCookieConsentDisplayed(domain: string, validForDays: number) 
  * @param {string} domain The domain of the cookie.
  * @param {number} validForDays The validity of the cookie in days.
  */
-export function persistCookieSelection(cookie: CookieProviderConfig, consentGiven: boolean, domain: string, validForDays: number) {
+export function persistCookieSelection(
+    cookie: CookieProviderConfig,
+    consentGiven: boolean,
+    domain: string,
+    validForDays: number
+) {
     setCookie(cookieAccessor(cookie), consentGiven ? COOKIE_VALUE_TRUE : COOKIE_VALUE_FALSE, domain, validForDays)
 }
 
@@ -101,9 +112,9 @@ export function lightenHexColor(hex: string, degree: number): string {
         .replace(/\)$/, '')
         .replace(/\s/g, '')
         .split(',')
-    const r = Math.min(255, Number.parseInt(rgb[0]) + degree)
-    const g = Math.min(255, Number.parseInt(rgb[1]) + degree)
-    const b = Math.min(255, Number.parseInt(rgb[2]) + degree)
+    const r = Math.min(255, Number.parseInt(rgb[0], 10) + degree)
+    const g = Math.min(255, Number.parseInt(rgb[1], 10) + degree)
+    const b = Math.min(255, Number.parseInt(rgb[2], 10) + degree)
     return `rgb(${r}, ${g}, ${b})`
 }
 
@@ -115,7 +126,11 @@ export function lightenHexColor(hex: string, degree: number): string {
  * @param config The configuration object containing labels and language
  * @returns {string} The text of the label
  */
-export function getLabel<S extends TranslationSections, K extends SectionKeys<S>>(section: S, key: K, config: { labels?: any; lang?: SupportedLanguage }): string {
+export function getLabel<S extends TranslationSections, K extends SectionKeys<S>>(
+    section: S,
+    key: K,
+    config: { labels?: any; lang?: SupportedLanguage }
+): string {
     const { labels, lang = 'enUS' } = config
     const customText = labels?.[section]?.[key]
     if (customText) {
@@ -133,7 +148,10 @@ export function getLabel<S extends TranslationSections, K extends SectionKeys<S>
  * @param lang The language to use
  * @returns Localized text based on current language configuration
  */
-export function getLocalizedCookieText(text: string | Record<SupportedLanguage, string>, lang: SupportedLanguage = 'enUS'): string {
+export function getLocalizedCookieText(
+    text: string | Record<SupportedLanguage, string>,
+    lang: SupportedLanguage = 'enUS'
+): string {
     return getLocalizedText(text, lang)
 }
 

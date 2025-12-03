@@ -55,10 +55,12 @@ const cookieConsentTranslations: Record<SupportedLanguage, CookieConsentLabels> 
         },
         cookiePolicy: {
             autoCookiePurpose: 'Merkt die Auswahl der Cookie-Einwilligung des Benutzers.',
-            autoCookieDescription: 'Diese Cookies werden verwendet, um die Auswahl der Cookie-Einwilligung des Benutzers zu unseren Diensten zu speichern.'
+            autoCookieDescription:
+                'Diese Cookies werden verwendet, um die Auswahl der Cookie-Einwilligung des Benutzers zu unseren Diensten zu speichern.'
         },
         consentGate: {
-            message: 'Entschuldigung. Wir können diesen Inhalt nicht anzeigen. Wir benötigen Ihre Zustimmung für Cookies von'
+            message:
+                'Entschuldigung. Wir können diesen Inhalt nicht anzeigen. Wir benötigen Ihre Zustimmung für Cookies von'
         },
         cookieCategoryDescriptions: {
             Essential:
@@ -125,17 +127,21 @@ const cookieConsentTranslations: Record<SupportedLanguage, CookieConsentLabels> 
         },
         cookiePolicy: {
             autoCookiePurpose: "Remember the user's cookie consent selection.",
-            autoCookieDescription: "These cookies are used to store the user's cookie consent selection to our services."
+            autoCookieDescription:
+                "These cookies are used to store the user's cookie consent selection to our services."
         },
         consentGate: {
             message: 'Sorry. We can not display this content as it requires your consent for cookies from'
         },
         cookieCategoryDescriptions: {
-            Essential: 'Essential cookies enable core website functionality, including security, authentication, and basic operations. These cannot be disabled.',
-            Functional: 'Functional cookies enable the website to provide third-party services and advanced functionality. For example, embedded videos, maps, or payments.',
+            Essential:
+                'Essential cookies enable core website functionality, including security, authentication, and basic operations. These cannot be disabled.',
+            Functional:
+                'Functional cookies enable the website to provide third-party services and advanced functionality. For example, embedded videos, maps, or payments.',
             Analytics:
                 'Analytics cookies help us understand how visitors use our website by collecting information about page visits, time spent, and user interactions. This data helps us improve our services.',
-            Marketing: 'Marketing cookies track your activity across websites to build a profile of your interests and show you relevant advertisements on other sites.'
+            Marketing:
+                'Marketing cookies track your activity across websites to build a profile of your interests and show you relevant advertisements on other sites.'
         }
     }
 }

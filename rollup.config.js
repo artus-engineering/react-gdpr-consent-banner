@@ -17,7 +17,7 @@ function getBuildConfig(output) {
         plugins: [
             peerDepsExternal(),
             commonjs(),
-            typescript({ 
+            typescript({
                 tsconfig: './tsconfig.build.json',
                 exclude: ['**/*.test.ts', '**/*.test.tsx', '**/__tests__/**', '**/__snapshots__/**']
             }),

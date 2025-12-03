@@ -5,8 +5,8 @@ import { CookieConsentBannerConfigWithDefaults, CookieProviderConfig } from '../
 import { CookieConsentGate } from './ConsentGate'
 
 describe('CookieConsentGate', () => {
-    let useConfigMock: jest.SpyInstance
-    let useStyleMock: jest.SpyInstance
+    let _useConfigMock: jest.SpyInstance
+    let _useStyleMock: jest.SpyInstance
     let useCookieStateMock: jest.SpyInstance
     let setIsEnabledMock: jest.Func
 
@@ -16,7 +16,8 @@ describe('CookieConsentGate', () => {
         name: 'Some Website',
         id: 'website',
         category: 'Essential',
-        description: 'We use session cookies to store your session on our website. This cookie is necessary to use the website.',
+        description:
+            'We use session cookies to store your session on our website. This cookie is necessary to use the website.',
         dataProtectionLink: 'https://example.com/privacy',
         cookies: [
             {
@@ -54,9 +55,13 @@ describe('CookieConsentGate', () => {
 
     beforeEach(() => {
         setIsEnabledMock = jest.fn()
-        useConfigMock = jest.spyOn(hooks, 'useConfig').mockReturnValue(mockConfig as unknown as CookieConsentBannerConfigWithDefaults)
-        useStyleMock = jest.spyOn(hooks, 'useStyle').mockReturnValue(DefaultTheme)
-        useCookieStateMock = jest.spyOn(hooks, 'useCookieState').mockReturnValue({ isEnabled: true, setIsEnabled: setIsEnabledMock })
+        _useConfigMock = jest
+            .spyOn(hooks, 'useConfig')
+            .mockReturnValue(mockConfig as unknown as CookieConsentBannerConfigWithDefaults)
+        _useStyleMock = jest.spyOn(hooks, 'useStyle').mockReturnValue(DefaultTheme)
+        useCookieStateMock = jest
+            .spyOn(hooks, 'useCookieState')
+            .mockReturnValue({ isEnabled: true, setIsEnabled: setIsEnabledMock })
     })
 
     afterEach(() => {
@@ -81,7 +86,9 @@ describe('CookieConsentGate', () => {
             serviceProvider: 'Google'
         }
         useCookieStateMock.mockReturnValue({ isEnabled: false, setIsEnabled: setIsEnabledMock })
-        const { container } = render(<CookieConsentGate cookieProvider={providerWithServiceProvider}>{children}</CookieConsentGate>)
+        const { container } = render(
+            <CookieConsentGate cookieProvider={providerWithServiceProvider}>{children}</CookieConsentGate>
+        )
         expect(container).toMatchSnapshot()
     })
 })

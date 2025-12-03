@@ -14,7 +14,8 @@ const WebsiteCookieProvider: CookieProvider = {
     name: 'Some Website',
     id: 'website',
     category: 'Essential',
-    description: 'We use session cookies to store your session on our website. This cookie is necessary to use the website.',
+    description:
+        'We use session cookies to store your session on our website. This cookie is necessary to use the website.',
     dataProtectionLink: 'https://example.com/privacy',
     cookies: [
         {
@@ -36,7 +37,8 @@ const TrackingCookieProvider: CookieProvider = {
     name: 'Some Tracking Service',
     id: 'tracking',
     category: 'Analytics',
-    description: 'We use Some Tracking Service to collect anonymous statistics about the use of our website. This helps us to improve the website.',
+    description:
+        'We use Some Tracking Service to collect anonymous statistics about the use of our website. This helps us to improve the website.',
     dataProtectionLink: 'https://example.com/privacy',
     cookies: [
         {

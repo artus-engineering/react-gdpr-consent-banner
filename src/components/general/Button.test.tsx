@@ -1,19 +1,19 @@
 import { render, screen } from '@testing-library/react'
-import { Button } from './Button'
 import * as functions from '../../functions'
 import * as hooks from '../../hooks'
 import { DefaultTheme } from '../../themes'
 import { ButtonSubSection } from '../../types'
+import { Button } from './Button'
 
 describe('Button', () => {
     let getLabelMock: jest.SpyInstance
-    let useStyleMock: jest.SpyInstance
+    let _useStyleMock: jest.SpyInstance
     const label = 'Test Button Label'
     const text: ButtonSubSection = 'acceptAllCookies'
 
     beforeEach(() => {
         getLabelMock = jest.spyOn(functions, 'getLabel').mockReturnValue(label)
-        useStyleMock = jest.spyOn(hooks, 'useStyle').mockReturnValue(DefaultTheme)
+        _useStyleMock = jest.spyOn(hooks, 'useStyle').mockReturnValue(DefaultTheme)
     })
 
     afterEach(() => {
@@ -62,7 +62,13 @@ describe('Button', () => {
     })
 
     it('should work with all button text types', () => {
-        const buttonTypes: ButtonSubSection[] = ['acceptAllCookies', 'rejectAllNonNecessaryCookies', 'acceptSelectedCookies', 'showDetails', 'back']
+        const buttonTypes: ButtonSubSection[] = [
+            'acceptAllCookies',
+            'rejectAllNonNecessaryCookies',
+            'acceptSelectedCookies',
+            'showDetails',
+            'back'
+        ]
 
         buttonTypes.forEach(buttonType => {
             const { unmount } = render(<Button onClick={jest.fn()} text={buttonType} />)

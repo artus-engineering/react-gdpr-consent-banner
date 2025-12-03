@@ -41,15 +41,25 @@ export function CookieConsentModal({ cookieProvider, children }: IConsentModalPr
                             <title>Close Icon</title>
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                         </svg>
-                        <div style={{ backgroundColor: style.bgPrimary, borderColor: style.bgSecondary }} className="p-12 rounded-lg border">
+                        <div
+                            style={{ backgroundColor: style.bgPrimary, borderColor: style.bgSecondary }}
+                            className="p-12 rounded-lg border"
+                        >
                             <h2 style={{ color: style.textPrimary }} className="text-xl font-semibold mb-4">
                                 {getLabel('headings', 'consentGate', config)}
                             </h2>
                             <p style={{ color: style.textSecondary }} className="mb-12">
                                 {getLabel('consentGate', 'message', config)} <b>{cookieProvider.name}.</b>
                             </p>
-                            <div style={{ backgroundColor: hexToRGBA(style.bgSecondary, 0.2) }} className="mb-12 p-8 rounded-lg">
-                                <CookieCategoryComponent provider={cookieProvider} handleCookieToggle={() => setIsEnabled(!isEnabled)} isEnabled={isEnabled} />
+                            <div
+                                style={{ backgroundColor: hexToRGBA(style.bgSecondary, 0.2) }}
+                                className="mb-12 p-8 rounded-lg"
+                            >
+                                <CookieCategoryComponent
+                                    provider={cookieProvider}
+                                    handleCookieToggle={() => setIsEnabled(!isEnabled)}
+                                    isEnabled={isEnabled}
+                                />
                             </div>
                             <Button onClick={handleAccept} disabled={!isEnabled} text={'acceptSelectedCookies'} />
                         </div>
@@ -68,10 +78,24 @@ export function CookieConsentModal({ cookieProvider, children }: IConsentModalPr
         return undefined
     }
 
+    function onKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+        if (!isEnabled && (event.key === 'Enter' || event.key === ' ')) {
+            event.preventDefault()
+            event.stopPropagation()
+            setOpenModal(true)
+        }
+    }
+
     return (
         <>
             <Modal />
-            <div onClick={onClick} className={isEnabled ? undefined : 'opacity-50'}>
+            <div
+                role="button"
+                tabIndex={0}
+                onClick={onClick}
+                onKeyDown={onKeyDown}
+                className={isEnabled ? undefined : 'opacity-50'}
+            >
                 {children}
             </div>
         </>

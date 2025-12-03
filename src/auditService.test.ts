@@ -1,5 +1,5 @@
 import { AuditService, createAuditService } from './auditService'
-import { AuditConfig, CookieCategory } from './types'
+import { AuditConfig } from './types'
 
 // Mock fetch
 global.fetch = jest.fn()

@@ -3,7 +3,12 @@ import { ConsentState, ConsentStateProviderContext } from './components/consent/
 import { COOKIE_VALUE_TRUE, DEFAULT_COOKIE_VALIDITY, DEFAULT_LANGUAGE } from './constants'
 import { cookieAccessor, getLabel, persistCookieSelection } from './functions'
 import { DefaultTheme } from './themes'
-import { CookieCategory, CookieConsentBannerConfigWithDefaults, CookieConsentStyleWithDefaults, CookieProviderConfig, CookieProvidersByCategory } from './types'
+import {
+    CookieConsentBannerConfigWithDefaults,
+    CookieConsentStyleWithDefaults,
+    CookieProviderConfig,
+    CookieProvidersByCategory
+} from './types'
 
 export function useCookieConsentContext(parentHookName?: string): ConsentState {
     const context = useContext(ConsentStateProviderContext)
@@ -20,12 +25,15 @@ export function useOpenCookieBanner() {
 
 export function useSetStrictlyNecessaryCookiesOnly() {
     const config = useConfig('useSetStrictlyNecessaryCookiesOnly')
-    return () =>
-        config.providers.forEach(provider =>
-            provider.category === 'Essential'
-                ? persistCookieSelection(provider, true, config.domain, config.cookiesValidForDays)
-                : persistCookieSelection(provider, false, config.domain, config.cookiesValidForDays)
-        )
+    return () => {
+        config.providers.forEach(provider => {
+            if (provider.category === 'Essential') {
+                persistCookieSelection(provider, true, config.domain, config.cookiesValidForDays)
+            } else {
+                persistCookieSelection(provider, false, config.domain, config.cookiesValidForDays)
+            }
+        })
+    }
 }
 
 /**
@@ -137,7 +145,7 @@ export function useCookieState({ cookieProvider }: { cookieProvider: CookieProvi
     const consentGiven = cookieValue === COOKIE_VALUE_TRUE
     const [isEnabled, setIsEnabled] = useState(consentGiven)
 
-    useEffect(() => setIsEnabled(consentGiven), [cookieValue])
+    useEffect(() => setIsEnabled(consentGiven), [cookieValue, consentGiven])
 
     return { isEnabled, setIsEnabled }
 }

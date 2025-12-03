@@ -97,7 +97,11 @@ export class AuditService {
 /**
  * Create an audit service instance if audit is configured
  */
-export function createAuditService(auditConfig: AuditConfig | undefined, websiteName: string, domain: string): AuditService | null {
+export function createAuditService(
+    auditConfig: AuditConfig | undefined,
+    websiteName: string,
+    domain: string
+): AuditService | null {
     if (!auditConfig || !auditConfig.url || !auditConfig.userId) {
         return null
     }

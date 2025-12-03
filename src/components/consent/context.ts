@@ -1,6 +1,6 @@
 import { createContext } from 'react'
-import { CookieConsentBannerConfig } from '../../types'
 import { AuditService } from '../../auditService'
+import { CookieConsentBannerConfig } from '../../types'
 
 export interface ConsentState {
     isBannerOpen: boolean

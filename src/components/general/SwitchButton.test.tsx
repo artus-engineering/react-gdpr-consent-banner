@@ -10,7 +10,9 @@ describe('SwitchButton', () => {
     })
 
     it('should match the snapshot with screen reader label', () => {
-        const { container } = render(<SwitchButton name={name} onToggle={jest.fn()} toggled screenReaderLabel="Test Label" />)
+        const { container } = render(
+            <SwitchButton name={name} onToggle={jest.fn()} toggled screenReaderLabel="Test Label" />
+        )
         expect(container).toMatchSnapshot()
     })
 

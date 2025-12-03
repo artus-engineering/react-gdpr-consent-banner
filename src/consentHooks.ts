@@ -1,5 +1,5 @@
 import { isServer } from './functions'
-import { ConsentHook, ConsentHookContext, CookieCategory, GoogleConsentMapping, GoogleConsentState } from './types'
+import { ConsentHook, ConsentHookContext, CookieCategory } from './types'
 
 declare global {
     interface Window {
@@ -29,14 +29,22 @@ export class ConsentHookManager {
      * Register multiple consent hooks
      */
     registerHooks(hooks: ConsentHook[]): void {
-        hooks.forEach(hook => this.registerHook(hook))
+        hooks.forEach(hook => {
+            this.registerHook(hook)
+        })
     }
 
     /**
      * Execute hooks for a specific category and type
      */
-    async executeHooks(category: CookieCategory, type: ConsentHook['type'], context: ConsentHookContext): Promise<void> {
-        const relevantHooks = Array.from(this.hooks.values()).filter(hook => hook.category === category && hook.type === type)
+    async executeHooks(
+        category: CookieCategory,
+        type: ConsentHook['type'],
+        context: ConsentHookContext
+    ): Promise<void> {
+        const relevantHooks = Array.from(this.hooks.values()).filter(
+            hook => hook.category === category && hook.type === type
+        )
 
         for (const hook of relevantHooks) {
             try {
@@ -52,7 +60,7 @@ export class ConsentHookManager {
                 if (type === 'onLoad') {
                     this.executedHooks.add(hookId)
                 }
-            } catch (error) {
+            } catch {
                 // Silently handle errors in production
             }
         }
@@ -87,7 +95,9 @@ export function createCookieUtils(domain?: string) {
         set: (name: string, value: string, options: { expires?: number; domain?: string; path?: string } = {}) => {
             if (isServer()) return
 
-            const expiresDate = options.expires ? new Date(Date.now() + options.expires * 24 * 60 * 60 * 1000) : undefined
+            const expiresDate = options.expires
+                ? new Date(Date.now() + options.expires * 24 * 60 * 60 * 1000)
+                : undefined
             const cookieDomain = options.domain || domain
             const path = options.path || '/'
 
@@ -142,7 +152,7 @@ export function createGoogleAnalyticsHook(
             category: 'Essential',
             type: 'onLoad',
             description: 'Initialize Google Analytics script with default denied consent',
-            execute: async (context: ConsentHookContext) => {
+            execute: async (_context: ConsentHookContext) => {
                 // Always initialize the script, but with denied consent by default
                 if (!window.gtag) {
                     window.dataLayer = window.dataLayer || []
@@ -182,7 +192,7 @@ export function createGoogleAnalyticsHook(
             category: 'Analytics',
             type: 'onAccept',
             description: 'Enable Google Analytics data collection for analytics purposes',
-            execute: async (context: ConsentHookContext) => {
+            execute: async (_context: ConsentHookContext) => {
                 if (window.gtag) {
                     window.gtag('consent', 'update', {
                         analytics_storage: 'granted',
@@ -217,7 +227,7 @@ export function createGoogleAnalyticsHook(
             category: 'Marketing',
             type: 'onAccept',
             description: 'Enable Google Analytics marketing features (audiences, remarketing)',
-            execute: async (context: ConsentHookContext) => {
+            execute: async (_context: ConsentHookContext) => {
                 if (window.gtag) {
                     window.gtag('consent', 'update', {
                         ad_storage: 'granted',
@@ -326,7 +336,11 @@ export function createFacebookPixelHook(pixelId: string): ConsentHook[] {
                     script.src = 'https://connect.facebook.net/en_US/fbevents.js'
                     document.head.appendChild(script)
                     ;(window as any).fbq = (...args: any[]) => {
-                        ;(window as any).fbq.callMethod ? (window as any).fbq.callMethod.apply((window as any).fbq, args) : (window as any).fbq.queue.push(args)
+                        if ((window as any).fbq.callMethod) {
+                            ;(window as any).fbq.callMethod.apply((window as any).fbq, args)
+                        } else {
+                            ;(window as any).fbq.queue.push(args)
+                        }
                     }
                     ;(window as any).fbq.push = (window as any).fbq
                     ;(window as any).fbq.loaded = true
@@ -400,7 +414,9 @@ export function createGoogleTagManagerHook(
             document.head.appendChild(script)
 
             // Add noscript fallback
-            const existingNoscript = document.querySelector(`noscript iframe[src*="googletagmanager.com/ns.html?id=${gtmId}"]`)
+            const existingNoscript = document.querySelector(
+                `noscript iframe[src*="googletagmanager.com/ns.html?id=${gtmId}"]`
+            )
             if (!existingNoscript) {
                 const noscript = document.createElement('noscript')
                 noscript.innerHTML = `<iframe src="https://www.googletagmanager.com/ns.html?id=${gtmId}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`
@@ -423,7 +439,7 @@ export function createGoogleTagManagerHook(
                 category: 'Analytics',
                 type: 'onAccept',
                 description: 'Grant analytics_storage consent parameter in GTM',
-                execute: async (context: ConsentHookContext) => {
+                execute: async (_context: ConsentHookContext) => {
                     window.dataLayer = window.dataLayer || []
                     window.dataLayer.push('consent', 'update', {
                         analytics_storage: 'granted'
@@ -464,7 +480,7 @@ export function createGoogleTagManagerHook(
                 category: 'Marketing',
                 type: 'onAccept',
                 description: 'Grant ad_storage consent parameter in GTM',
-                execute: async (context: ConsentHookContext) => {
+                execute: async (_context: ConsentHookContext) => {
                     window.dataLayer = window.dataLayer || []
                     window.dataLayer.push('consent', 'update', {
                         ad_storage: 'granted'
@@ -505,7 +521,7 @@ export function createGoogleTagManagerHook(
                 category: 'Marketing',
                 type: 'onAccept',
                 description: 'Grant ad_user_data consent parameter in GTM',
-                execute: async (context: ConsentHookContext) => {
+                execute: async (_context: ConsentHookContext) => {
                     window.dataLayer = window.dataLayer || []
                     window.dataLayer.push('consent', 'update', {
                         ad_user_data: 'granted'
@@ -521,7 +537,7 @@ export function createGoogleTagManagerHook(
                 category: 'Marketing',
                 type: 'onReject',
                 description: 'Deny ad_user_data consent parameter in GTM',
-                execute: async (context: ConsentHookContext) => {
+                execute: async (_context: ConsentHookContext) => {
                     window.dataLayer = window.dataLayer || []
                     window.dataLayer.push('consent', 'update', {
                         ad_user_data: 'denied'
@@ -539,7 +555,7 @@ export function createGoogleTagManagerHook(
                 category: 'Marketing',
                 type: 'onAccept',
                 description: 'Grant ad_personalization consent parameter in GTM',
-                execute: async (context: ConsentHookContext) => {
+                execute: async (_context: ConsentHookContext) => {
                     window.dataLayer = window.dataLayer || []
                     window.dataLayer.push('consent', 'update', {
                         ad_personalization: 'granted'
@@ -583,7 +599,7 @@ export function createGoogleTagManagerHook(
             category: 'Analytics',
             type: 'onAccept',
             description: 'Grant analytics consent in GTM',
-            execute: async (context: ConsentHookContext) => {
+            execute: async (_context: ConsentHookContext) => {
                 window.dataLayer = window.dataLayer || []
                 window.dataLayer.push('consent', 'update', {
                     analytics_storage: 'granted',
@@ -622,7 +638,7 @@ export function createGoogleTagManagerHook(
             category: 'Marketing',
             type: 'onAccept',
             description: 'Grant marketing consent in GTM',
-            execute: async (context: ConsentHookContext) => {
+            execute: async (_context: ConsentHookContext) => {
                 window.dataLayer = window.dataLayer || []
                 window.dataLayer.push('consent', 'update', {
                     ad_storage: 'granted',
@@ -710,4 +726,5 @@ export function createCustomToolHook(
 }
 
 // Legacy function names for backward compatibility
-export const createGranularGoogleTagManagerHook = (gtmId: string) => createGoogleTagManagerHook(gtmId, { granular: true })
+export const createGranularGoogleTagManagerHook = (gtmId: string) =>
+    createGoogleTagManagerHook(gtmId, { granular: true })

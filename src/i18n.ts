@@ -7,7 +7,11 @@ import { SupportedLanguage } from './types'
  * @param fallbackLanguage - Fallback language if current language not found
  * @returns Localized text
  */
-export function getLocalizedText(text: string | Record<SupportedLanguage, string>, language: SupportedLanguage, fallbackLanguage: SupportedLanguage = 'enUS'): string {
+export function getLocalizedText(
+    text: string | Record<SupportedLanguage, string>,
+    language: SupportedLanguage,
+    fallbackLanguage: SupportedLanguage = 'enUS'
+): string {
     // If text is a simple string, return it directly
     if (typeof text === 'string') {
         return text

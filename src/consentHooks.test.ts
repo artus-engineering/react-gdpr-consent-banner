@@ -68,7 +68,7 @@ describe('Google Consent Mode v2 Tests', () => {
 
     describe('GTM Initialization', () => {
         it('should initialize GTM with default denied consent state', () => {
-            const hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
+            const _hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
 
             // GTM should be initialized immediately with default denied state
             expect(window.dataLayer).toContainEqual('consent')
@@ -446,7 +446,7 @@ describe('Google Consent Mode v2 Tests', () => {
 
     describe('Consent Mode v2 Compliance', () => {
         it('should include all required consent mode v2 parameters', () => {
-            const hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
+            const _hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
 
             // Check initialization includes all v2 parameters
             expect(window.dataLayer).toContainEqual(

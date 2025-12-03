@@ -1,16 +1,16 @@
 export * from './components'
 export * from './consentHooks'
+export { getLocalizedCookieText } from './functions'
 export * from './hooks'
 export * from './themes'
-export { getLocalizedCookieText } from './functions'
 
 export type {
-    CookieBannerTheme,
-    CookieConsentBannerConfig,
-    CookieProviderConfig as CookieProvider,
-    SupportedLanguage,
     ConsentHook,
     ConsentHookContext,
     ConsentHookType,
-    CookieCategory
+    CookieBannerTheme,
+    CookieCategory,
+    CookieConsentBannerConfig,
+    CookieProviderConfig as CookieProvider,
+    SupportedLanguage
 } from './types'

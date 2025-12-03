@@ -1,5 +1,5 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
-import { getLabel, getUnit, hexToRGBA, getLocalizedCookieText } from '../../functions'
+import { getLabel, getLocalizedCookieText, getUnit, hexToRGBA } from '../../functions'
 import { useConfig, useStyle } from '../../hooks'
 import { CookieProviderConfig } from '../../types'
 import { SwitchButton } from '../general'
@@ -42,7 +42,10 @@ export function CookieCategoryComponent({ provider, handleCookieToggle, isEnable
             <Disclosure as="div" className="mt-4" defaultOpen={false}>
                 {({ open }) => (
                     <>
-                        <DisclosureButton as="div" className="min-w-24 flex justify-end items-center hover:cursor-pointer mt-4">
+                        <DisclosureButton
+                            as="div"
+                            className="min-w-24 flex justify-end items-center hover:cursor-pointer mt-4"
+                        >
                             <p style={{ color: style.textSecondary }} className="text-xs">
                                 {getLabel('details', 'expandCookieDetails', config)}
                             </p>
@@ -77,7 +80,10 @@ export function CookieCategoryComponent({ provider, handleCookieToggle, isEnable
                         <DisclosurePanel as="div" className="grid xl:grid-cols-3 lg:grid-cols-2 gap-2 mt-6">
                             {provider.cookies.map(cookie => (
                                 <div
-                                    style={{ borderColor: hexToRGBA(style.bgSecondary, 0.6), backgroundColor: hexToRGBA(style.bgPrimary, 0.7) }}
+                                    style={{
+                                        borderColor: hexToRGBA(style.bgSecondary, 0.6),
+                                        backgroundColor: hexToRGBA(style.bgPrimary, 0.7)
+                                    }}
                                     className="p-3 rounded-lg border"
                                     key={cookie.name}
                                 >

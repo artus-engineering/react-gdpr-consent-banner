@@ -1,10 +1,10 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { CookieConsentBanner } from './ConsentBanner'
-import * as hooks from '../../hooks'
 import * as functions from '../../functions'
+import * as hooks from '../../hooks'
 import { DefaultTheme } from '../../themes'
-import { CookieConsentBannerConfigWithDefaults, CookieProviderConfig, CookieConsentState, CookieCategory } from '../../types'
+import { CookieConsentBannerConfigWithDefaults, CookieProviderConfig } from '../../types'
+import { CookieConsentBanner } from './ConsentBanner'
 
 // Mock the hooks module
 jest.mock('../../hooks', () => ({
@@ -12,7 +12,7 @@ jest.mock('../../hooks', () => ({
     useStyle: jest.fn(),
     useCookieProviders: jest.fn(),
     useSetStrictlyNecessaryCookiesOnly: jest.fn(),
-    useCookieConsentContext: jest.fn(),
+    useCookieConsentContext: jest.fn()
 }))
 
 // Mock functions module
@@ -22,52 +22,52 @@ jest.mock('../../functions', () => ({
         const labels: Record<string, Record<string, string>> = {
             headings: {
                 banner: 'Cookie Consent',
-                details: 'Cookie Settings',
+                details: 'Cookie Settings'
             },
             descriptions: {
-                cookieDetails: 'We use cookies to enhance your experience.',
+                cookieDetails: 'We use cookies to enhance your experience.'
             },
             buttons: {
                 acceptAllCookies: 'Accept All',
                 rejectAllNonNecessaryCookies: 'Reject All',
                 showDetails: 'Customize',
                 acceptSelectedCookies: 'Save Preferences',
-                back: 'Back',
+                back: 'Back'
             },
             links: {
-                cookiePolicy: 'Cookie Policy',
+                cookiePolicy: 'Cookie Policy'
             },
             cookieCategories: {
                 Essential: 'Essential',
                 Functional: 'Functional',
                 Analytics: 'Analytics',
-                Marketing: 'Marketing',
+                Marketing: 'Marketing'
             },
             cookieCategoryDescriptions: {
                 Essential: 'Required for the website to function properly.',
                 Functional: 'Enable personalized features.',
                 Analytics: 'Help us understand how visitors use our website.',
-                Marketing: 'Used to deliver relevant advertisements.',
+                Marketing: 'Used to deliver relevant advertisements.'
             },
             details: {
                 expandCookieDetails: 'Show cookie details',
                 cookieName: 'Name',
                 cookieDuration: 'Duration',
                 cookieAccessors: 'Accessors',
-                privacyPolicyOf: 'Privacy Policy of',
+                privacyPolicyOf: 'Privacy Policy of'
             },
             units: {
                 days: 'day',
-                daysPlural: 'days',
-            },
+                daysPlural: 'days'
+            }
         }
         return labels[section]?.[key] || key
     }),
-    hexToRGBA: jest.fn((hex, alpha = 1) => `rgba(0, 0, 0, ${alpha})`),
+    hexToRGBA: jest.fn((_hex, alpha = 1) => `rgba(0, 0, 0, ${alpha})`),
     persistCookieSelection: jest.fn(),
     setCookieConsentDisplayed: jest.fn(),
     getUnit: jest.fn(() => 'days'),
-    getLocalizedCookieText: jest.fn((text) => typeof text === 'string' ? text : text.enUS),
+    getLocalizedCookieText: jest.fn(text => (typeof text === 'string' ? text : text.enUS))
 }))
 
 describe('CookieConsentBanner - GDPR Compliance Tests', () => {
@@ -80,9 +80,7 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
         category: 'Essential',
         description: 'Required for website functionality',
         dataProtectionLink: 'https://example.com/privacy',
-        cookies: [
-            { name: 'session_id', duration: 1, unit: 'session', purpose: 'User session' },
-        ],
+        cookies: [{ name: 'session_id', duration: 1, unit: 'session', purpose: 'User session' }]
     }
 
     const analyticsProvider: CookieProviderConfig = {
@@ -94,8 +92,8 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
         serviceProvider: 'Google',
         cookies: [
             { name: '_ga', duration: 2, unit: 'years', purpose: 'Distinguish users' },
-            { name: '_gid', duration: 24, unit: 'days', purpose: 'Distinguish users' },
-        ],
+            { name: '_gid', duration: 24, unit: 'days', purpose: 'Distinguish users' }
+        ]
     }
 
     const marketingProvider: CookieProviderConfig = {
@@ -105,9 +103,7 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
         description: 'Advertising and tracking',
         dataProtectionLink: 'https://www.facebook.com/privacy',
         serviceProvider: 'Meta',
-        cookies: [
-            { name: '_fbp', duration: 90, unit: 'days', purpose: 'Track conversions' },
-        ],
+        cookies: [{ name: '_fbp', duration: 90, unit: 'days', purpose: 'Track conversions' }]
     }
 
     const functionalProvider: CookieProviderConfig = {
@@ -116,9 +112,7 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
         category: 'Functional',
         description: 'Store user preferences',
         dataProtectionLink: 'https://example.com/privacy',
-        cookies: [
-            { name: 'theme', duration: 365, unit: 'days', purpose: 'Theme preference' },
-        ],
+        cookies: [{ name: 'theme', duration: 365, unit: 'days', purpose: 'Theme preference' }]
     }
 
     const mockConfig: CookieConsentBannerConfigWithDefaults = {
@@ -127,7 +121,7 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
         providers: [essentialProvider, analyticsProvider, marketingProvider, functionalProvider],
         domain: 'example.com',
         cookiesValidForDays: 183,
-        lang: 'enUS',
+        lang: 'enUS'
     }
 
     const allProviders = [essentialProvider, analyticsProvider, marketingProvider, functionalProvider]
@@ -135,14 +129,13 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
     beforeEach(() => {
         mockSetIsBannerOpen = jest.fn()
         mockSetStrictlyNecessaryCookiesOnly = jest.fn()
-
         ;(hooks.useConfig as jest.Mock).mockReturnValue(mockConfig)
         ;(hooks.useStyle as jest.Mock).mockReturnValue(DefaultTheme)
         ;(hooks.useCookieProviders as jest.Mock).mockReturnValue(allProviders)
         ;(hooks.useSetStrictlyNecessaryCookiesOnly as jest.Mock).mockReturnValue(mockSetStrictlyNecessaryCookiesOnly)
         ;(hooks.useCookieConsentContext as jest.Mock).mockReturnValue({
             isBannerOpen: true,
-            setIsBannerOpen: mockSetIsBannerOpen,
+            setIsBannerOpen: mockSetIsBannerOpen
         })
 
         // Default: no cookies selected
@@ -164,7 +157,7 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
         it('should not render banner when isBannerOpen is false', () => {
             ;(hooks.useCookieConsentContext as jest.Mock).mockReturnValue({
                 isBannerOpen: false,
-                setIsBannerOpen: mockSetIsBannerOpen,
+                setIsBannerOpen: mockSetIsBannerOpen
             })
 
             const { container } = render(<CookieConsentBanner />)
@@ -435,7 +428,7 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
     describe('Reopening Banner - Restore Previous Selections', () => {
         it('should restore previously accepted cookies when banner is reopened', async () => {
             // Mock that Analytics cookies were previously accepted
-            ;(functions.getCookieSelection as jest.Mock).mockImplementation((provider) => {
+            ;(functions.getCookieSelection as jest.Mock).mockImplementation(provider => {
                 return provider.category === 'Analytics'
             })
 
@@ -475,7 +468,7 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
     describe('Changing Consent', () => {
         it('should allow changing previously accepted consent to rejected', async () => {
             // Start with Analytics accepted
-            ;(functions.getCookieSelection as jest.Mock).mockImplementation((provider) => {
+            ;(functions.getCookieSelection as jest.Mock).mockImplementation(provider => {
                 return provider.category === 'Analytics'
             })
 
@@ -565,7 +558,7 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
         it('should display multiple domains for cross-subdomain consent', async () => {
             const configWithCrossSubdomain = {
                 ...mockConfig,
-                crossSubDomainConsent: ['example.com', 'app.example.com', 'api.example.com'],
+                crossSubDomainConsent: ['example.com', 'app.example.com', 'api.example.com']
             }
             ;(hooks.useConfig as jest.Mock).mockReturnValue(configWithCrossSubdomain)
 
@@ -645,7 +638,7 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
     describe('Mixed Consent State', () => {
         it('should handle partial category acceptance correctly', async () => {
             // Only one provider in Analytics accepted
-            ;(functions.getCookieSelection as jest.Mock).mockImplementation((provider) => {
+            ;(functions.getCookieSelection as jest.Mock).mockImplementation(provider => {
                 return provider.id === 'google_analytics'
             })
 
@@ -711,7 +704,7 @@ describe('CookieConsentBanner - Edge Cases', () => {
         category: 'Essential',
         description: 'Minimal required cookies',
         dataProtectionLink: 'https://example.com/privacy',
-        cookies: [{ name: 'minimal', duration: 1, unit: 'session', purpose: 'Required' }],
+        cookies: [{ name: 'minimal', duration: 1, unit: 'session', purpose: 'Required' }]
     }
 
     const mockConfig: CookieConsentBannerConfigWithDefaults = {
@@ -720,22 +713,20 @@ describe('CookieConsentBanner - Edge Cases', () => {
         providers: [minimalProvider],
         domain: 'example.com',
         cookiesValidForDays: 183,
-        lang: 'enUS',
+        lang: 'enUS'
     }
 
     beforeEach(() => {
         mockSetIsBannerOpen = jest.fn()
         mockSetStrictlyNecessaryCookiesOnly = jest.fn()
-
         ;(hooks.useConfig as jest.Mock).mockReturnValue(mockConfig)
         ;(hooks.useStyle as jest.Mock).mockReturnValue(DefaultTheme)
         ;(hooks.useCookieProviders as jest.Mock).mockReturnValue([minimalProvider])
         ;(hooks.useSetStrictlyNecessaryCookiesOnly as jest.Mock).mockReturnValue(mockSetStrictlyNecessaryCookiesOnly)
         ;(hooks.useCookieConsentContext as jest.Mock).mockReturnValue({
             isBannerOpen: true,
-            setIsBannerOpen: mockSetIsBannerOpen,
+            setIsBannerOpen: mockSetIsBannerOpen
         })
-
         ;(functions.getCookieSelection as jest.Mock).mockReturnValue(false)
     })
 
@@ -752,7 +743,7 @@ describe('CookieConsentBanner - Edge Cases', () => {
     it('should handle empty cookie arrays gracefully', async () => {
         const emptyProvider: CookieProviderConfig = {
             ...minimalProvider,
-            cookies: [],
+            cookies: []
         }
         ;(hooks.useCookieProviders as jest.Mock).mockReturnValue([emptyProvider])
 
@@ -771,21 +762,20 @@ describe('CookieConsentBanner - Server-Side Rendering', () => {
 
     beforeEach(() => {
         mockSetIsBannerOpen = jest.fn()
-
         ;(hooks.useConfig as jest.Mock).mockReturnValue({
             cookiePolicyLink: 'https://example.com/cookies',
             websiteName: 'Test',
             providers: [],
             domain: 'example.com',
             cookiesValidForDays: 183,
-            lang: 'enUS',
+            lang: 'enUS'
         })
         ;(hooks.useStyle as jest.Mock).mockReturnValue(DefaultTheme)
         ;(hooks.useCookieProviders as jest.Mock).mockReturnValue([])
         ;(hooks.useSetStrictlyNecessaryCookiesOnly as jest.Mock).mockReturnValue(jest.fn())
         ;(hooks.useCookieConsentContext as jest.Mock).mockReturnValue({
             isBannerOpen: true,
-            setIsBannerOpen: mockSetIsBannerOpen,
+            setIsBannerOpen: mockSetIsBannerOpen
         })
     })
 
@@ -799,4 +789,3 @@ describe('CookieConsentBanner - Server-Side Rendering', () => {
         expect(container).toBeDefined()
     })
 })
-
