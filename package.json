@@ -1,6 +1,6 @@
 {
-    "name": "@artus-engineering/react-gdpr-cookie-consent",
-    "version": "0.1.5-beta",
+    "name": "@artus_engineering/react-gdpr-cookie-consent",
+    "version": "0.1.11",
     "type": "module",
     "description": "A simple and customizable GDPR cookie consent component for React.",
     "main": "dist/cjs/index.js",
@@ -11,9 +11,6 @@
         "README.md",
         "LICENSE"
     ],
-    "publishConfig": {
-        "registry": "https://npm.pkg.github.com"
-    },
     "scripts": {
         "dev": "concurrently \"rollup -c --watch\" \"cd example && npm run dev\"",
         "dev:lib": "rollup -c --watch",
@@ -49,9 +46,8 @@
     "author": "Yannic Schröer <yannic@schroeer.tech>",
     "license": "ISC",
     "peerDependencies": {
-        "@headlessui/react": "^2.2.7",
-        "react": "^19",
-        "react-dom": "^19"
+        "react": ">=18.0.0",
+        "react-dom": ">=18.0.0"
     },
     "devDependencies": {
         "@babel/preset-env": "7.28.5",

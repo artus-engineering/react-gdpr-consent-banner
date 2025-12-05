@@ -84,15 +84,11 @@ exports[`CookieConsentGate should render gate content if not consented to cookie
             </button>
           </div>
         </div>
-        <div
-          class="mt-4"
-          data-headlessui-state=""
+        <details
+          class="mt-4 group"
         >
-          <div
-            aria-expanded="false"
-            class="min-w-24 flex justify-end items-center hover:cursor-pointer mt-4"
-            data-headlessui-state=""
-            id="headlessui-disclosure-button-_r_0_"
+          <summary
+            class="min-w-24 flex justify-end items-center cursor-pointer mt-4 list-none [&::-webkit-details-marker]:hidden"
           >
             <p
               class="text-xs"
@@ -101,7 +97,7 @@ exports[`CookieConsentGate should render gate content if not consented to cookie
               Show details
             </p>
             <svg
-              class="w-6 h-6 ml-3"
+              class="w-6 h-6 ml-3 transition-transform group-open:rotate-180"
               fill="none"
               stroke="currentColor"
               stroke-width="1.5"
@@ -110,7 +106,7 @@ exports[`CookieConsentGate should render gate content if not consented to cookie
               xmlns="http://www.w3.org/2000/svg"
             >
               <title>
-                Chevron down to expand the section
+                Toggle cookie details
               </title>
               <path
                 d="m19.5 8.25-7.5 7.5-7.5-7.5"
@@ -118,8 +114,142 @@ exports[`CookieConsentGate should render gate content if not consented to cookie
                 stroke-linejoin="round"
               />
             </svg>
+          </summary>
+          <div
+            class="grid xl:grid-cols-3 lg:grid-cols-2 gap-2 mt-6"
+          >
+            <div
+              class="p-3 rounded-lg border"
+              style="border-color: rgba(248, 250, 252, 0.6); background-color: rgba(255, 255, 255, 0.7);"
+            >
+              <div
+                class="flex justify-between gap-6 "
+              >
+                <p
+                  class="inline text-xs font-medium"
+                  style="color: rgb(30, 41, 59);"
+                >
+                  Store the session
+                </p>
+              </div>
+              <div
+                class="flex justify-between gap-6 pt-6"
+              >
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  Name
+                </p>
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  app_session
+                </p>
+              </div>
+              <div
+                class="flex justify-between gap-6"
+              >
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  Storage Duration
+                </p>
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  7
+                   
+                  Days
+                </p>
+              </div>
+              <div
+                class="flex justify-between gap-6 "
+              >
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  Accessible By
+                </p>
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  Some Website
+                </p>
+              </div>
+            </div>
+            <div
+              class="p-3 rounded-lg border"
+              style="border-color: rgba(248, 250, 252, 0.6); background-color: rgba(255, 255, 255, 0.7);"
+            >
+              <div
+                class="flex justify-between gap-6 "
+              >
+                <p
+                  class="inline text-xs font-medium"
+                  style="color: rgb(30, 41, 59);"
+                >
+                  Store the login status
+                </p>
+              </div>
+              <div
+                class="flex justify-between gap-6 pt-6"
+              >
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  Name
+                </p>
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  logged_in
+                </p>
+              </div>
+              <div
+                class="flex justify-between gap-6"
+              >
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  Storage Duration
+                </p>
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  7
+                   
+                  Days
+                </p>
+              </div>
+              <div
+                class="flex justify-between gap-6 "
+              >
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  Accessible By
+                </p>
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  Some Website
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
+        </details>
       </div>
     </div>
     <div
@@ -215,15 +345,11 @@ exports[`CookieConsentGate should use serviceProvider when available 1`] = `
             </button>
           </div>
         </div>
-        <div
-          class="mt-4"
-          data-headlessui-state=""
+        <details
+          class="mt-4 group"
         >
-          <div
-            aria-expanded="false"
-            class="min-w-24 flex justify-end items-center hover:cursor-pointer mt-4"
-            data-headlessui-state=""
-            id="headlessui-disclosure-button-_r_2_"
+          <summary
+            class="min-w-24 flex justify-end items-center cursor-pointer mt-4 list-none [&::-webkit-details-marker]:hidden"
           >
             <p
               class="text-xs"
@@ -232,7 +358,7 @@ exports[`CookieConsentGate should use serviceProvider when available 1`] = `
               Show details
             </p>
             <svg
-              class="w-6 h-6 ml-3"
+              class="w-6 h-6 ml-3 transition-transform group-open:rotate-180"
               fill="none"
               stroke="currentColor"
               stroke-width="1.5"
@@ -241,7 +367,7 @@ exports[`CookieConsentGate should use serviceProvider when available 1`] = `
               xmlns="http://www.w3.org/2000/svg"
             >
               <title>
-                Chevron down to expand the section
+                Toggle cookie details
               </title>
               <path
                 d="m19.5 8.25-7.5 7.5-7.5-7.5"
@@ -249,8 +375,142 @@ exports[`CookieConsentGate should use serviceProvider when available 1`] = `
                 stroke-linejoin="round"
               />
             </svg>
+          </summary>
+          <div
+            class="grid xl:grid-cols-3 lg:grid-cols-2 gap-2 mt-6"
+          >
+            <div
+              class="p-3 rounded-lg border"
+              style="border-color: rgba(248, 250, 252, 0.6); background-color: rgba(255, 255, 255, 0.7);"
+            >
+              <div
+                class="flex justify-between gap-6 "
+              >
+                <p
+                  class="inline text-xs font-medium"
+                  style="color: rgb(30, 41, 59);"
+                >
+                  Store the session
+                </p>
+              </div>
+              <div
+                class="flex justify-between gap-6 pt-6"
+              >
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  Name
+                </p>
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  app_session
+                </p>
+              </div>
+              <div
+                class="flex justify-between gap-6"
+              >
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  Storage Duration
+                </p>
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  7
+                   
+                  Days
+                </p>
+              </div>
+              <div
+                class="flex justify-between gap-6 "
+              >
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  Accessible By
+                </p>
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  Google Analytics & Ads
+                </p>
+              </div>
+            </div>
+            <div
+              class="p-3 rounded-lg border"
+              style="border-color: rgba(248, 250, 252, 0.6); background-color: rgba(255, 255, 255, 0.7);"
+            >
+              <div
+                class="flex justify-between gap-6 "
+              >
+                <p
+                  class="inline text-xs font-medium"
+                  style="color: rgb(30, 41, 59);"
+                >
+                  Store the login status
+                </p>
+              </div>
+              <div
+                class="flex justify-between gap-6 pt-6"
+              >
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  Name
+                </p>
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  logged_in
+                </p>
+              </div>
+              <div
+                class="flex justify-between gap-6"
+              >
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  Storage Duration
+                </p>
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  7
+                   
+                  Days
+                </p>
+              </div>
+              <div
+                class="flex justify-between gap-6 "
+              >
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  Accessible By
+                </p>
+                <p
+                  class="inline text-xs"
+                  style="color: rgb(100, 116, 139);"
+                >
+                  Google Analytics & Ads
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
+        </details>
       </div>
     </div>
     <div

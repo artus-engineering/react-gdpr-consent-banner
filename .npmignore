@@ -10,3 +10,7 @@ public
 *.json
 *.config.js
 !package.json
+
+# Source maps (exclude from package to reduce size)
+**/*.map
+dist/**/*.map

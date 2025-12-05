@@ -10,11 +10,11 @@
         "declaration": true,
         "declarationDir": "types",
         "sourceMap": true,
-        "outDir": "dist",
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
         "emitDeclarationOnly": false,
-        "jsx": "react-jsx"
+        "jsx": "react-jsx",
+        "noEmit": true
     },
     "include": ["src", "example"],
     "exclude": ["node_modules"]

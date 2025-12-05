@@ -1,4 +1,3 @@
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { getLabel, getLocalizedCookieText, getUnit, hexToRGBA } from '../../functions'
 import { useConfig, useStyle } from '../../hooks'
 import { CookieProviderConfig } from '../../types'
@@ -39,89 +38,67 @@ export function CookieCategoryComponent({ provider, handleCookieToggle, isEnable
                     />
                 </div>
             </div>
-            <Disclosure as="div" className="mt-4" defaultOpen={false}>
-                {({ open }) => (
-                    <>
-                        <DisclosureButton
-                            as="div"
-                            className="min-w-24 flex justify-end items-center hover:cursor-pointer mt-4"
+            <details className="mt-4 group">
+                <summary className="min-w-24 flex justify-end items-center cursor-pointer mt-4 list-none [&::-webkit-details-marker]:hidden">
+                    <p style={{ color: style.textSecondary }} className="text-xs">
+                        {getLabel('details', 'expandCookieDetails', config)}
+                    </p>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-6 h-6 ml-3 transition-transform group-open:rotate-180"
+                        style={{ color: style.textSecondary }}
+                    >
+                        <title>Toggle cookie details</title>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                </summary>
+                <div className="grid xl:grid-cols-3 lg:grid-cols-2 gap-2 mt-6">
+                    {provider.cookies.map(cookie => (
+                        <div
+                            style={{
+                                borderColor: hexToRGBA(style.bgSecondary, 0.6),
+                                backgroundColor: hexToRGBA(style.bgPrimary, 0.7)
+                            }}
+                            className="p-3 rounded-lg border"
+                            key={cookie.name}
                         >
-                            <p style={{ color: style.textSecondary }} className="text-xs">
-                                {getLabel('details', 'expandCookieDetails', config)}
-                            </p>
-                            {open ? (
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={1.5}
-                                    stroke="currentColor"
-                                    className="w-6 h-6 ml-3"
-                                    style={{ color: style.textSecondary }}
-                                >
-                                    <title>Chevron up to collapse the section</title>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                </svg>
-                            ) : (
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth="1.5"
-                                    stroke="currentColor"
-                                    className="w-6 h-6 ml-3"
-                                    style={{ color: style.textSecondary }}
-                                >
-                                    <title>Chevron down to expand the section</title>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                </svg>
-                            )}
-                        </DisclosureButton>
-                        <DisclosurePanel as="div" className="grid xl:grid-cols-3 lg:grid-cols-2 gap-2 mt-6">
-                            {provider.cookies.map(cookie => (
-                                <div
-                                    style={{
-                                        borderColor: hexToRGBA(style.bgSecondary, 0.6),
-                                        backgroundColor: hexToRGBA(style.bgPrimary, 0.7)
-                                    }}
-                                    className="p-3 rounded-lg border"
-                                    key={cookie.name}
-                                >
-                                    <div className="flex justify-between gap-6 ">
-                                        <p style={{ color: style.textPrimary }} className="inline text-xs font-medium">
-                                            {getLocalizedCookieText(cookie.purpose)}
-                                        </p>
-                                    </div>
-                                    <div className="flex justify-between gap-6 pt-6">
-                                        <p style={{ color: style.textSecondary }} className="inline text-xs">
-                                            {getLabel('details', 'cookieName', config)}
-                                        </p>
-                                        <p style={{ color: style.textSecondary }} className="inline text-xs">
-                                            {cookie.name}
-                                        </p>
-                                    </div>
-                                    <div className="flex justify-between gap-6">
-                                        <p style={{ color: style.textSecondary }} className="inline text-xs">
-                                            {getLabel('details', 'cookieDuration', config)}
-                                        </p>
-                                        <p style={{ color: style.textSecondary }} className="inline text-xs">
-                                            {cookie.duration} {getUnit(cookie.duration, cookie.unit, config)}
-                                        </p>
-                                    </div>
-                                    <div className="flex justify-between gap-6 ">
-                                        <p style={{ color: style.textSecondary }} className="inline text-xs">
-                                            {getLabel('details', 'cookieAccessors', config)}
-                                        </p>
-                                        <p style={{ color: style.textSecondary }} className="inline text-xs">
-                                            {(cookie.accessors || [provider.name]).join(', ')}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-                        </DisclosurePanel>
-                    </>
-                )}
-            </Disclosure>
+                            <div className="flex justify-between gap-6 ">
+                                <p style={{ color: style.textPrimary }} className="inline text-xs font-medium">
+                                    {getLocalizedCookieText(cookie.purpose)}
+                                </p>
+                            </div>
+                            <div className="flex justify-between gap-6 pt-6">
+                                <p style={{ color: style.textSecondary }} className="inline text-xs">
+                                    {getLabel('details', 'cookieName', config)}
+                                </p>
+                                <p style={{ color: style.textSecondary }} className="inline text-xs">
+                                    {cookie.name}
+                                </p>
+                            </div>
+                            <div className="flex justify-between gap-6">
+                                <p style={{ color: style.textSecondary }} className="inline text-xs">
+                                    {getLabel('details', 'cookieDuration', config)}
+                                </p>
+                                <p style={{ color: style.textSecondary }} className="inline text-xs">
+                                    {cookie.duration} {getUnit(cookie.duration, cookie.unit, config)}
+                                </p>
+                            </div>
+                            <div className="flex justify-between gap-6 ">
+                                <p style={{ color: style.textSecondary }} className="inline text-xs">
+                                    {getLabel('details', 'cookieAccessors', config)}
+                                </p>
+                                <p style={{ color: style.textSecondary }} className="inline text-xs">
+                                    {(cookie.accessors || [provider.name]).join(', ')}
+                                </p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </details>
         </div>
     )
 }

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ConsentState, ConsentStateProviderContext } from './components/consent/context'
 import { COOKIE_VALUE_TRUE, DEFAULT_COOKIE_VALIDITY, DEFAULT_LANGUAGE } from './constants'
 import { cookieAccessor, getLabel, persistCookieSelection } from './functions'
@@ -25,7 +25,7 @@ export function useOpenCookieBanner() {
 
 export function useSetStrictlyNecessaryCookiesOnly() {
     const config = useConfig('useSetStrictlyNecessaryCookiesOnly')
-    return () => {
+    return useCallback(() => {
         config.providers.forEach(provider => {
             if (provider.category === 'Essential') {
                 persistCookieSelection(provider, true, config.domain, config.cookiesValidForDays)
@@ -33,7 +33,7 @@ export function useSetStrictlyNecessaryCookiesOnly() {
                 persistCookieSelection(provider, false, config.domain, config.cookiesValidForDays)
             }
         })
-    }
+    }, [config.providers, config.domain, config.cookiesValidForDays])
 }
 
 /**
@@ -44,13 +44,14 @@ export function useSetStrictlyNecessaryCookiesOnly() {
 export function useConfig(parentHookName?: string): CookieConsentBannerConfigWithDefaults {
     const { config } = useCookieConsentContext(parentHookName || 'useConfig')
 
-    const configWithDefaults: CookieConsentBannerConfigWithDefaults = {
-        ...config,
-        lang: config.lang || DEFAULT_LANGUAGE,
-        cookiesValidForDays: config.cookiesValidForDays || DEFAULT_COOKIE_VALIDITY
-    }
-
-    return configWithDefaults
+    return useMemo(
+        () => ({
+            ...config,
+            lang: config.lang || DEFAULT_LANGUAGE,
+            cookiesValidForDays: config.cookiesValidForDays || DEFAULT_COOKIE_VALIDITY
+        }),
+        [config]
+    )
 }
 
 /**
@@ -61,16 +62,17 @@ export function useConfig(parentHookName?: string): CookieConsentBannerConfigWit
 export function useStyle(): CookieConsentStyleWithDefaults {
     const { config } = useCookieConsentContext('useStyle')
 
-    const theme: CookieConsentStyleWithDefaults = {
-        bgPrimary: config.theme?.bgPrimary || DefaultTheme.bgPrimary,
-        bgSecondary: config.theme?.bgSecondary || DefaultTheme.bgSecondary,
-        textPrimary: config.theme?.textPrimary || DefaultTheme.textPrimary,
-        textSecondary: config.theme?.textSecondary || DefaultTheme.textSecondary,
-        primaryColor: config.theme?.primaryColor || DefaultTheme.primaryColor,
-        buttonText: config.theme?.buttonText || DefaultTheme.buttonText
-    }
-
-    return theme
+    return useMemo(
+        () => ({
+            bgPrimary: config.theme?.bgPrimary || DefaultTheme.bgPrimary,
+            bgSecondary: config.theme?.bgSecondary || DefaultTheme.bgSecondary,
+            textPrimary: config.theme?.textPrimary || DefaultTheme.textPrimary,
+            textSecondary: config.theme?.textSecondary || DefaultTheme.textSecondary,
+            primaryColor: config.theme?.primaryColor || DefaultTheme.primaryColor,
+            buttonText: config.theme?.buttonText || DefaultTheme.buttonText
+        }),
+        [config.theme]
+    )
 }
 
 /**
@@ -108,24 +110,27 @@ export function useCookieListener(cookieName: string) {
 export function useCookieProviders(parentHookName?: string): CookieProviderConfig[] {
     const config = useConfig(parentHookName || 'useCookieProviders')
 
-    const cookieConsentProvider: CookieProviderConfig = {
-        name: 'Cookie Consents',
-        id: 'cookie_consent',
-        category: 'Essential',
-        description: getLabel('cookiePolicy', 'autoCookieDescription', config),
-        dataProtectionLink: config.cookiePolicyLink,
-        cookies: config.providers.map(provider => {
-            return {
-                name: cookieAccessor(provider),
-                duration: config.cookiesValidForDays,
-                unit: 'days',
-                accessors: [config.domain],
-                purpose: getLabel('cookiePolicy', 'autoCookiePurpose', config)
-            }
-        })
-    }
+    // Memoize to prevent infinite re-renders in components that depend on this
+    return useMemo(() => {
+        const cookieConsentProvider: CookieProviderConfig = {
+            name: 'Cookie Consents',
+            id: 'cookie_consent',
+            category: 'Essential',
+            description: getLabel('cookiePolicy', 'autoCookieDescription', config),
+            dataProtectionLink: config.cookiePolicyLink,
+            cookies: config.providers.map(provider => {
+                return {
+                    name: cookieAccessor(provider),
+                    duration: config.cookiesValidForDays,
+                    unit: 'days',
+                    accessors: [config.domain],
+                    purpose: getLabel('cookiePolicy', 'autoCookiePurpose', config)
+                }
+            })
+        }
 
-    return [cookieConsentProvider, ...config.providers] as CookieProviderConfig[]
+        return [cookieConsentProvider, ...config.providers] as CookieProviderConfig[]
+    }, [config])
 }
 
 export function useCookieProvidersByCategory(): CookieProvidersByCategory {

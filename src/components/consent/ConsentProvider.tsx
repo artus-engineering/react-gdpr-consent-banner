@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { createAuditService } from '../../auditService'
 import { consentHookManager, createCookieUtils } from '../../consentHooks'
 import { CONSENT_DIALOG_HAS_BEEN_DISPLAYED, CONSENT_DIALOG_HAS_BEEN_DISPLAYED_VALUE } from '../../constants'
@@ -34,10 +34,13 @@ export function CookieConsentProvider({
 
     const openBanner = useCallback(() => setIsBannerOpen(true), [])
 
-    // Create audit service if configured
-    const auditService = createAuditService(config.audit, config.websiteName, config.domain)
+    // Create audit service if configured - memoize to prevent re-renders
+    const auditService = useMemo(
+        () => createAuditService(config.audit, config.websiteName, config.domain),
+        [config.audit, config.websiteName, config.domain]
+    )
 
-    // Initialize consent hooks system
+    // Initialize consent hooks system - run only once on mount
     useEffect(() => {
         // Register consent hooks
         if (config.consentHooks) {
@@ -85,18 +88,23 @@ export function CookieConsentProvider({
         if (!isServer()) {
             executeOnLoadHooks()
         }
-    }, [config])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    // Memoize context value to prevent unnecessary re-renders
+    const contextValue = useMemo(
+        () => ({
+            isBannerOpen,
+            setIsBannerOpen,
+            openBanner,
+            config,
+            auditService
+        }),
+        [isBannerOpen, setIsBannerOpen, openBanner, config, auditService]
+    )
 
     return (
-        <ConsentStateProviderContext.Provider
-            value={{
-                isBannerOpen,
-                setIsBannerOpen,
-                openBanner,
-                config,
-                auditService
-            }}
-        >
+        <ConsentStateProviderContext.Provider value={contextValue}>
             {children}
             {includeCookieBanner && <CookieConsentBanner />}
         </ConsentStateProviderContext.Provider>

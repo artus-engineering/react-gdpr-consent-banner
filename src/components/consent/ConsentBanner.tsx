@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
 import {
     getCookieSelection,
     getLabel,
@@ -18,6 +18,8 @@ import {
 import { CookieCategory, CookieConsentState, CookieProviderConfig } from '../../types'
 import { SwitchButton } from '../general'
 
+const emptySubscribe = () => () => {}
+
 export function CookieConsentBanner(): JSX.Element {
     const config = useConfig()
     const style = useStyle()
@@ -25,10 +27,12 @@ export function CookieConsentBanner(): JSX.Element {
     const setStrictlyNecessaryCookiesOnly = useSetStrictlyNecessaryCookiesOnly()
     const { isBannerOpen, setIsBannerOpen } = useCookieConsentContext()
     const [showDetails, setShowDetails] = useState<boolean>(false)
-    const [consentState, setConsentState] = useState<CookieConsentState>(getCookieConsentState)
     const [expandedProviders, setExpandedProviders] = useState<Set<string>>(new Set())
-    const [isClient, setIsClient] = useState(false)
 
+    // SSR-safe client detection using useSyncExternalStore
+    const isClient = useSyncExternalStore(emptySubscribe, () => true, () => false)
+
+    // Define getCookieConsentState BEFORE it's used
     const getCookieConsentState = useCallback((): CookieConsentState => {
         return cookieProviders.reduce((acc, cookie) => {
             if (!acc[cookie.category]) {
@@ -43,9 +47,19 @@ export function CookieConsentBanner(): JSX.Element {
         }, {} as CookieConsentState)
     }, [cookieProviders])
 
-    useEffect(() => setIsClient(true), [])
+    // Initialize consent state lazily
+    const [consentState, setConsentState] = useState<CookieConsentState>(() => {
+        if (typeof window === 'undefined') return {} as CookieConsentState
+        return getCookieConsentState()
+    })
+
+    // Sync consent state with cookie storage when banner opens
+    // This is a valid effect: synchronizing React state with external browser cookie storage
     useEffect(() => {
-        setConsentState(getCookieConsentState())
+        if (isBannerOpen) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- Synchronizing with external cookie storage
+            setConsentState(getCookieConsentState())
+        }
     }, [isBannerOpen, getCookieConsentState])
 
     function getSelectionState(cookie: CookieProviderConfig): boolean {

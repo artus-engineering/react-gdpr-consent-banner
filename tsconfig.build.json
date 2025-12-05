@@ -12,10 +12,10 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "experimentalDecorators": true,
-        "sourceMap": true,
-        "noEmit": true,
+        "sourceMap": false,
         "jsx": "react-jsx",
-        "rootDir": "src"
+        "rootDir": "src",
+        "types": ["react", "react-dom", "jest", "@testing-library/jest-dom"]
     },
     "include": ["src"],
     "exclude": ["node_modules", "*.stories.tsx", "**/*.test.ts", "**/*.test.tsx", "**/__tests__/**", "**/__snapshots__/**"]

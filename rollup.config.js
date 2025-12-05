@@ -11,6 +11,9 @@ import pkg from './package.json' with { type: 'json' }
 const dts = dtsPlugin.default || dtsPlugin
 
 function getBuildConfig(output) {
+    // Extract directory from output file path for outDir
+    const outputDir = output.file.split('/').slice(0, -1).join('/') || '.'
+    
     return {
         input: 'src/index.ts',
         output: [output],
@@ -19,7 +22,12 @@ function getBuildConfig(output) {
             commonjs(),
             typescript({
                 tsconfig: './tsconfig.build.json',
-                exclude: ['**/*.test.ts', '**/*.test.tsx', '**/__tests__/**', '**/__snapshots__/**']
+                exclude: ['**/*.test.ts', '**/*.test.tsx', '**/__tests__/**', '**/__snapshots__/**'],
+                compilerOptions: {
+                    declaration: false,
+                    declarationMap: false,
+                    outDir: outputDir
+                }
             }),
             postcss({
                 minimize: true,
@@ -30,6 +38,19 @@ function getBuildConfig(output) {
             terser({
                 format: {
                     preamble: `"use client";`
+                },
+                mangle: {
+                    // Don't mangle top-level exports to avoid ESM initialization issues
+                    toplevel: false,
+                    // Keep class and function names for debugging
+                    keep_classnames: true,
+                    keep_fnames: true
+                },
+                compress: {
+                    // Don't hoist functions which can cause initialization order issues
+                    hoist_funs: false,
+                    // Don't inline functions across module boundaries
+                    reduce_funcs: false
                 }
             }),
             analyze({ summaryOnly: true })
@@ -42,12 +63,12 @@ export default [
     getBuildConfig({
         file: pkg.main,
         format: 'cjs',
-        sourcemap: true
+        sourcemap: false
     }),
     getBuildConfig({
         file: pkg.module,
         format: 'esm',
-        sourcemap: true
+        sourcemap: false
     }),
     {
         input: 'src/index.ts',
