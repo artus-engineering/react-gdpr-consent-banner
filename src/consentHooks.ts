@@ -385,6 +385,10 @@ export function createGoogleTagManagerHook(
     // Initialize GTM immediately on page load with default denied consent
     // This is the correct implementation according to Google's documentation
     const initializeGTM = () => {
+        if (typeof window === 'undefined' || typeof document === 'undefined') {
+            return // Not in browser environment
+        }
+
         if (window.dataLayer?.find((item: any) => item.event === 'gtm.js')) {
             return // Already initialized
         }
@@ -426,7 +430,7 @@ export function createGoogleTagManagerHook(
     }
 
     // Initialize GTM immediately (this should run before any consent hooks)
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         initializeGTM()
     }
 

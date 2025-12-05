@@ -14,6 +14,11 @@ const mockAppendChild = jest.fn()
 const mockInsertBefore = jest.fn()
 const mockQuerySelector = jest.fn()
 
+// Ensure window is defined before mocking
+if (typeof window === 'undefined') {
+    ;(global as any).window = global
+}
+
 // Mock document
 Object.defineProperty(global.document, 'createElement', {
     value: jest.fn((tagName: string) => ({
@@ -44,6 +49,11 @@ Object.defineProperty(global.document, 'body', {
     }
 })
 
+// Ensure window.dataLayer is initialized
+if (typeof window !== 'undefined' && !window.dataLayer) {
+    window.dataLayer = []
+}
+
 // Mock cookie utilities
 const mockCookieRemove = jest.fn()
 const mockCookieSet = jest.fn()
@@ -52,7 +62,12 @@ const mockCookieGet = jest.fn()
 describe('Google Consent Mode v2 Tests', () => {
     beforeEach(() => {
         // Reset window.dataLayer
-        window.dataLayer = []
+        if (typeof window !== 'undefined') {
+            window.dataLayer = []
+        }
+
+        // Clear consent hook manager
+        consentHookManager.clearHooks()
 
         // Reset all mocks
         jest.clearAllMocks()
@@ -64,6 +79,7 @@ describe('Google Consent Mode v2 Tests', () => {
 
     afterEach(() => {
         jest.restoreAllMocks()
+        consentHookManager.clearHooks()
     })
 
     describe('GTM Initialization', () => {
