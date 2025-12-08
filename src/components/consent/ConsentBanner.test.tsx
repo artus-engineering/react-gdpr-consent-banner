@@ -17,6 +17,7 @@ jest.mock('../../hooks', () => ({
 
 // Mock functions module
 jest.mock('../../functions', () => ({
+    isServer: jest.fn(() => false),
     getCookieSelection: jest.fn(),
     getLabel: jest.fn((section, key) => {
         const labels: Record<string, Record<string, string>> = {
