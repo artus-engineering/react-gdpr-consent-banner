@@ -30,7 +30,42 @@ export function setCookie(key: string, value: string, domain: string, validForDa
     if (isServer()) {
         return
     }
-    document.cookie = `${key}=${value}; domain=${domain}; path=/; max-age=${validForDays * 86400}; SameSite=Lax; Secure`
+
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    const isHttps = window.location.protocol === 'https:'
+
+    // For localhost or HTTP, don't use Secure flag
+    const secureFlag = isLocalhost || !isHttps ? '' : '; Secure'
+
+    // For localhost, don't set domain attribute (browsers reject domain=localhost)
+    const domainAttr = isLocalhost ? '' : `; domain=${domain}`
+
+    const cookieString = `${key}=${value}${domainAttr}; path=/; max-age=${validForDays * 86400}; SameSite=Lax${secureFlag}`
+
+    try {
+        document.cookie = cookieString
+
+        // Verify the cookie was set - check after a small delay to ensure it's readable
+        if (process.env.NODE_ENV === 'development') {
+            // Use setTimeout to check after the cookie is actually written
+            setTimeout(() => {
+                const wasSet = document.cookie.split(';').some(c => c.trim().startsWith(`${key}=`))
+                console.log('[CookieConsent] Cookie set:', {
+                    key,
+                    value,
+                    domain: isLocalhost ? '(no domain attr)' : domain,
+                    wasSet,
+                    cookieString,
+                    allCookies: document.cookie.split(';').map(c => c.trim())
+                })
+            }, 0)
+        }
+    } catch (error) {
+        console.error('[CookieConsent] Failed to set cookie:', {
+            key,
+            error
+        })
+    }
 }
 
 /**

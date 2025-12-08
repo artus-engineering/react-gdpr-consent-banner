@@ -60,8 +60,16 @@ export class ConsentHookManager {
                 if (type === 'onLoad') {
                     this.executedHooks.add(hookId)
                 }
-            } catch {
-                // Silently handle errors in production
+            } catch (error) {
+                // Log errors in development
+                if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+                    console.error('[ConsentHook] Error executing hook:', {
+                        hookId: hook.id,
+                        type,
+                        category,
+                        error
+                    })
+                }
             }
         }
     }

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
+import { consentHookManager, createCookieUtils } from '../../consentHooks'
 import {
     getCookieSelection,
     getLabel,
@@ -30,7 +31,11 @@ export function CookieConsentBanner(): JSX.Element {
     const [expandedProviders, setExpandedProviders] = useState<Set<string>>(new Set())
 
     // SSR-safe client detection using useSyncExternalStore
-    const isClient = useSyncExternalStore(emptySubscribe, () => true, () => false)
+    const isClient = useSyncExternalStore(
+        emptySubscribe,
+        () => true,
+        () => false
+    )
 
     // Define getCookieConsentState BEFORE it's used
     const getCookieConsentState = useCallback((): CookieConsentState => {
@@ -118,21 +123,155 @@ export function CookieConsentBanner(): JSX.Element {
         })
     }
 
-    function handleAcceptAll() {
+    async function handleAcceptAll() {
         setAllCookiesAccepted()
         setCookieConsentDisplayed(config.domain, config.cookiesValidForDays)
+
+        // Execute onAccept hooks for all categories
+        const cookieUtils = createCookieUtils(config.domain)
+        const consentState: Record<CookieCategory, boolean> = {
+            Essential: true,
+            Functional: false,
+            Analytics: false,
+            Marketing: false
+        }
+
+        // Set all categories to true (accept all)
+        cookieProviders.forEach(provider => {
+            if (provider.category !== 'Essential') {
+                consentState[provider.category as CookieCategory] = true
+            }
+        })
+
+        const context = {
+            category: 'Essential' as CookieCategory,
+            consentState,
+            cookies: cookieUtils,
+            gtag: (window as any).gtag,
+            dataLayer: (window as any).dataLayer
+        }
+
+        // Execute onAccept hooks for all non-Essential categories
+        for (const category of ['Functional', 'Analytics', 'Marketing'] as CookieCategory[]) {
+            if (consentState[category]) {
+                await consentHookManager.executeHooks(category, 'onAccept', {
+                    ...context,
+                    category
+                })
+            }
+        }
+
         setIsBannerOpen(false)
     }
 
-    function handleRejectAll() {
+    async function handleRejectAll() {
         setStrictlyNecessaryCookiesOnly()
         setCookieConsentDisplayed(config.domain, config.cookiesValidForDays)
+
+        // Only execute onReject hooks if consent was previously given
+        const cookieUtils = createCookieUtils(config.domain)
+        const previousConsentState: Record<CookieCategory, boolean> = {
+            Essential: true,
+            Functional: false,
+            Analytics: false,
+            Marketing: false
+        }
+
+        // Check which categories had previous consent
+        cookieProviders.forEach(provider => {
+            if (provider.category !== 'Essential') {
+                const hadConsent = cookieUtils.get(`${provider.id}_consent`) === 'given'
+                previousConsentState[provider.category as CookieCategory] =
+                    previousConsentState[provider.category as CookieCategory] || hadConsent
+            }
+        })
+
+        const context = {
+            category: 'Essential' as CookieCategory,
+            consentState: previousConsentState,
+            cookies: cookieUtils,
+            gtag: (window as any).gtag,
+            dataLayer: (window as any).dataLayer
+        }
+
+        // Only execute onReject hooks for categories that had previous consent
+        for (const category of ['Functional', 'Analytics', 'Marketing'] as CookieCategory[]) {
+            if (previousConsentState[category]) {
+                await consentHookManager.executeHooks(category, 'onReject', {
+                    ...context,
+                    category
+                })
+            }
+        }
+
         setIsBannerOpen(false)
     }
 
-    function handleAcceptSelected() {
+    async function handleAcceptSelected() {
         setSelectedCookies()
         setCookieConsentDisplayed(config.domain, config.cookiesValidForDays)
+
+        // Execute hooks based on selected state AND previous state
+        const cookieUtils = createCookieUtils(config.domain)
+
+        // Current selections
+        const currentConsentState: Record<CookieCategory, boolean> = {
+            Essential: true,
+            Functional: false,
+            Analytics: false,
+            Marketing: false
+        }
+
+        // Previous consent state
+        const previousConsentState: Record<CookieCategory, boolean> = {
+            Essential: true,
+            Functional: false,
+            Analytics: false,
+            Marketing: false
+        }
+
+        // Build both states
+        cookieProviders.forEach(provider => {
+            if (provider.category !== 'Essential') {
+                const isSelected = getSelectionState(provider)
+                currentConsentState[provider.category as CookieCategory] =
+                    currentConsentState[provider.category as CookieCategory] || isSelected
+
+                const hadConsent = cookieUtils.get(`${provider.id}_consent`) === 'given'
+                previousConsentState[provider.category as CookieCategory] =
+                    previousConsentState[provider.category as CookieCategory] || hadConsent
+            }
+        })
+
+        const context = {
+            category: 'Essential' as CookieCategory,
+            consentState: currentConsentState,
+            cookies: cookieUtils,
+            gtag: (window as any).gtag,
+            dataLayer: (window as any).dataLayer
+        }
+
+        // Execute appropriate hooks based on state changes
+        for (const category of ['Functional', 'Analytics', 'Marketing'] as CookieCategory[]) {
+            const wasEnabled = previousConsentState[category]
+            const isEnabled = currentConsentState[category]
+
+            if (isEnabled && !wasEnabled) {
+                // Newly accepted
+                await consentHookManager.executeHooks(category, 'onAccept', {
+                    ...context,
+                    category
+                })
+            } else if (!isEnabled && wasEnabled) {
+                // Newly rejected (was enabled before)
+                await consentHookManager.executeHooks(category, 'onReject', {
+                    ...context,
+                    category
+                })
+            }
+            // If state didn't change (was enabled and still enabled, or was disabled and still disabled), do nothing
+        }
+
         setIsBannerOpen(false)
     }
 
