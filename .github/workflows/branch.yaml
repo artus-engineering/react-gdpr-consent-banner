@@ -6,17 +6,13 @@ on:
       - main
   pull_request_target:
 
-permissions:
-  contents: read
-  pull-requests: read # allows SonarQube to decorate PRs with analysis results
-  actions: write # upload/download coverage artifact between jobs
-
 jobs:
   tests:
     name: Tests
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      actions: write # upload/download coverage artifact between jobs
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
@@ -39,27 +35,18 @@ jobs:
       - name: Build package
         run: pnpm run build
 
-      - name: Tests
-        run: pnpm run test
-
       - name: Import test (dist)
         run: pnpm run test:import
 
-      - name: Upload coverage (lcov) for SonarQube
+      - name: Unit Tests
+        run: pnpm run test:unit
+
+      - name: Upload Unit Test Coverage (lcov) for SonarQube
         uses: actions/upload-artifact@v7
         with:
           name: coverage-lcov
           path: coverage/lcov.info
           if-no-files-found: error
-
-  visual:
-    name: Visual Tests
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v6
 
       # Baselines live under *-chromium-linux.png and must match the Playwright
       # Docker image (see AGENTS.md). The hosted runner’s bundled Chromium/fonts
@@ -80,7 +67,7 @@ jobs:
           path: playwright-report
           retention-days: 7
 
-      - name: Upload diff artifacts on failure
+      - name: Upload Playwright diff artifacts on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -91,6 +78,10 @@ jobs:
   scan:
     name: SonarQube Scan
     runs-on: ubuntu-latest
+    needs: tests
+    permissions:
+      contents: read
+      pull-requests: read # allows SonarQube to decorate PRs with analysis results
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6

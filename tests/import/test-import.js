@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 
 /**
- * Standalone script to test package imports
- * This script can be run independently to verify that the package works correctly
+ * Dist-level smoke test.
+ *
+ * Runs against the freshly built `dist/` output (CJS + ESM + .d.ts) to catch
+ * packaging regressions that Jest cannot see: missing/extra side-effect CSS
+ * imports, missing public exports, and missing type declarations. Invoked via
+ * `pnpm run test:import` and enforced by CI.
  */
 
 import fs from 'node:fs'
@@ -12,16 +16,17 @@ import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const require = createRequire(import.meta.url)
+const distDir = path.resolve(__dirname, '../../dist')
 
 console.log('🧪 Testing package imports...\n')
 
 try {
     console.log('📦 Testing CommonJS import...')
-    const cjsExports = require('../dist/cjs/index.cjs')
+    const cjsExports = require(path.join(distDir, 'cjs/index.cjs'))
     console.log('✅ CommonJS import successful')
 
     console.log('📦 Testing ESM build...')
-    const esmPath = path.join(__dirname, '../dist/esm/index.js')
+    const esmPath = path.join(distDir, 'esm/index.js')
     if (fs.existsSync(esmPath)) {
         console.log('✅ ESM build exists')
     } else {
@@ -29,8 +34,8 @@ try {
     }
 
     console.log('🎨 Checking for CSS import issues...')
-    const cjsContent = fs.readFileSync(path.join(__dirname, '../dist/cjs/index.cjs'), 'utf8')
-    const esmContent = fs.readFileSync(path.join(__dirname, '../dist/esm/index.js'), 'utf8')
+    const cjsContent = fs.readFileSync(path.join(distDir, 'cjs/index.cjs'), 'utf8')
+    const esmContent = fs.readFileSync(esmPath, 'utf8')
 
     if (cjsContent.includes('require("./index.css")') || cjsContent.includes('require("./styles/index.css")')) {
         throw new Error('CSS import found in CJS build')
@@ -64,7 +69,7 @@ try {
     console.log('✅ All required exports are available')
 
     console.log('📝 Checking type definitions...')
-    const typeDefPath = path.join(__dirname, '../dist/index.d.ts')
+    const typeDefPath = path.join(distDir, 'index.d.ts')
     if (fs.existsSync(typeDefPath)) {
         const typeDefContent = fs.readFileSync(typeDefPath, 'utf8')
         if (typeDefContent.includes('export declare const CookieConsentProvider')) {

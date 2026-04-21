@@ -1,6 +1,9 @@
 {
-    "name": "@artus_engineering/react-gdpr-cookie-consent",
+    "name": "@artus-engineering/react-gdpr-cookie-consent",
     "version": "0.1.11",
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com"
+    },
     "packageManager": "pnpm@10.33.0",
     "type": "module",
     "description": "A simple and customizable GDPR cookie consent component for React.",
@@ -13,10 +16,10 @@
         "dev:lib": "rollup -c --watch",
         "dev:example": "pnpm --dir example run dev",
         "build": "rollup -c --bundleConfigAsCjs",
-        "test": "jest --coverage --watchAll=false",
-        "test:watch": "jest --coverage --watch",
-        "test:import": "node scripts/test-import.js",
-        "test:all": "pnpm run test && pnpm run test:import",
+        "test": "pnpm run test:unit && pnpm run test:import && pnpm run test:visual",
+        "test:unit": "jest --coverage --watchAll=false",
+        "test:unit:watch": "jest --coverage --watch",
+        "test:import": "node tests/import/test-import.js",
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build",
         "test:visual": "playwright test",
@@ -24,13 +27,7 @@
         "prepare": "husky",
         "format": "biome format --write .",
         "lint": "biome check .",
-        "lint:fix": "biome check --write .",
-        "publish:npmjs": "node scripts/publish.js patch npmjs",
-        "publish:github": "node scripts/publish.js patch github",
-        "publish:dry": "node scripts/publish.js patch npmjs --dry-run",
-        "version:patch": "node scripts/publish.js patch npmjs --dry-run",
-        "version:minor": "node scripts/publish.js minor npmjs --dry-run",
-        "version:major": "node scripts/publish.js major npmjs --dry-run"
+        "lint:fix": "biome check --write ."
     },
     "keywords": ["gdpr", "cookie", "consent", "react", "privacy", "compliance"],
     "author": "Artus Engineering GmbH",

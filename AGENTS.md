@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Canonical contributor and AI-agent guide for `@artus_engineering/react-gdpr-cookie-consent`. Cursor rules in `.cursor/rules/*.mdc` point here; keep this file as the single source of truth.
+Canonical contributor and AI-agent guide for `@artus-engineering/react-gdpr-cookie-consent`. Cursor rules in `.cursor/rules/*.mdc` point here; keep this file as the single source of truth.
 
 ## Repository map
 
@@ -36,6 +36,13 @@ Jest (jsdom) runs behavior tests. Playwright runs visual tests against a built S
 - Reuse fixtures from `src/test-utils/fixtures.ts` instead of inlining cookie providers.
 - Clean cookies between tests when asserting on `document.cookie` (see existing tests for the pattern).
 - Coverage is tracked in `coverage/lcov.info` and uploaded to SonarQube; do not regress coverage on changed files.
+
+### Dist import smoke test
+
+- `tests/import/test-import.js` runs against the built `dist/` output (CJS + ESM + `.d.ts`) and catches packaging regressions Jest cannot see (missing exports, stray CSS `require`/`import`, missing types).
+- Invoked via `pnpm run test:import` (or `pnpm run test:all` for Jest + import). Requires a prior `pnpm run build`.
+- CI (`branch.yaml`) and release (`publish.yaml`) both run it.
+- When a new public export is added to `src/index.ts`, add it to the `requiredExports` list in `tests/import/test-import.js`.
 
 ### Visual test rules
 
@@ -116,3 +123,15 @@ Run locally before pushing:
 - [ ] Stories, tests, and the example app all reflect every public API change
 
 CI (`.github/workflows/branch.yaml`) enforces `lint`, `build`, `test`, `test:import`, visual tests, and SonarQube. A PR that ships a public-API change without a corresponding story, test, or example update should not be merged.
+
+## Publishing
+
+Releases are driven by GitHub Releases, not local npm scripts. See `.github/workflows/publish.yaml`.
+
+To cut a release:
+
+1. Ensure `main` is green.
+2. Create a GitHub Release with a semver tag, e.g. `v0.1.12` (leading `v` is stripped automatically).
+3. The workflow sets `package.json` version from the tag, runs `lint` → `test` → `build` → `test:import`, and publishes `@artus-engineering/react-gdpr-cookie-consent` to GitHub Packages (`https://npm.pkg.github.com`).
+
+The package inherits the repo's private visibility. Consumers need a GitHub PAT with `read:packages` and an `.npmrc` pointing the `@artus-engineering` scope at `https://npm.pkg.github.com/`.

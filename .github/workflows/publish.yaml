@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write  # Required for publishing to GitHub Packages
+      packages: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
@@ -20,23 +20,34 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: '22.x'
-          cache: 'pnpm'
-          cache-dependency-path: 'pnpm-lock.yaml'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@artus-engineering'
+          node-version: "22.x"
+          cache: "pnpm"
+          cache-dependency-path: "pnpm-lock.yaml"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@artus-engineering"
 
       - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Set version from release tag
         run: |
-          pnpm install --frozen-lockfile
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION#v}"
+          npm version "$VERSION" --no-git-tag-version --allow-same-version
 
       - name: Linting
         run: pnpm run lint
 
+      - name: Tests
+        run: pnpm run test
+
       - name: Build
         run: pnpm run build
 
-      - name: Publish to npm
-        run: pnpm publish --tag beta
+      - name: Import test (dist)
+        run: pnpm run test:import
+
+      - name: Publish to GitHub Packages
+        run: pnpm publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

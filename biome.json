@@ -6,7 +6,6 @@
             "**",
             "!node_modules/**",
             "!dist/**",
-            "!test-install/**",
             "!**/.next/**",
             "!**/coverage/**",
             "!**/build/**",
@@ -103,7 +102,6 @@
             "**",
             "!node_modules/**",
             "!dist/**",
-            "!test-install/**",
             "!**/.next/**",
             "!**/coverage/**",
             "!**/build/**",
@@ -365,7 +363,7 @@
             }
         },
         {
-            "includes": ["scripts/**/*.js", "**/scripts/**/*.js", "**/*.config.js"],
+            "includes": ["tests/**/*.js", "**/scripts/**/*.js", "**/*.config.js"],
             "javascript": {
                 "globals": ["require", "exports", "module", "__filename", "console", "process", "__dirname"]
             },

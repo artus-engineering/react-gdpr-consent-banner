@@ -1,15 +1,20 @@
 # Directories
+.cursor
 .github
 .husky
 .storybook
 .vscode
 example
 public
+tests
 
 # Files
+*.md
 *.json
 *.config.js
+*.config.ts
 !package.json
+!README.md
 
 # Source maps (exclude from package to reduce size)
 **/*.map
