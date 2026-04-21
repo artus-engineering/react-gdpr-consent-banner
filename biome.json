@@ -6,7 +6,6 @@
             "**",
             "!node_modules/**",
             "!dist/**",
-            "!example/**",
             "!test-install/**",
             "!**/.next/**",
             "!**/coverage/**",
@@ -104,7 +103,6 @@
             "**",
             "!node_modules/**",
             "!dist/**",
-            "!example/**",
             "!test-install/**",
             "!**/.next/**",
             "!**/coverage/**",
@@ -132,6 +130,7 @@
         }
     },
     "html": { "formatter": { "indentScriptAndStyle": false, "selfCloseVoidElements": "always" } },
+    "css": { "parser": { "tailwindDirectives": true } },
     "overrides": [
         {
             "includes": ["**/*.{ts,tsx,js,jsx}"],
@@ -360,7 +359,13 @@
         },
         { "includes": ["**/*.d.ts"], "linter": { "rules": {} } },
         {
-            "includes": ["scripts/**/*.js", "**/*.config.js"],
+            "includes": ["example/lib/**", "example/scripts/**"],
+            "linter": {
+                "rules": { "suspicious": { "noConsole": "off" } }
+            }
+        },
+        {
+            "includes": ["scripts/**/*.js", "**/scripts/**/*.js", "**/*.config.js"],
             "javascript": {
                 "globals": ["require", "exports", "module", "__filename", "console", "process", "__dirname"]
             },

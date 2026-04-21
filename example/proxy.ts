@@ -25,8 +25,7 @@ export function proxy(request: NextRequest) {
     response.headers.set(USER_ID_HEADER, userId)
 
     const forwarded = request.headers.get('x-forwarded-for')
-    const ip =
-        forwarded?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown'
+    const ip = forwarded?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown'
 
     response.headers.set('x-client-ip', ip)
 

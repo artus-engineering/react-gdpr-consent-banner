@@ -266,7 +266,9 @@ export default function HomePage() {
                         <div className="flex justify-between items-center h-16">
                             <div className="flex items-center gap-3">
                                 <Shield className="h-6 w-6 text-teal-600" />
-                                <h1 className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">GDPR Cookie Consent</h1>
+                                <h1 className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                                    GDPR Cookie Consent
+                                </h1>
                             </div>
                         </div>
                     </div>
@@ -276,9 +278,12 @@ export default function HomePage() {
                     <div className="max-w-6xl mx-auto space-y-8">
                         {/* Hero Section */}
                         <div className="text-center space-y-4">
-                            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">World-Class Cookie Consent</h2>
+                            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
+                                World-Class Cookie Consent
+                            </h2>
                             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                                A beautifully designed, GDPR-compliant cookie consent system with full customization and audit trail capabilities.
+                                A beautifully designed, GDPR-compliant cookie consent system with full customization and
+                                audit trail capabilities.
                             </p>
                         </div>
 
@@ -289,7 +294,9 @@ export default function HomePage() {
                                     <Palette className="h-5 w-5 text-teal-600" />
                                     <CardTitle>Theme Customization</CardTitle>
                                 </div>
-                                <CardDescription>Customize the appearance of your cookie consent banner with live preview</CardDescription>
+                                <CardDescription>
+                                    Customize the appearance of your cookie consent banner with live preview
+                                </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-8">
                                 {/* Two column layout: Themes + Colors on left, Preview on right */}
@@ -298,7 +305,9 @@ export default function HomePage() {
                                     <div className="space-y-6">
                                         {/* Preset themes with visual swatches */}
                                         <div>
-                                            <label className="text-sm font-medium mb-4 block text-slate-700">Preset Themes</label>
+                                            <p className="text-sm font-medium mb-4 block text-slate-700">
+                                                Preset Themes
+                                            </p>
                                             <div className="grid grid-cols-2 gap-3">
                                                 {Object.entries(presetThemes).map(([preset, theme]) => (
                                                     <button
@@ -317,14 +326,21 @@ export default function HomePage() {
                                                                 style={{
                                                                     backgroundColor: theme.bgPrimary,
                                                                     border:
-                                                                        theme.bgPrimary === '#ffffff' || theme.bgPrimary === '#fffbeb' || theme.bgPrimary === '#fafafa'
+                                                                        theme.bgPrimary === '#ffffff' ||
+                                                                        theme.bgPrimary === '#fffbeb' ||
+                                                                        theme.bgPrimary === '#fafafa'
                                                                             ? '1px solid #e2e8f0'
                                                                             : 'none'
                                                                 }}
                                                             />
-                                                            <div className="w-8 h-8 rounded-lg shadow-sm" style={{ backgroundColor: theme.primaryColor }} />
+                                                            <div
+                                                                className="w-8 h-8 rounded-lg shadow-sm"
+                                                                style={{ backgroundColor: theme.primaryColor }}
+                                                            />
                                                         </div>
-                                                        <span className="text-sm font-medium capitalize text-slate-700">{preset}</span>
+                                                        <span className="text-sm font-medium capitalize text-slate-700">
+                                                            {preset}
+                                                        </span>
                                                     </button>
                                                 ))}
                                             </div>
@@ -334,70 +350,97 @@ export default function HomePage() {
 
                                         {/* Custom color inputs - cleaner layout */}
                                         <div>
-                                            <label className="text-sm font-medium mb-4 block text-slate-700">Fine-tune Colors</label>
+                                            <p className="text-sm font-medium mb-4 block text-slate-700">
+                                                Fine-tune Colors
+                                            </p>
                                             <div className="space-y-3">
-                                                {(Object.keys(customTheme) as (keyof CookieConsentStyle)[]).map(colorKey => (
-                                                    <div key={colorKey} className="flex items-center gap-3">
-                                                        <div className="relative">
+                                                {(Object.keys(customTheme) as (keyof CookieConsentStyle)[]).map(
+                                                    colorKey => (
+                                                        <div key={colorKey} className="flex items-center gap-3">
+                                                            <div className="relative">
+                                                                <input
+                                                                    type="color"
+                                                                    id={colorKey}
+                                                                    value={customTheme[colorKey]}
+                                                                    onChange={e => {
+                                                                        const normalized = normalizeHexColor(
+                                                                            e.target.value
+                                                                        )
+                                                                        handleColorChange(colorKey, normalized)
+                                                                    }}
+                                                                    className="w-10 h-10 rounded-lg cursor-pointer border border-slate-200 hover:border-slate-400 transition-colors"
+                                                                    style={{ padding: 0 }}
+                                                                />
+                                                            </div>
+                                                            <div className="flex-1">
+                                                                <label
+                                                                    htmlFor={colorKey}
+                                                                    className="text-sm font-medium text-slate-600 block"
+                                                                >
+                                                                    {colorLabels[colorKey]}
+                                                                </label>
+                                                            </div>
                                                             <input
-                                                                type="color"
-                                                                id={colorKey}
+                                                                type="text"
                                                                 value={customTheme[colorKey]}
                                                                 onChange={e => {
+                                                                    const value = e.target.value
+                                                                    if (
+                                                                        value === '' ||
+                                                                        /^#?[0-9A-Fa-f]{0,6}$/i.test(value)
+                                                                    ) {
+                                                                        handleColorChange(colorKey, value)
+                                                                    }
+                                                                }}
+                                                                onBlur={e => {
                                                                     const normalized = normalizeHexColor(e.target.value)
                                                                     handleColorChange(colorKey, normalized)
                                                                 }}
-                                                                className="w-10 h-10 rounded-lg cursor-pointer border border-slate-200 hover:border-slate-400 transition-colors"
-                                                                style={{ padding: 0 }}
+                                                                className="w-24 text-xs px-3 py-2 border border-slate-200 rounded-lg font-mono text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                                placeholder="#000000"
                                                             />
                                                         </div>
-                                                        <div className="flex-1">
-                                                            <label htmlFor={colorKey} className="text-sm font-medium text-slate-600 block">
-                                                                {colorLabels[colorKey]}
-                                                            </label>
-                                                        </div>
-                                                        <input
-                                                            type="text"
-                                                            value={customTheme[colorKey]}
-                                                            onChange={e => {
-                                                                const value = e.target.value
-                                                                if (value === '' || /^#?[0-9A-Fa-f]{0,6}$/i.test(value)) {
-                                                                    handleColorChange(colorKey, value)
-                                                                }
-                                                            }}
-                                                            onBlur={e => {
-                                                                const normalized = normalizeHexColor(e.target.value)
-                                                                handleColorChange(colorKey, normalized)
-                                                            }}
-                                                            className="w-24 text-xs px-3 py-2 border border-slate-200 rounded-lg font-mono text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                            placeholder="#000000"
-                                                        />
-                                                    </div>
-                                                ))}
+                                                    )
+                                                )}
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* Right side: Live preview */}
                                     <div className="space-y-4">
-                                        <label className="text-sm font-medium text-slate-700 block">Live Preview</label>
+                                        <p className="text-sm font-medium text-slate-700 block">Live Preview</p>
                                         <div className="bg-slate-100 rounded-2xl p-6 min-h-[320px] flex items-end justify-center">
                                             {/* Banner preview - matches actual component */}
                                             <div
                                                 className="w-full max-w-md rounded-xl overflow-hidden"
                                                 style={{
                                                     backgroundColor: customTheme.bgPrimary,
-                                                    boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.08)'
+                                                    boxShadow:
+                                                        '0 10px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.08)'
                                                 }}
                                             >
                                                 <div className="p-4">
                                                     <div className="mb-3">
-                                                        <h3 className="text-base font-semibold mb-1" style={{ color: customTheme.textPrimary }}>
+                                                        <h3
+                                                            className="text-base font-semibold mb-1"
+                                                            style={{ color: customTheme.textPrimary }}
+                                                        >
                                                             Wir schätzen Ihre Privatsphäre
                                                         </h3>
-                                                        <p className="text-xs leading-relaxed" style={{ color: customTheme.textSecondary }}>
-                                                            Wir verwenden Cookies, um Ihre Erfahrung auf unserer Website zu verbessern.{' '}
-                                                            <span style={{ color: customTheme.primaryColor, textDecoration: 'underline' }}>Mehr erfahren</span>
+                                                        <p
+                                                            className="text-xs leading-relaxed"
+                                                            style={{ color: customTheme.textSecondary }}
+                                                        >
+                                                            Wir verwenden Cookies, um Ihre Erfahrung auf unserer Website
+                                                            zu verbessern.{' '}
+                                                            <span
+                                                                style={{
+                                                                    color: customTheme.primaryColor,
+                                                                    textDecoration: 'underline'
+                                                                }}
+                                                            >
+                                                                Mehr erfahren
+                                                            </span>
                                                         </p>
                                                     </div>
                                                     <div className="flex items-center justify-between gap-2">
@@ -456,7 +499,8 @@ export default function HomePage() {
                                 </CardHeader>
                                 <CardContent>
                                     <p className="text-sm text-muted-foreground">
-                                        Fully compliant with GDPR, CCPA, and other privacy regulations. Complete audit trail for all consent changes.
+                                        Fully compliant with GDPR, CCPA, and other privacy regulations. Complete audit
+                                        trail for all consent changes.
                                     </p>
                                 </CardContent>
                             </Card>
@@ -468,7 +512,8 @@ export default function HomePage() {
                                 </CardHeader>
                                 <CardContent>
                                     <p className="text-sm text-muted-foreground">
-                                        Simple configuration with pre-built hooks for Google Analytics, PostHog, Matomo, and more. Just add your IDs.
+                                        Simple configuration with pre-built hooks for Google Analytics, PostHog, Matomo,
+                                        and more. Just add your IDs.
                                     </p>
                                 </CardContent>
                             </Card>
@@ -479,7 +524,10 @@ export default function HomePage() {
                                     <CardTitle>Multi-Language</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <p className="text-sm text-muted-foreground">Built-in German and English translations. Easily extensible for any language with i18n support.</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        Built-in German and English translations. Easily extensible for any language
+                                        with i18n support.
+                                    </p>
                                 </CardContent>
                             </Card>
 
@@ -489,7 +537,10 @@ export default function HomePage() {
                                     <CardTitle>Fully Customizable</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <p className="text-sm text-muted-foreground">Complete control over colors, typography, and layout. Match your brand identity perfectly.</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        Complete control over colors, typography, and layout. Match your brand identity
+                                        perfectly.
+                                    </p>
                                 </CardContent>
                             </Card>
 
@@ -500,7 +551,8 @@ export default function HomePage() {
                                 </CardHeader>
                                 <CardContent>
                                     <p className="text-sm text-muted-foreground">
-                                        Block content until consent is given. Perfect for embedded videos, maps, and third-party widgets.
+                                        Block content until consent is given. Perfect for embedded videos, maps, and
+                                        third-party widgets.
                                     </p>
                                 </CardContent>
                             </Card>
@@ -512,7 +564,8 @@ export default function HomePage() {
                                 </CardHeader>
                                 <CardContent>
                                     <p className="text-sm text-muted-foreground">
-                                        Support for granular consent levels. Essential, Functional, Analytics, and Marketing categories.
+                                        Support for granular consent levels. Essential, Functional, Analytics, and
+                                        Marketing categories.
                                     </p>
                                 </CardContent>
                             </Card>
@@ -522,7 +575,9 @@ export default function HomePage() {
                         <Card>
                             <CardHeader>
                                 <CardTitle>Getting Started</CardTitle>
-                                <CardDescription>Learn how to integrate and customize the cookie consent banner</CardDescription>
+                                <CardDescription>
+                                    Learn how to integrate and customize the cookie consent banner
+                                </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
@@ -531,7 +586,8 @@ export default function HomePage() {
                                         Customize Your Theme
                                     </h4>
                                     <p className="text-sm text-muted-foreground ml-8">
-                                        Use the color pickers above to customize the banner appearance. Changes update in real-time.
+                                        Use the color pickers above to customize the banner appearance. Changes update
+                                        in real-time.
                                     </p>
                                 </div>
                                 <div className="space-y-2">
@@ -539,7 +595,9 @@ export default function HomePage() {
                                         <Badge variant="outline">2</Badge>
                                         Configure Providers
                                     </h4>
-                                    <p className="text-sm text-muted-foreground ml-8">Add your cookie providers with descriptions, privacy links, and cookie details.</p>
+                                    <p className="text-sm text-muted-foreground ml-8">
+                                        Add your cookie providers with descriptions, privacy links, and cookie details.
+                                    </p>
                                 </div>
                                 <div className="space-y-2">
                                     <h4 className="font-semibold flex items-center gap-2">
@@ -547,7 +605,8 @@ export default function HomePage() {
                                         Test the Banner
                                     </h4>
                                     <p className="text-sm text-muted-foreground ml-8">
-                                        Click &quot;Cookie-Einstellungen öffnen&quot; to see the full banner with all customization options.
+                                        Click &quot;Cookie-Einstellungen öffnen&quot; to see the full banner with all
+                                        customization options.
                                     </p>
                                 </div>
                             </CardContent>

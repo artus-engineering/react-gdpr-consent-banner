@@ -62,7 +62,6 @@ export function CookieConsentBanner(): ReactElement | null {
     // This is a valid effect: synchronizing React state with external browser cookie storage
     useEffect(() => {
         if (isBannerOpen) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect -- Synchronizing with external cookie storage
             setConsentState(getCookieConsentState())
         }
     }, [isBannerOpen, getCookieConsentState])

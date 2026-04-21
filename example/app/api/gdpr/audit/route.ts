@@ -72,7 +72,10 @@ export async function GET(request: NextRequest) {
         // For this example, we'll allow basic querying
 
         if (!userId && (!startDate || !endDate)) {
-            return NextResponse.json({ error: 'Either userId or date range (startDate, endDate) is required' }, { status: 400 })
+            return NextResponse.json(
+                { error: 'Either userId or date range (startDate, endDate) is required' },
+                { status: 400 }
+            )
         }
 
         // Import the function dynamically to avoid circular dependencies

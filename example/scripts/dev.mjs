@@ -1,9 +1,9 @@
 import { spawn } from 'node:child_process'
-import { createRequire } from 'node:module'
 import fs from 'node:fs'
+import { createRequire } from 'node:module'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { setTimeout as delay } from 'node:timers/promises'
+import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const exampleRoot = path.join(__dirname, '..')
@@ -27,13 +27,17 @@ async function releaseDevLock() {
     } catch {
         try {
             fs.unlinkSync(lockPath)
-        } catch {}
+        } catch {
+            /* ignore */
+        }
         return
     }
     if (typeof pid !== 'number') {
         try {
             fs.unlinkSync(lockPath)
-        } catch {}
+        } catch {
+            /* ignore */
+        }
         return
     }
     if (isProcessAlive(pid)) {
@@ -45,7 +49,9 @@ async function releaseDevLock() {
     }
     try {
         fs.unlinkSync(lockPath)
-    } catch {}
+    } catch {
+        /* ignore */
+    }
 }
 
 await releaseDevLock()
