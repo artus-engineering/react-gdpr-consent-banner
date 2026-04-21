@@ -1,6 +1,6 @@
 {
     "name": "@artus-engineering/react-gdpr-cookie-consent",
-    "version": "0.1.11",
+    "version": "1.0.0",
     "publishConfig": {
         "registry": "https://npm.pkg.github.com"
     },
