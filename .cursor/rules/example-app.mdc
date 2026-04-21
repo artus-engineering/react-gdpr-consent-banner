@@ -1,0 +1,13 @@
+---
+description: Example app consumption rules
+globs: example/**,src/index.ts
+alwaysApply: false
+---
+
+Example app rules. See the `Example app` section of [AGENTS.md](mdc:AGENTS.md) for the canonical guide.
+
+- The example app in `example/` consumes the library via `file:..` and acts as a living integration test.
+- When a new prop, hook, theme, or consent-hook factory becomes public (added to [src/index.ts](mdc:src/index.ts)), wire a realistic usage into `example/components/` or a route.
+- Removing or renaming a public export requires updating `example/` in the same PR.
+- Verify `pnpm --dir example run lint` and `pnpm --dir example run build` before opening a PR that touches `example/` or the library's public surface.
+- Do not commit `example/.env*` files. Keep `example/env.example` in sync with any new env vars.

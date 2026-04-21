@@ -1,0 +1,15 @@
+---
+description: Storybook authoring rules
+globs: src/components/**/*.tsx,**/*.stories.tsx,.storybook/**/*
+alwaysApply: false
+---
+
+Storybook authoring rules. See the `Storybook` section of [AGENTS.md](mdc:AGENTS.md) for the canonical guide.
+
+- Every public component under `src/components/**` has a co-located `*.stories.tsx`.
+- Use CSF3: `const meta: Meta<typeof X>` + `StoryObj<typeof X>`.
+- Components that call `useStyle` / `useConfig` / `useCookieState` must be wrapped via `withConsentProvider` from [.storybook/decorators.tsx](mdc:.storybook/decorators.tsx). Configure per-story through `parameters.consent` (`includeCookieBanner`, `markBannerDismissed`, `preSetCookies`, `config`).
+- Reuse `defaultStoryConfig` and the provider fixtures from [src/test-utils/fixtures.ts](mdc:src/test-utils/fixtures.ts). Do not inline ad-hoc providers.
+- One theme (`DefaultTheme`) and one locale (`enUS`) per story unless the story is specifically exercising theming or i18n.
+- Variants cover default state plus any meaningful interactive state (expanded, gated, disabled). Drive interactions through a `play` function when the resulting UI is stable.
+- Any new or changed story requires a regenerated Playwright baseline. See the Visual test rules.

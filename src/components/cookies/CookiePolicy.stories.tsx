@@ -1,73 +1,20 @@
-import { Meta, StoryFn } from '@storybook/react'
-import { CookieProvider } from '../..'
-import { CookieConsentBannerConfig, SupportedLanguage } from '../../types'
-import { CookieConsentProvider } from '../consent'
+import type { Meta, StoryObj } from '@storybook/react'
+import { withConsentProvider } from '../../../.storybook/decorators'
 import { CookiePolicy } from './CookiePolicy'
 
-export default {
-    title: 'CookiePolicy',
+const meta: Meta<typeof CookiePolicy> = {
+    title: 'Cookies/CookiePolicy',
     component: CookiePolicy,
-    id: 'CookiePolicy'
-} as Meta
-
-const WebsiteCookieProvider: CookieProvider = {
-    name: 'Some Website',
-    id: 'website',
-    category: 'Essential',
-    description:
-        'We use session cookies to store your session on our website. This cookie is necessary to use the website.',
-    dataProtectionLink: 'https://example.com/privacy',
-    cookies: [
-        {
-            name: 'app_session',
-            duration: 7,
-            unit: 'days',
-            purpose: 'Store the session'
-        },
-        {
-            name: 'logged_in',
-            duration: 7,
-            unit: 'days',
-            purpose: 'Store the login status'
-        }
-    ]
+    id: 'cookies-cookiepolicy',
+    decorators: [withConsentProvider],
+    parameters: {
+        layout: 'padded',
+        consent: { includeCookieBanner: false, markBannerDismissed: true }
+    }
 }
 
-const TrackingCookieProvider: CookieProvider = {
-    name: 'Some Tracking Service',
-    id: 'tracking',
-    category: 'Analytics',
-    description:
-        'We use Some Tracking Service to collect anonymous statistics about the use of our website. This helps us to improve the website.',
-    dataProtectionLink: 'https://example.com/privacy',
-    cookies: [
-        {
-            name: '_pk_id',
-            duration: 7,
-            unit: 'days',
-            purpose: 'Identifies returning visitors'
-        },
-        {
-            name: '_pk_ses',
-            duration: 7,
-            unit: 'days',
-            purpose: 'Stores the session of a visitor'
-        }
-    ]
-}
+export default meta
 
-const config: CookieConsentBannerConfig = {
-    lang: 'deDE' as SupportedLanguage,
-    websiteName: 'React Cookie Consent Banner Demo',
-    cookiePolicyLink: '/datenschutzerklaerung#cookie-richtlinie',
-    domain: 'localhost',
-    providers: [WebsiteCookieProvider, TrackingCookieProvider]
-}
+type Story = StoryObj<typeof CookiePolicy>
 
-const Template: StoryFn<typeof CookiePolicy> = () => (
-    <CookieConsentProvider config={config}>
-        <CookiePolicy />
-    </CookieConsentProvider>
-)
-
-export const Default: typeof Template = Template.bind({})
+export const Default: Story = {}

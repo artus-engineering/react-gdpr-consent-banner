@@ -1,0 +1,8 @@
+---
+description: Canonical contributor guide pointer for this repository
+alwaysApply: true
+---
+
+The canonical contributor and testing guide for this repository lives in [AGENTS.md](mdc:AGENTS.md) at the repo root.
+
+Before editing library source, tests, stories, or the example app, consult `AGENTS.md`. Scoped rules in this folder are shortcuts into specific sections; `AGENTS.md` is the authoritative source and wins on any conflict.

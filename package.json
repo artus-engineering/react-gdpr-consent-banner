@@ -19,6 +19,8 @@
         "test:all": "pnpm run test && pnpm run test:import",
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build",
+        "test:visual": "playwright test",
+        "test:visual:update": "playwright test --update-snapshots",
         "prepare": "husky",
         "format": "biome format --write .",
         "lint": "biome check .",
@@ -31,11 +33,11 @@
         "version:major": "node scripts/publish.js major npmjs --dry-run"
     },
     "keywords": ["gdpr", "cookie", "consent", "react", "privacy", "compliance"],
-    "author": "Yannic Schröer <yannic@schroeer.tech>",
+    "author": "Artus Engineering GmbH",
     "license": "ISC",
     "peerDependencies": {
-        "react": ">=18.0.0",
-        "react-dom": ">=18.0.0"
+        "react": ">=19.0.0",
+        "react-dom": ">=19.0.0"
     },
     "devDependencies": {
         "@babel/preset-env": "7.29.2",
@@ -44,12 +46,12 @@
         "@biomejs/biome": "2.4.12",
         "@chromatic-com/storybook": "5.1.2",
         "@jest/test-sequencer": "30.3.0",
+        "@playwright/test": "1.59.1",
         "@rollup/plugin-commonjs": "29.0.2",
         "@rollup/plugin-terser": "1.0.0",
         "@rollup/plugin-typescript": "12.3.0",
         "@storybook/addon-docs": "10.3.5",
         "@storybook/addon-links": "10.3.5",
-        "@storybook/addon-onboarding": "10.3.5",
         "@storybook/react": "10.3.5",
         "@storybook/react-vite": "10.3.5",
         "@tailwindcss/postcss": "4.2.3",
@@ -68,6 +70,7 @@
         "concurrently": "^9.2.1",
         "diff-sequences": "^29.6.3",
         "esbuild": "0.28.0",
+        "http-server": "14.1.1",
         "husky": "9.1.7",
         "jest": "30.3.0",
         "jest-environment-jsdom": "30.3.0",
@@ -87,13 +90,15 @@
     "jest": {
         "testEnvironment": "jsdom",
         "setupFilesAfterEnv": ["<rootDir>/src/setupTests.ts"],
+        "testPathIgnorePatterns": ["/node_modules/", "<rootDir>/tests/", "<rootDir>/dist/"],
         "collectCoverageFrom": [
             "src/**/*.{ts,tsx}",
             "!src/**/*.d.ts",
             "!src/**/*.test.{ts,tsx}",
             "!src/**/*.stories.{ts,tsx}",
             "!src/setupTests.ts",
-            "!src/**/index.ts"
+            "!src/**/index.ts",
+            "!src/test-utils/**"
         ],
         "coverageDirectory": "coverage",
         "coverageProvider": "v8",
@@ -122,6 +127,7 @@
     "pnpm": {
         "overrides": {
             "yaml": "^2.8.3"
-        }
+        },
+        "ignoredBuiltDependencies": ["esbuild", "sharp", "unrs-resolver"]
     }
 }

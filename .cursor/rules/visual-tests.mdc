@@ -1,0 +1,19 @@
+---
+description: Playwright visual regression rules
+globs: tests/visual/**/*,playwright.config.ts,.storybook/**/*,**/*.stories.tsx
+alwaysApply: false
+---
+
+Playwright visual regression rules. See the `Visual test rules` section of [AGENTS.md](mdc:AGENTS.md) for the canonical guide.
+
+- Baselines are stored at `tests/visual/stories.spec.ts-snapshots/<story-id>-chromium-linux.png` and must be generated on Linux to match CI.
+- After adding / renaming / changing a story, regenerate baselines via the Playwright Linux container:
+  ```bash
+  docker run --rm --ipc=host -e CI=true -v "$(pwd)":/work -w /work \
+    mcr.microsoft.com/playwright:v1.59.1-noble bash -lc \
+    "npm i -g pnpm@10.33.0 >/dev/null && pnpm install --frozen-lockfile && \
+     pnpm run build-storybook && pnpm run test:visual:update"
+  ```
+- Review the regenerated PNGs visually before committing. Never commit `-actual.png` / `-diff.png` outputs.
+- Flake mitigation already in [playwright.config.ts](mdc:playwright.config.ts): fixed viewport (1280x800), `en-GB` locale, UTC timezone, light colour scheme, reduced-motion. Do not loosen `maxDiffPixelRatio` — stub non-determinism in the story instead.
+- The spec reads `storybook-static/index.json`; stories must build (`pnpm run build-storybook`) before `pnpm run test:visual` runs.

@@ -1,0 +1,15 @@
+---
+description: Jest testing rules for the library source
+globs: src/**/*.ts,src/**/*.tsx
+alwaysApply: false
+---
+
+Jest test rules. See the `Testing` section of [AGENTS.md](mdc:AGENTS.md) for the canonical guide.
+
+- Every `src/**/*.ts` logic file needs a co-located `*.test.ts`.
+- Every `src/components/**/*.tsx` component needs a co-located `*.test.tsx`.
+- Use `@testing-library/react` + `@testing-library/user-event`. Prefer role / label queries over `data-testid`.
+- Reuse fixtures from `src/test-utils/fixtures.ts` — do not inline cookie providers.
+- Clean cookies between tests when asserting on `document.cookie`.
+- Adding a new public export in `src/index.ts` without a test is not acceptable.
+- Do not regress coverage on files you touch (Sonar tracks `coverage/lcov.info`).
