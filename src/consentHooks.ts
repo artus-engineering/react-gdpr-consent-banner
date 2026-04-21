@@ -78,33 +78,35 @@ function createGranularGtmHooks(): ConsentHook[] {
         const { consentKey, category, idSuffix } = def
         const grantedEvent = `${consentKey}_granted`
         const deniedEvent = `${consentKey}_denied`
-        hooks.push({
-            id: `gtm-${idSuffix}`,
-            category,
-            type: 'onAccept',
-            description: `Grant ${consentKey} consent parameter in GTM`,
-            execute: async () => {
-                pushGtmDataLayerConsent(
-                    { [consentKey]: 'granted' },
-                    { event: grantedEvent, consent_parameter: consentKey }
-                )
-            }
-        })
-        hooks.push({
-            id: `gtm-${idSuffix}-reject`,
-            category,
-            type: 'onReject',
-            description: `Deny ${consentKey} consent parameter in GTM`,
-            execute: async (context: ConsentHookContext) => {
-                pushGtmDataLayerConsent(
-                    { [consentKey]: 'denied' },
-                    { event: deniedEvent, consent_parameter: consentKey }
-                )
-                if (def.rejectCookieNames?.length) {
-                    removeConsentCookiesForHostname(context, def.rejectCookieNames)
+        hooks.push(
+            {
+                id: `gtm-${idSuffix}`,
+                category,
+                type: 'onAccept',
+                description: `Grant ${consentKey} consent parameter in GTM`,
+                execute: async () => {
+                    pushGtmDataLayerConsent(
+                        { [consentKey]: 'granted' },
+                        { event: grantedEvent, consent_parameter: consentKey }
+                    )
+                }
+            },
+            {
+                id: `gtm-${idSuffix}-reject`,
+                category,
+                type: 'onReject',
+                description: `Deny ${consentKey} consent parameter in GTM`,
+                execute: async (context: ConsentHookContext) => {
+                    pushGtmDataLayerConsent(
+                        { [consentKey]: 'denied' },
+                        { event: deniedEvent, consent_parameter: consentKey }
+                    )
+                    if (def.rejectCookieNames?.length) {
+                        removeConsentCookiesForHostname(context, def.rejectCookieNames)
+                    }
                 }
             }
-        })
+        )
     }
     return hooks
 }

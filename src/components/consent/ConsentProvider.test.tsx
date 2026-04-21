@@ -4,7 +4,7 @@ import { consentHookManager } from '../../consentHooks'
 import { CONSENT_DIALOG_HAS_BEEN_DISPLAYED, CONSENT_DIALOG_HAS_BEEN_DISPLAYED_VALUE } from '../../constants'
 import { CookieConsentBannerConfig, CookieProviderConfig } from '../../types'
 import { CookieConsentProvider } from './ConsentProvider'
-import { ConsentStateProviderContext } from './context'
+import { ConsentState, ConsentStateProviderContext } from './context'
 
 function clearAllCookies() {
     for (const cookie of document.cookie.split(';')) {
@@ -15,7 +15,7 @@ function clearAllCookies() {
     }
 }
 
-function ContextProbe({ onContext }: { onContext: (ctx: any) => void }) {
+function ContextProbe({ onContext }: { readonly onContext: (ctx: ConsentState | null) => void }) {
     const ctx = useContext(ConsentStateProviderContext)
     onContext(ctx)
     return <div data-testid="probe">ready</div>
