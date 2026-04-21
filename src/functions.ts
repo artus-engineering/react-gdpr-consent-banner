@@ -15,7 +15,7 @@ import { CookieProviderConfig, SectionKeys, SupportedLanguage, TranslationSectio
  * @returns {boolean} True if the code is running on the server, false otherwise.
  */
 export function isServer(): boolean {
-    return typeof globalThis.window === 'undefined' || typeof globalThis.document === 'undefined'
+    return globalThis.window === undefined || globalThis.document === undefined
 }
 
 /**

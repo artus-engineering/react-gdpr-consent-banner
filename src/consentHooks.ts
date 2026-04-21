@@ -11,6 +11,12 @@ declare global {
     }
 }
 
+const GTM_CONTAINER_ID_PATTERN = /^GTM-[A-Z0-9]+$/
+
+function isValidGtmContainerId(id: string): boolean {
+    return GTM_CONTAINER_ID_PATTERN.test(id)
+}
+
 /**
  * Consent Hook Manager - Scalable system for handling consent-driven code execution
  */
@@ -393,8 +399,12 @@ export function createGoogleTagManagerHook(
     // Initialize GTM immediately on page load with default denied consent
     // This is the correct implementation according to Google's documentation
     const initializeGTM = () => {
-        if (typeof globalThis.window === 'undefined' || typeof globalThis.document === 'undefined') {
+        if (globalThis.window === undefined || globalThis.document === undefined) {
             return // Not in browser environment
+        }
+
+        if (!isValidGtmContainerId(gtmId)) {
+            return
         }
 
         if (globalThis.window.dataLayer?.find((item: any) => item.event === 'gtm.js')) {
@@ -431,14 +441,20 @@ export function createGoogleTagManagerHook(
             )
             if (!existingNoscript) {
                 const noscript = document.createElement('noscript')
-                noscript.innerHTML = `<iframe src="https://www.googletagmanager.com/ns.html?id=${gtmId}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`
+                const iframe = document.createElement('iframe')
+                iframe.src = `https://www.googletagmanager.com/ns.html?id=${encodeURIComponent(gtmId)}`
+                iframe.height = '0'
+                iframe.width = '0'
+                iframe.style.display = 'none'
+                iframe.style.visibility = 'hidden'
+                noscript.appendChild(iframe)
                 document.body.appendChild(noscript)
             }
         }
     }
 
     // Initialize GTM immediately (this should run before any consent hooks)
-    if (typeof globalThis.window !== 'undefined' && typeof globalThis.document !== 'undefined') {
+    if (globalThis.window !== undefined && globalThis.document !== undefined) {
         initializeGTM()
     }
 

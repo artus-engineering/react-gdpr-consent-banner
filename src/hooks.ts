@@ -150,7 +150,7 @@ export function useCookieState({ cookieProvider }: { cookieProvider: CookieProvi
     const consentGiven = cookieValue === COOKIE_VALUE_TRUE
     const [manualValue, setManualValue] = useState<boolean | null>(null)
 
-    const isEnabled = manualValue !== null ? manualValue : consentGiven
+    const isEnabled = manualValue === null ? consentGiven : manualValue
 
     const setIsEnabled = (value: boolean | ((prev: boolean) => boolean)) => {
         if (typeof value === 'function') {

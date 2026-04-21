@@ -13,7 +13,7 @@ const mockAppendChild = jest.fn()
 const mockInsertBefore = jest.fn()
 const mockQuerySelector = jest.fn()
 
-if (typeof globalThis.window === 'undefined') {
+if (globalThis.window === undefined) {
     ;(globalThis as any).window = globalThis
 }
 
@@ -47,7 +47,7 @@ Object.defineProperty(globalThis.document, 'body', {
 })
 
 // Ensure globalThis.window.dataLayer is initialized
-if (typeof globalThis.window !== 'undefined' && !globalThis.window.dataLayer) {
+if (globalThis.window !== undefined && !globalThis.window.dataLayer) {
     globalThis.window.dataLayer = []
 }
 
@@ -59,7 +59,7 @@ const mockCookieGet = jest.fn()
 describe('Google Consent Mode v2 Tests', () => {
     beforeEach(() => {
         // Reset globalThis.window.dataLayer
-        if (typeof globalThis.window !== 'undefined') {
+        if (globalThis.window !== undefined) {
             globalThis.window.dataLayer = []
         }
 

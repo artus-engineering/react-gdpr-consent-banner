@@ -54,7 +54,7 @@ export function CookieConsentBanner(): ReactElement | null {
 
     // Initialize consent state lazily
     const [consentState, setConsentState] = useState<CookieConsentState>(() => {
-        if (typeof globalThis.window === 'undefined') return {} as CookieConsentState
+        if (globalThis.window === undefined) return {} as CookieConsentState
         return getCookieConsentState()
     })
 
