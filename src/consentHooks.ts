@@ -17,6 +17,98 @@ function isValidGtmContainerId(id: string): boolean {
     return GTM_CONTAINER_ID_PATTERN.test(id)
 }
 
+function ensureWindowDataLayer(): void {
+    globalThis.window.dataLayer = globalThis.window.dataLayer || []
+}
+
+function pushGtmDataLayerConsent(consentUpdate: Record<string, string>, eventMeta: Record<string, string>): void {
+    ensureWindowDataLayer()
+    globalThis.window.dataLayer.push('consent', 'update', consentUpdate, eventMeta)
+}
+
+function removeConsentCookiesForHostname(
+    context: ConsentHookContext,
+    cookieNames: readonly string[],
+    additionalCookieDomains: readonly string[] = []
+): void {
+    const hostDomain = `.${globalThis.window.location.hostname}`
+    for (const name of cookieNames) {
+        context.cookies.remove(name)
+        context.cookies.remove(name, { domain: hostDomain })
+        for (const domain of additionalCookieDomains) {
+            context.cookies.remove(name, { domain })
+        }
+    }
+}
+
+type GranularGtmConsentKey = 'analytics_storage' | 'ad_storage' | 'ad_user_data' | 'ad_personalization'
+
+type GranularGtmDefinition = {
+    idSuffix: string
+    category: CookieCategory
+    consentKey: GranularGtmConsentKey
+    rejectCookieNames?: readonly string[]
+}
+
+const GRANULAR_GTM_HOOK_DEFINITIONS: readonly GranularGtmDefinition[] = [
+    {
+        idSuffix: 'analytics-storage',
+        category: 'Analytics',
+        consentKey: 'analytics_storage',
+        rejectCookieNames: ['_ga', '_gid', '_ga_*']
+    },
+    {
+        idSuffix: 'ad-storage',
+        category: 'Marketing',
+        consentKey: 'ad_storage',
+        rejectCookieNames: ['_gcl_*', '_gac_*', '_gat_*']
+    },
+    { idSuffix: 'ad-user-data', category: 'Marketing', consentKey: 'ad_user_data' },
+    {
+        idSuffix: 'ad-personalization',
+        category: 'Marketing',
+        consentKey: 'ad_personalization',
+        rejectCookieNames: ['__gads', '__gpi']
+    }
+]
+
+function createGranularGtmHooks(): ConsentHook[] {
+    const hooks: ConsentHook[] = []
+    for (const def of GRANULAR_GTM_HOOK_DEFINITIONS) {
+        const { consentKey, category, idSuffix } = def
+        const grantedEvent = `${consentKey}_granted`
+        const deniedEvent = `${consentKey}_denied`
+        hooks.push({
+            id: `gtm-${idSuffix}`,
+            category,
+            type: 'onAccept',
+            description: `Grant ${consentKey} consent parameter in GTM`,
+            execute: async () => {
+                pushGtmDataLayerConsent(
+                    { [consentKey]: 'granted' },
+                    { event: grantedEvent, consent_parameter: consentKey }
+                )
+            }
+        })
+        hooks.push({
+            id: `gtm-${idSuffix}-reject`,
+            category,
+            type: 'onReject',
+            description: `Deny ${consentKey} consent parameter in GTM`,
+            execute: async (context: ConsentHookContext) => {
+                pushGtmDataLayerConsent(
+                    { [consentKey]: 'denied' },
+                    { event: deniedEvent, consent_parameter: consentKey }
+                )
+                if (def.rejectCookieNames?.length) {
+                    removeConsentCookiesForHostname(context, def.rejectCookieNames)
+                }
+            }
+        })
+    }
+    return hooks
+}
+
 /**
  * Consent Hook Manager - Scalable system for handling consent-driven code execution
  */
@@ -169,7 +261,7 @@ export function createGoogleAnalyticsHook(
             execute: async (_context: ConsentHookContext) => {
                 // Always initialize the script, but with denied consent by default
                 if (!globalThis.window.gtag) {
-                    globalThis.window.dataLayer = globalThis.window.dataLayer || []
+                    ensureWindowDataLayer()
                     globalThis.window.gtag = function gtag(...args: any[]) {
                         globalThis.window.dataLayer.push(args)
                     }
@@ -228,12 +320,7 @@ export function createGoogleAnalyticsHook(
                     })
                 }
 
-                // Remove analytics cookies only
-                const analyticsCookies = ['_ga', '_gid']
-                analyticsCookies.forEach(cookie => {
-                    context.cookies.remove(cookie)
-                    context.cookies.remove(cookie, { domain: `.${globalThis.window.location.hostname}` })
-                })
+                removeConsentCookiesForHostname(context, ['_ga', '_gid'])
             }
         },
         {
@@ -277,12 +364,7 @@ export function createGoogleAnalyticsHook(
                     })
                 }
 
-                // Remove marketing-related cookies
-                const marketingCookies = ['_gat', '_ga_*']
-                marketingCookies.forEach(cookie => {
-                    context.cookies.remove(cookie)
-                    context.cookies.remove(cookie, { domain: `.${globalThis.window.location.hostname}` })
-                })
+                removeConsentCookiesForHostname(context, ['_gat', '_ga_*'])
             }
         }
     ]
@@ -371,13 +453,7 @@ export function createFacebookPixelHook(pixelId: string): ConsentHook[] {
             type: 'onReject',
             description: 'Disable Facebook Pixel when marketing consent is rejected',
             execute: async (context: ConsentHookContext) => {
-                // Remove Facebook cookies
-                const cookiesToRemove = ['_fbp', '_fbc', 'fr']
-                cookiesToRemove.forEach(cookie => {
-                    context.cookies.remove(cookie)
-                    context.cookies.remove(cookie, { domain: `.${globalThis.window.location.hostname}` })
-                    context.cookies.remove(cookie, { domain: '.facebook.com' })
-                })
+                removeConsentCookiesForHostname(context, ['_fbp', '_fbc', 'fr'], ['.facebook.com'])
             }
         }
     ]
@@ -411,8 +487,7 @@ export function createGoogleTagManagerHook(
             return // Already initialized
         }
 
-        // Initialize dataLayer
-        globalThis.window.dataLayer = globalThis.window.dataLayer || []
+        ensureWindowDataLayer()
 
         // CRITICAL: Set default consent state BEFORE loading GTM
         // This ensures GTM respects consent from the very beginning
@@ -459,197 +534,7 @@ export function createGoogleTagManagerHook(
     }
 
     if (granular) {
-        // Granular consent control - individual parameters
-        return [
-            // Analytics Storage (analytics_storage) - Individual parameter
-            {
-                id: 'gtm-analytics-storage',
-                category: 'Analytics',
-                type: 'onAccept',
-                description: 'Grant analytics_storage consent parameter in GTM',
-                execute: async (_context: ConsentHookContext) => {
-                    globalThis.window.dataLayer = globalThis.window.dataLayer || []
-                    globalThis.window.dataLayer.push(
-                        'consent',
-                        'update',
-                        {
-                            analytics_storage: 'granted'
-                        },
-                        {
-                            event: 'analytics_storage_granted',
-                            consent_parameter: 'analytics_storage'
-                        }
-                    )
-                }
-            },
-            {
-                id: 'gtm-analytics-storage-reject',
-                category: 'Analytics',
-                type: 'onReject',
-                description: 'Deny analytics_storage consent parameter in GTM',
-                execute: async (context: ConsentHookContext) => {
-                    globalThis.window.dataLayer = globalThis.window.dataLayer || []
-                    globalThis.window.dataLayer.push(
-                        'consent',
-                        'update',
-                        {
-                            analytics_storage: 'denied'
-                        },
-                        {
-                            event: 'analytics_storage_denied',
-                            consent_parameter: 'analytics_storage'
-                        }
-                    )
-
-                    // Remove analytics cookies
-                    const analyticsCookies = ['_ga', '_gid', '_ga_*']
-                    analyticsCookies.forEach(cookie => {
-                        context.cookies.remove(cookie)
-                        context.cookies.remove(cookie, { domain: `.${globalThis.window.location.hostname}` })
-                    })
-                }
-            },
-
-            // Ad Storage (ad_storage) - Individual parameter
-            {
-                id: 'gtm-ad-storage',
-                category: 'Marketing',
-                type: 'onAccept',
-                description: 'Grant ad_storage consent parameter in GTM',
-                execute: async (_context: ConsentHookContext) => {
-                    globalThis.window.dataLayer = globalThis.window.dataLayer || []
-                    globalThis.window.dataLayer.push(
-                        'consent',
-                        'update',
-                        {
-                            ad_storage: 'granted'
-                        },
-                        {
-                            event: 'ad_storage_granted',
-                            consent_parameter: 'ad_storage'
-                        }
-                    )
-                }
-            },
-            {
-                id: 'gtm-ad-storage-reject',
-                category: 'Marketing',
-                type: 'onReject',
-                description: 'Deny ad_storage consent parameter in GTM',
-                execute: async (context: ConsentHookContext) => {
-                    globalThis.window.dataLayer = globalThis.window.dataLayer || []
-                    globalThis.window.dataLayer.push(
-                        'consent',
-                        'update',
-                        {
-                            ad_storage: 'denied'
-                        },
-                        {
-                            event: 'ad_storage_denied',
-                            consent_parameter: 'ad_storage'
-                        }
-                    )
-
-                    // Remove ad storage cookies
-                    const adCookies = ['_gcl_*', '_gac_*', '_gat_*']
-                    adCookies.forEach(cookie => {
-                        context.cookies.remove(cookie)
-                        context.cookies.remove(cookie, { domain: `.${globalThis.window.location.hostname}` })
-                    })
-                }
-            },
-
-            // Ad User Data (ad_user_data) - Individual parameter
-            {
-                id: 'gtm-ad-user-data',
-                category: 'Marketing',
-                type: 'onAccept',
-                description: 'Grant ad_user_data consent parameter in GTM',
-                execute: async (_context: ConsentHookContext) => {
-                    globalThis.window.dataLayer = globalThis.window.dataLayer || []
-                    globalThis.window.dataLayer.push(
-                        'consent',
-                        'update',
-                        {
-                            ad_user_data: 'granted'
-                        },
-                        {
-                            event: 'ad_user_data_granted',
-                            consent_parameter: 'ad_user_data'
-                        }
-                    )
-                }
-            },
-            {
-                id: 'gtm-ad-user-data-reject',
-                category: 'Marketing',
-                type: 'onReject',
-                description: 'Deny ad_user_data consent parameter in GTM',
-                execute: async (_context: ConsentHookContext) => {
-                    globalThis.window.dataLayer = globalThis.window.dataLayer || []
-                    globalThis.window.dataLayer.push(
-                        'consent',
-                        'update',
-                        {
-                            ad_user_data: 'denied'
-                        },
-                        {
-                            event: 'ad_user_data_denied',
-                            consent_parameter: 'ad_user_data'
-                        }
-                    )
-                }
-            },
-
-            // Ad Personalization (ad_personalization) - Individual parameter
-            {
-                id: 'gtm-ad-personalization',
-                category: 'Marketing',
-                type: 'onAccept',
-                description: 'Grant ad_personalization consent parameter in GTM',
-                execute: async (_context: ConsentHookContext) => {
-                    globalThis.window.dataLayer = globalThis.window.dataLayer || []
-                    globalThis.window.dataLayer.push(
-                        'consent',
-                        'update',
-                        {
-                            ad_personalization: 'granted'
-                        },
-                        {
-                            event: 'ad_personalization_granted',
-                            consent_parameter: 'ad_personalization'
-                        }
-                    )
-                }
-            },
-            {
-                id: 'gtm-ad-personalization-reject',
-                category: 'Marketing',
-                type: 'onReject',
-                description: 'Deny ad_personalization consent parameter in GTM',
-                execute: async (context: ConsentHookContext) => {
-                    globalThis.window.dataLayer = globalThis.window.dataLayer || []
-                    globalThis.window.dataLayer.push(
-                        'consent',
-                        'update',
-                        {
-                            ad_personalization: 'denied'
-                        },
-                        {
-                            event: 'ad_personalization_denied',
-                            consent_parameter: 'ad_personalization'
-                        }
-                    )
-
-                    // Remove personalization cookies
-                    const personalizationCookies = ['__gads', '__gpi']
-                    personalizationCookies.forEach(cookie => {
-                        context.cookies.remove(cookie)
-                        context.cookies.remove(cookie, { domain: `.${globalThis.window.location.hostname}` })
-                    })
-                }
-            }
-        ]
+        return createGranularGtmHooks()
     }
 
     // Standard consent control - category-based
@@ -660,17 +545,12 @@ export function createGoogleTagManagerHook(
             type: 'onAccept',
             description: 'Grant analytics consent in GTM',
             execute: async (_context: ConsentHookContext) => {
-                globalThis.window.dataLayer = globalThis.window.dataLayer || []
-                globalThis.window.dataLayer.push(
-                    'consent',
-                    'update',
+                pushGtmDataLayerConsent(
                     {
                         analytics_storage: 'granted',
                         functionality_storage: 'granted'
                     },
-                    {
-                        event: 'analytics_consent_granted'
-                    }
+                    { event: 'analytics_consent_granted' }
                 )
             }
         },
@@ -680,25 +560,14 @@ export function createGoogleTagManagerHook(
             type: 'onReject',
             description: 'Deny analytics consent in GTM',
             execute: async (context: ConsentHookContext) => {
-                globalThis.window.dataLayer = globalThis.window.dataLayer || []
-                globalThis.window.dataLayer.push(
-                    'consent',
-                    'update',
+                pushGtmDataLayerConsent(
                     {
                         analytics_storage: 'denied',
                         functionality_storage: 'denied'
                     },
-                    {
-                        event: 'analytics_consent_denied'
-                    }
+                    { event: 'analytics_consent_denied' }
                 )
-
-                // Remove analytics cookies
-                const analyticsCookies = ['_ga', '_gid', '_ga_*']
-                analyticsCookies.forEach(cookie => {
-                    context.cookies.remove(cookie)
-                    context.cookies.remove(cookie, { domain: `.${globalThis.window.location.hostname}` })
-                })
+                removeConsentCookiesForHostname(context, ['_ga', '_gid', '_ga_*'])
             }
         },
         {
@@ -707,18 +576,13 @@ export function createGoogleTagManagerHook(
             type: 'onAccept',
             description: 'Grant marketing consent in GTM',
             execute: async (_context: ConsentHookContext) => {
-                globalThis.window.dataLayer = globalThis.window.dataLayer || []
-                globalThis.window.dataLayer.push(
-                    'consent',
-                    'update',
+                pushGtmDataLayerConsent(
                     {
                         ad_storage: 'granted',
                         ad_user_data: 'granted',
                         ad_personalization: 'granted'
                     },
-                    {
-                        event: 'marketing_consent_granted'
-                    }
+                    { event: 'marketing_consent_granted' }
                 )
             }
         },
@@ -728,26 +592,15 @@ export function createGoogleTagManagerHook(
             type: 'onReject',
             description: 'Deny marketing consent in GTM',
             execute: async (context: ConsentHookContext) => {
-                globalThis.window.dataLayer = globalThis.window.dataLayer || []
-                globalThis.window.dataLayer.push(
-                    'consent',
-                    'update',
+                pushGtmDataLayerConsent(
                     {
                         ad_storage: 'denied',
                         ad_user_data: 'denied',
                         ad_personalization: 'denied'
                     },
-                    {
-                        event: 'marketing_consent_denied'
-                    }
+                    { event: 'marketing_consent_denied' }
                 )
-
-                // Remove marketing cookies
-                const marketingCookies = ['_gat', '_gcl_*', '_fbp', '_fbc']
-                marketingCookies.forEach(cookie => {
-                    context.cookies.remove(cookie)
-                    context.cookies.remove(cookie, { domain: `.${globalThis.window.location.hostname}` })
-                })
+                removeConsentCookiesForHostname(context, ['_gat', '_gcl_*', '_fbp', '_fbc'])
             }
         }
     ]

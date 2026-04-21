@@ -1,5 +1,5 @@
 import { consentHookManager, createGoogleTagManagerHook } from './consentHooks'
-import { ConsentHookContext } from './types'
+import { ConsentHookContext, CookieCategory } from './types'
 
 // Mock window.dataLayer and global types for Jest
 declare global {
@@ -55,6 +55,45 @@ if (globalThis.window !== undefined && !globalThis.window.dataLayer) {
 const mockCookieRemove = jest.fn()
 const mockCookieSet = jest.fn()
 const mockCookieGet = jest.fn()
+
+const BASE_CONSENT_STATE: Record<CookieCategory, boolean> = {
+    Essential: true,
+    Functional: false,
+    Analytics: false,
+    Marketing: false
+}
+
+function createMockHookContext(
+    category: CookieCategory,
+    options?: {
+        consentState?: Record<CookieCategory, boolean>
+        previousState?: Record<CookieCategory, boolean>
+    }
+): ConsentHookContext {
+    return {
+        category,
+        consentState: options?.consentState ?? { ...BASE_CONSENT_STATE },
+        previousState: options?.previousState ?? { ...BASE_CONSENT_STATE },
+        cookies: {
+            set: mockCookieSet,
+            get: mockCookieGet,
+            remove: mockCookieRemove
+        },
+        gtag: jest.fn(),
+        dataLayer: globalThis.window.dataLayer
+    }
+}
+
+function expectGranularGtmDataLayerPush(
+    consent: Record<string, string>,
+    eventMeta: { event: string; consent_parameter: string }
+) {
+    const dl = globalThis.window.dataLayer
+    expect(dl).toContainEqual('consent')
+    expect(dl).toContainEqual('update')
+    expect(dl).toContainEqual(consent)
+    expect(dl).toContainEqual(eventMeta)
+}
 
 describe('Google Consent Mode v2 Tests', () => {
     beforeEach(() => {
@@ -127,20 +166,7 @@ describe('Google Consent Mode v2 Tests', () => {
 
         beforeEach(() => {
             hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
-            mockContext = {
-                category: 'Analytics',
-                consentState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
-                previousState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
-                cookies: {
-                    set: mockCookieSet,
-                    get: mockCookieGet,
-                    remove: mockCookieRemove
-                },
-                gtag: jest.fn(),
-                dataLayer: globalThis.window.dataLayer
-            }
-
-            // Clear initialization event
+            mockContext = createMockHookContext('Analytics')
             globalThis.window.dataLayer = []
         })
 
@@ -150,16 +176,10 @@ describe('Google Consent Mode v2 Tests', () => {
 
             await analyticsAcceptHook.execute(mockContext)
 
-            expect(globalThis.window.dataLayer).toContainEqual('consent')
-            expect(globalThis.window.dataLayer).toContainEqual('update')
-            expect(globalThis.window.dataLayer).toContainEqual({
-                analytics_storage: 'granted'
-            })
-
-            expect(globalThis.window.dataLayer).toContainEqual({
-                event: 'analytics_storage_granted',
-                consent_parameter: 'analytics_storage'
-            })
+            expectGranularGtmDataLayerPush(
+                { analytics_storage: 'granted' },
+                { event: 'analytics_storage_granted', consent_parameter: 'analytics_storage' }
+            )
         })
 
         it('should deny analytics_storage consent when rejected', async () => {
@@ -168,16 +188,10 @@ describe('Google Consent Mode v2 Tests', () => {
 
             await analyticsRejectHook.execute(mockContext)
 
-            expect(globalThis.window.dataLayer).toContainEqual('consent')
-            expect(globalThis.window.dataLayer).toContainEqual('update')
-            expect(globalThis.window.dataLayer).toContainEqual({
-                analytics_storage: 'denied'
-            })
-
-            expect(globalThis.window.dataLayer).toContainEqual({
-                event: 'analytics_storage_denied',
-                consent_parameter: 'analytics_storage'
-            })
+            expectGranularGtmDataLayerPush(
+                { analytics_storage: 'denied' },
+                { event: 'analytics_storage_denied', consent_parameter: 'analytics_storage' }
+            )
         })
 
         it('should remove analytics cookies when consent is denied', async () => {
@@ -198,20 +212,7 @@ describe('Google Consent Mode v2 Tests', () => {
 
         beforeEach(() => {
             hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
-            mockContext = {
-                category: 'Marketing',
-                consentState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
-                previousState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
-                cookies: {
-                    set: mockCookieSet,
-                    get: mockCookieGet,
-                    remove: mockCookieRemove
-                },
-                gtag: jest.fn(),
-                dataLayer: globalThis.window.dataLayer
-            }
-
-            // Clear initialization event
+            mockContext = createMockHookContext('Marketing')
             globalThis.window.dataLayer = []
         })
 
@@ -221,16 +222,10 @@ describe('Google Consent Mode v2 Tests', () => {
 
             await adStorageAcceptHook.execute(mockContext)
 
-            expect(globalThis.window.dataLayer).toContainEqual('consent')
-            expect(globalThis.window.dataLayer).toContainEqual('update')
-            expect(globalThis.window.dataLayer).toContainEqual({
-                ad_storage: 'granted'
-            })
-
-            expect(globalThis.window.dataLayer).toContainEqual({
-                event: 'ad_storage_granted',
-                consent_parameter: 'ad_storage'
-            })
+            expectGranularGtmDataLayerPush(
+                { ad_storage: 'granted' },
+                { event: 'ad_storage_granted', consent_parameter: 'ad_storage' }
+            )
         })
 
         it('should deny ad_storage consent and remove cookies when rejected', async () => {
@@ -238,11 +233,10 @@ describe('Google Consent Mode v2 Tests', () => {
 
             await adStorageRejectHook.execute(mockContext)
 
-            expect(globalThis.window.dataLayer).toContainEqual('consent')
-            expect(globalThis.window.dataLayer).toContainEqual('update')
-            expect(globalThis.window.dataLayer).toContainEqual({
-                ad_storage: 'denied'
-            })
+            expectGranularGtmDataLayerPush(
+                { ad_storage: 'denied' },
+                { event: 'ad_storage_denied', consent_parameter: 'ad_storage' }
+            )
 
             // Check that ad storage cookies are removed
             expect(mockCookieRemove).toHaveBeenCalledWith('_gcl_*')
@@ -257,19 +251,7 @@ describe('Google Consent Mode v2 Tests', () => {
 
         beforeEach(() => {
             hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
-            mockContext = {
-                category: 'Marketing',
-                consentState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
-                previousState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
-                cookies: {
-                    set: mockCookieSet,
-                    get: mockCookieGet,
-                    remove: mockCookieRemove
-                },
-                gtag: jest.fn(),
-                dataLayer: globalThis.window.dataLayer
-            }
-
+            mockContext = createMockHookContext('Marketing')
             globalThis.window.dataLayer = []
         })
 
@@ -278,16 +260,10 @@ describe('Google Consent Mode v2 Tests', () => {
 
             await adUserDataAcceptHook.execute(mockContext)
 
-            expect(globalThis.window.dataLayer).toContainEqual('consent')
-            expect(globalThis.window.dataLayer).toContainEqual('update')
-            expect(globalThis.window.dataLayer).toContainEqual({
-                ad_user_data: 'granted'
-            })
-
-            expect(globalThis.window.dataLayer).toContainEqual({
-                event: 'ad_user_data_granted',
-                consent_parameter: 'ad_user_data'
-            })
+            expectGranularGtmDataLayerPush(
+                { ad_user_data: 'granted' },
+                { event: 'ad_user_data_granted', consent_parameter: 'ad_user_data' }
+            )
         })
 
         it('should deny ad_user_data consent when rejected', async () => {
@@ -295,16 +271,10 @@ describe('Google Consent Mode v2 Tests', () => {
 
             await adUserDataRejectHook.execute(mockContext)
 
-            expect(globalThis.window.dataLayer).toContainEqual('consent')
-            expect(globalThis.window.dataLayer).toContainEqual('update')
-            expect(globalThis.window.dataLayer).toContainEqual({
-                ad_user_data: 'denied'
-            })
-
-            expect(globalThis.window.dataLayer).toContainEqual({
-                event: 'ad_user_data_denied',
-                consent_parameter: 'ad_user_data'
-            })
+            expectGranularGtmDataLayerPush(
+                { ad_user_data: 'denied' },
+                { event: 'ad_user_data_denied', consent_parameter: 'ad_user_data' }
+            )
         })
     })
 
@@ -314,19 +284,7 @@ describe('Google Consent Mode v2 Tests', () => {
 
         beforeEach(() => {
             hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
-            mockContext = {
-                category: 'Marketing',
-                consentState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
-                previousState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
-                cookies: {
-                    set: mockCookieSet,
-                    get: mockCookieGet,
-                    remove: mockCookieRemove
-                },
-                gtag: jest.fn(),
-                dataLayer: globalThis.window.dataLayer
-            }
-
+            mockContext = createMockHookContext('Marketing')
             globalThis.window.dataLayer = []
         })
 
@@ -335,16 +293,10 @@ describe('Google Consent Mode v2 Tests', () => {
 
             await adPersonalizationAcceptHook.execute(mockContext)
 
-            expect(globalThis.window.dataLayer).toContainEqual('consent')
-            expect(globalThis.window.dataLayer).toContainEqual('update')
-            expect(globalThis.window.dataLayer).toContainEqual({
-                ad_personalization: 'granted'
-            })
-
-            expect(globalThis.window.dataLayer).toContainEqual({
-                event: 'ad_personalization_granted',
-                consent_parameter: 'ad_personalization'
-            })
+            expectGranularGtmDataLayerPush(
+                { ad_personalization: 'granted' },
+                { event: 'ad_personalization_granted', consent_parameter: 'ad_personalization' }
+            )
         })
 
         it('should deny ad_personalization consent and remove cookies when rejected', async () => {
@@ -352,11 +304,10 @@ describe('Google Consent Mode v2 Tests', () => {
 
             await adPersonalizationRejectHook.execute(mockContext)
 
-            expect(globalThis.window.dataLayer).toContainEqual('consent')
-            expect(globalThis.window.dataLayer).toContainEqual('update')
-            expect(globalThis.window.dataLayer).toContainEqual({
-                ad_personalization: 'denied'
-            })
+            expectGranularGtmDataLayerPush(
+                { ad_personalization: 'denied' },
+                { event: 'ad_personalization_denied', consent_parameter: 'ad_personalization' }
+            )
 
             // Check that personalization cookies are removed
             expect(mockCookieRemove).toHaveBeenCalledWith('__gads')
@@ -372,30 +323,19 @@ describe('Google Consent Mode v2 Tests', () => {
             consentHookManager.registerHooks(hooks)
 
             // Mock consent state changes
-            const mockContext: ConsentHookContext = {
-                category: 'Analytics',
-                consentState: { Analytics: true, Marketing: false, Essential: true, Functional: false },
-                previousState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
-                cookies: {
-                    set: mockCookieSet,
-                    get: mockCookieGet,
-                    remove: mockCookieRemove
-                },
-                gtag: jest.fn(),
-                dataLayer: globalThis.window.dataLayer
-            }
+            const mockContext = createMockHookContext('Analytics', {
+                consentState: { ...BASE_CONSENT_STATE, Analytics: true }
+            })
 
             globalThis.window.dataLayer = []
 
             // Execute onAccept hooks for Analytics category
             await consentHookManager.executeHooks('Analytics', 'onAccept', mockContext)
 
-            // Should have fired analytics_storage consent
-            expect(globalThis.window.dataLayer).toContainEqual('consent')
-            expect(globalThis.window.dataLayer).toContainEqual('update')
-            expect(globalThis.window.dataLayer).toContainEqual({
-                analytics_storage: 'granted'
-            })
+            expectGranularGtmDataLayerPush(
+                { analytics_storage: 'granted' },
+                { event: 'analytics_storage_granted', consent_parameter: 'analytics_storage' }
+            )
         })
 
         it('should handle mixed consent scenarios correctly', async () => {
@@ -405,23 +345,14 @@ describe('Google Consent Mode v2 Tests', () => {
             globalThis.window.dataLayer = []
 
             // User grants Analytics but denies Marketing
-            const analyticsContext: ConsentHookContext = {
-                category: 'Analytics',
-                consentState: { Analytics: true, Marketing: false, Essential: true, Functional: false },
-                previousState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
-                cookies: { set: mockCookieSet, get: mockCookieGet, remove: mockCookieRemove },
-                gtag: jest.fn(),
-                dataLayer: globalThis.window.dataLayer
-            }
+            const analyticsContext = createMockHookContext('Analytics', {
+                consentState: { ...BASE_CONSENT_STATE, Analytics: true }
+            })
 
-            const marketingContext: ConsentHookContext = {
-                category: 'Marketing',
-                consentState: { Analytics: true, Marketing: false, Essential: true, Functional: false },
-                previousState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
-                cookies: { set: mockCookieSet, get: mockCookieGet, remove: mockCookieRemove },
-                gtag: jest.fn(),
-                dataLayer: globalThis.window.dataLayer
-            }
+            const marketingContext = createMockHookContext('Marketing', {
+                consentState: { ...BASE_CONSENT_STATE, Analytics: true, Marketing: false },
+                previousState: { ...BASE_CONSENT_STATE }
+            })
 
             // Grant analytics
             await consentHookManager.executeHooks('Analytics', 'onAccept', analyticsContext)
@@ -429,31 +360,25 @@ describe('Google Consent Mode v2 Tests', () => {
             // Deny marketing
             await consentHookManager.executeHooks('Marketing', 'onReject', marketingContext)
 
-            // Should have granted analytics_storage only
-            expect(globalThis.window.dataLayer).toContainEqual('consent')
-            expect(globalThis.window.dataLayer).toContainEqual('update')
-            expect(globalThis.window.dataLayer).toContainEqual({
-                analytics_storage: 'granted'
-            })
+            expectGranularGtmDataLayerPush(
+                { analytics_storage: 'granted' },
+                { event: 'analytics_storage_granted', consent_parameter: 'analytics_storage' }
+            )
 
-            // Should have denied all marketing parameters
-            expect(globalThis.window.dataLayer).toContainEqual('consent')
-            expect(globalThis.window.dataLayer).toContainEqual('update')
-            expect(globalThis.window.dataLayer).toContainEqual({
-                ad_storage: 'denied'
-            })
+            expectGranularGtmDataLayerPush(
+                { ad_storage: 'denied' },
+                { event: 'ad_storage_denied', consent_parameter: 'ad_storage' }
+            )
 
-            expect(globalThis.window.dataLayer).toContainEqual('consent')
-            expect(globalThis.window.dataLayer).toContainEqual('update')
-            expect(globalThis.window.dataLayer).toContainEqual({
-                ad_user_data: 'denied'
-            })
+            expectGranularGtmDataLayerPush(
+                { ad_user_data: 'denied' },
+                { event: 'ad_user_data_denied', consent_parameter: 'ad_user_data' }
+            )
 
-            expect(globalThis.window.dataLayer).toContainEqual('consent')
-            expect(globalThis.window.dataLayer).toContainEqual('update')
-            expect(globalThis.window.dataLayer).toContainEqual({
-                ad_personalization: 'denied'
-            })
+            expectGranularGtmDataLayerPush(
+                { ad_personalization: 'denied' },
+                { event: 'ad_personalization_denied', consent_parameter: 'ad_personalization' }
+            )
         })
     })
 
@@ -480,23 +405,16 @@ describe('Google Consent Mode v2 Tests', () => {
 
             globalThis.window.dataLayer = []
 
-            const mockContext: ConsentHookContext = {
-                category: 'Analytics',
-                consentState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
-                previousState: { Analytics: false, Marketing: false, Essential: true, Functional: false },
-                cookies: { set: mockCookieSet, get: mockCookieGet, remove: mockCookieRemove },
-                gtag: jest.fn(),
-                dataLayer: globalThis.window.dataLayer
-            }
+            const mockContext = createMockHookContext('Analytics')
 
             if (analyticsHook) {
                 await analyticsHook.execute(mockContext)
             }
 
-            // Should use proper gtag format with separate push calls
-            expect(globalThis.window.dataLayer).toContainEqual('consent')
-            expect(globalThis.window.dataLayer).toContainEqual('update')
-            expect(globalThis.window.dataLayer).toContainEqual({ analytics_storage: 'granted' })
+            expectGranularGtmDataLayerPush(
+                { analytics_storage: 'granted' },
+                { event: 'analytics_storage_granted', consent_parameter: 'analytics_storage' }
+            )
         })
     })
 })
