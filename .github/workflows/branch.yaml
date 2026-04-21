@@ -61,33 +61,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v6
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version: "22.x"
-          cache: "pnpm"
-          cache-dependency-path: "pnpm-lock.yaml"
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            playwright-${{ runner.os }}-
-
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium
-
-      - name: Build Storybook
-        run: pnpm run build-storybook
-
-      - name: Run visual regression tests
-        run: pnpm run test:visual
+      # Baselines live under *-chromium-linux.png and must match the Playwright
+      # Docker image (see AGENTS.md). The hosted runner’s bundled Chromium/fonts
+      # differ from that image, so we run the suite inside the same container
+      # used for `test:visual:update`.
+      - name: Run visual regression tests (Playwright Docker)
+        run: |
+          docker run --rm --ipc=host -e CI=true -v "$PWD":/work -w /work \
+            mcr.microsoft.com/playwright:v1.59.1-noble bash -lc \
+            "npm i -g pnpm@10.33.0 >/dev/null && pnpm install --frozen-lockfile && \
+             pnpm run build-storybook && pnpm run test:visual"
 
       - name: Upload Playwright report
         if: failure()

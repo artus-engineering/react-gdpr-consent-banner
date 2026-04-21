@@ -11,7 +11,7 @@ exports[`CookieConsentGate should render children if consented to provider 1`] =
 exports[`CookieConsentGate should render gate content if not consented to cookies of provider 1`] = `
 <div>
   <div
-    class="md:p-12 p-4 rounded-lg border max-w-5xl mx-auto !text-left"
+    class="md:p-12 p-4 rounded-lg border max-w-5xl mx-auto text-left!"
     style="background-color: rgb(255, 255, 255); border-color: rgb(248, 250, 252);"
   >
     <h2
@@ -272,7 +272,7 @@ exports[`CookieConsentGate should render gate content if not consented to cookie
 exports[`CookieConsentGate should use serviceProvider when available 1`] = `
 <div>
   <div
-    class="md:p-12 p-4 rounded-lg border max-w-5xl mx-auto !text-left"
+    class="md:p-12 p-4 rounded-lg border max-w-5xl mx-auto text-left!"
     style="background-color: rgb(255, 255, 255); border-color: rgb(248, 250, 252);"
   >
     <h2
