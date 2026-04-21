@@ -115,6 +115,9 @@ importers:
       babel-jest:
         specifier: 30.3.0
         version: 30.3.0(@babel/core@7.28.5)
+      baseline-browser-mapping:
+        specifier: ^2.10.20
+        version: 2.10.20
       concurrently:
         specifier: ^9.2.1
         version: 9.2.1
@@ -1999,10 +2002,6 @@ packages:
   baseline-browser-mapping@2.10.20:
     resolution: {integrity: sha512-1AaXxEPfXT+GvTBJFuy4yXVHWJBXa4OdbIebGN/wX5DlsIkU0+wzGnd2lOzokSk51d5LUmqjgBLRLlypLUqInQ==}
     engines: {node: '>=6.0.0'}
-    hasBin: true
-
-  baseline-browser-mapping@2.8.32:
-    resolution: {integrity: sha512-OPz5aBThlyLFgxyhdwf/s2+8ab3OvT7AdTNvKHBwpXomIYeXqpUUuT8LrdtxZSsWJ4R4CU1un4XGh5Ez3nlTpw==}
     hasBin: true
 
   boolbase@1.0.0:
@@ -5903,8 +5902,6 @@ snapshots:
 
   baseline-browser-mapping@2.10.20: {}
 
-  baseline-browser-mapping@2.8.32: {}
-
   boolbase@1.0.0: {}
 
   brace-expansion@5.0.5:
@@ -5917,7 +5914,7 @@ snapshots:
 
   browserslist@4.28.0:
     dependencies:
-      baseline-browser-mapping: 2.8.32
+      baseline-browser-mapping: 2.10.20
       caniuse-lite: 1.0.30001759
       electron-to-chromium: 1.5.263
       node-releases: 2.0.27

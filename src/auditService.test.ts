@@ -88,36 +88,50 @@ describe('AuditService', () => {
             expect(body.domain).toBe('test.com')
         })
 
-        it('should handle fetch errors gracefully', async () => {
-            mockFetch.mockRejectedValueOnce(new Error('Network error'))
+        describe('when the audit request fails', () => {
+            let warnSpy: jest.SpyInstance
 
-            const currentState = {
-                Essential: true,
-                Functional: false,
-                Analytics: true,
-                Marketing: false
-            }
+            beforeEach(() => {
+                warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+            })
 
-            // Should not throw error
-            await expect(auditService.logConsentChange('accept', 'Analytics', currentState)).resolves.toBeUndefined()
-        })
+            afterEach(() => {
+                warnSpy.mockRestore()
+            })
 
-        it('should handle non-ok responses gracefully', async () => {
-            mockFetch.mockResolvedValueOnce({
-                ok: false,
-                status: 500,
-                statusText: 'Internal Server Error'
-            } as Response)
+            it('should handle fetch errors gracefully', async () => {
+                mockFetch.mockRejectedValueOnce(new Error('Network error'))
 
-            const currentState = {
-                Essential: true,
-                Functional: false,
-                Analytics: true,
-                Marketing: false
-            }
+                const currentState = {
+                    Essential: true,
+                    Functional: false,
+                    Analytics: true,
+                    Marketing: false
+                }
 
-            // Should not throw error
-            await expect(auditService.logConsentChange('accept', 'Analytics', currentState)).resolves.toBeUndefined()
+                await expect(
+                    auditService.logConsentChange('accept', 'Analytics', currentState)
+                ).resolves.toBeUndefined()
+            })
+
+            it('should handle non-ok responses gracefully', async () => {
+                mockFetch.mockResolvedValueOnce({
+                    ok: false,
+                    status: 500,
+                    statusText: 'Internal Server Error'
+                } as Response)
+
+                const currentState = {
+                    Essential: true,
+                    Functional: false,
+                    Analytics: true,
+                    Marketing: false
+                }
+
+                await expect(
+                    auditService.logConsentChange('accept', 'Analytics', currentState)
+                ).resolves.toBeUndefined()
+            })
         })
     })
 
