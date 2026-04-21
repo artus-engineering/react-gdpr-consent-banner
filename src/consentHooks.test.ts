@@ -74,7 +74,7 @@ describe('Google Consent Mode v2 Tests', () => {
         mockQuerySelector.mockReturnValue(null)
 
         // Reset console spy
-        jest.spyOn(console, 'log').mockImplementation(() => {})
+        jest.spyOn(console, 'log').mockImplementation(() => undefined)
     })
 
     afterEach(() => {

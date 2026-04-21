@@ -2,8 +2,8 @@
 
 import { execSync } from 'child_process'
 import { readFileSync, writeFileSync } from 'fs'
-import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
+import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -132,9 +132,10 @@ function main() {
     // Step 5: Publish
     if (!dryRun) {
         console.log('📤 Step 5: Publishing to npm...')
-        const publishCommand = registry === 'https://npm.pkg.github.com'
-            ? `npm publish --registry=${registry}`
-            : `npm publish --registry=${registry} --access public`
+        const publishCommand =
+            registry === 'https://npm.pkg.github.com'
+                ? `npm publish --registry=${registry}`
+                : `npm publish --registry=${registry} --access public`
 
         // Temporarily update publishConfig if needed
         const originalPublishConfig = pkg.publishConfig
@@ -170,4 +171,3 @@ function main() {
 }
 
 main()
-

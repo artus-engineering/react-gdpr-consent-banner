@@ -70,7 +70,7 @@ function Modal({
     }
 
     return (
-        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- dialog element handles its own close behavior via backdrop click
+        // biome-ignore lint/a11y/noNoninteractiveElementInteractions: native dialog handles backdrop click and Escape
         <dialog
             ref={dialogRef}
             className="relative z-50 max-w-5xl mx-auto my-auto overflow-scroll max-h-[80vh] bg-transparent backdrop:bg-black/30 p-0 open:flex"
@@ -78,6 +78,8 @@ function Modal({
             onKeyDown={handleKeyDown}
         >
             <div className="relative">
+                {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: decorative close control */}
+                {/* biome-ignore lint/a11y/useKeyWithClickEvents: paired with dialog Escape handling */}
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -118,7 +120,7 @@ function Modal({
     )
 }
 
-export function CookieConsentModal({ cookieProvider, children }: IConsentModalProps): JSX.Element {
+export function CookieConsentModal({ cookieProvider, children }: IConsentModalProps): React.ReactElement {
     const style = useStyle()
     const config = useConfig()
     const { isEnabled, setIsEnabled } = useCookieState({ cookieProvider })

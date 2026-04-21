@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
+import { type ReactElement, useCallback, useEffect, useState, useSyncExternalStore } from 'react'
 import { consentHookManager, createCookieUtils } from '../../consentHooks'
 import {
     getCookieSelection,
@@ -19,9 +19,9 @@ import {
 import { CookieCategory, CookieConsentState, CookieProviderConfig } from '../../types'
 import { SwitchButton } from '../general'
 
-const emptySubscribe = () => () => {}
+const emptySubscribe = () => () => undefined
 
-export function CookieConsentBanner(): JSX.Element {
+export function CookieConsentBanner(): ReactElement | null {
     const config = useConfig()
     const style = useStyle()
     const cookieProviders = useCookieProviders()
@@ -440,6 +440,7 @@ export function CookieConsentBanner(): JSX.Element {
     }
 
     return (
+        // biome-ignore lint/a11y/noStaticElementInteractions: modal backdrop closes details on overlay click
         <div
             role="presentation"
             style={{

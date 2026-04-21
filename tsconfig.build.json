@@ -3,6 +3,7 @@
         "target": "ES6",
         "module": "ESNext",
         "moduleResolution": "node",
+        "ignoreDeprecations": "6.0",
         "lib": ["dom", "dom.iterable", "esnext"],
         "strict": true,
         "skipLibCheck": true,
@@ -15,8 +16,16 @@
         "sourceMap": false,
         "jsx": "react-jsx",
         "rootDir": "src",
-        "types": ["react", "react-dom", "jest", "@testing-library/jest-dom"]
+        "types": ["react", "react-dom", "jest", "@testing-library/jest-dom", "node"]
     },
     "include": ["src"],
-    "exclude": ["node_modules", "*.stories.tsx", "**/*.test.ts", "**/*.test.tsx", "**/__tests__/**", "**/__snapshots__/**"]
+    "exclude": [
+        "node_modules",
+        "**/*.stories.ts",
+        "**/*.stories.tsx",
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/__tests__/**",
+        "**/__snapshots__/**"
+    ]
 }

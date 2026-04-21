@@ -134,3 +134,6 @@ dist
 
 # Rollup
 .rollup.cache
+
+# Storybook
+storybook-static

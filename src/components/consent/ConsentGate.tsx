@@ -10,7 +10,7 @@ interface IConsentGateProps {
     children: React.ReactNode
 }
 
-export function CookieConsentGate({ cookieProvider, children }: IConsentGateProps): JSX.Element {
+export function CookieConsentGate({ cookieProvider, children }: IConsentGateProps): React.ReactElement {
     const { isEnabled } = useCookieState({ cookieProvider })
     if (isEnabled) {
         return <>{children}</>

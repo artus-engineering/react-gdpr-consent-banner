@@ -50,7 +50,7 @@ export function setCookie(key: string, value: string, domain: string, validForDa
             // Use setTimeout to check after the cookie is actually written
             setTimeout(() => {
                 const wasSet = document.cookie.split(';').some(c => c.trim().startsWith(`${key}=`))
-                console.log('[CookieConsent] Cookie set:', {
+                console.warn('[CookieConsent] Cookie set:', {
                     key,
                     value,
                     domain: isLocalhost ? '(no domain attr)' : domain,

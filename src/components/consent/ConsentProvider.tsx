@@ -29,7 +29,7 @@ export function CookieConsentProvider({
     children,
     config,
     includeCookieBanner = true
-}: ConsentProviderProps): JSX.Element {
+}: ConsentProviderProps): React.ReactElement {
     const [isBannerOpen, setIsBannerOpen] = useState<boolean>(!hasCookieBannerBeenShown())
 
     const openBanner = useCallback(() => setIsBannerOpen(true), [])
@@ -41,6 +41,7 @@ export function CookieConsentProvider({
     )
 
     // Initialize consent hooks system - run only once on mount
+    // biome-ignore lint/correctness/useExhaustiveDependencies: intentional mount-only registration and onLoad hooks
     useEffect(() => {
         // Register consent hooks
         if (config.consentHooks) {
@@ -88,7 +89,6 @@ export function CookieConsentProvider({
         if (!isServer()) {
             executeOnLoadHooks()
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     // Memoize context value to prevent unnecessary re-renders
@@ -100,7 +100,7 @@ export function CookieConsentProvider({
             config,
             auditService
         }),
-        [isBannerOpen, setIsBannerOpen, openBanner, config, auditService]
+        [isBannerOpen, openBanner, config, auditService]
     )
 
     return (
