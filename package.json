@@ -9,9 +9,9 @@
     "types": "dist/index.d.ts",
     "files": ["dist", "README.md", "LICENSE"],
     "scripts": {
-        "dev": "concurrently \"rollup -c --watch\" \"cd example && npm run dev\"",
+        "dev": "concurrently \"rollup -c --watch\" \"pnpm --dir example run dev\"",
         "dev:lib": "rollup -c --watch",
-        "dev:example": "cd example && npm run dev",
+        "dev:example": "pnpm --dir example run dev",
         "build": "rollup -c --bundleConfigAsCjs",
         "test": "jest --coverage --watchAll=false",
         "test:watch": "jest --coverage --watch",
