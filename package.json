@@ -16,6 +16,7 @@
         "test:watch": "jest --watch",
         "test:consent-hooks": "jest consentHooks.test.ts",
         "test:coverage": "jest --coverage --watchAll=false",
+        "test:ci": "pnpm run lint && pnpm run test:coverage && pnpm run test:import",
         "test:import": "node scripts/test-import.js",
         "test:all": "pnpm run test && pnpm run test:import",
         "storybook": "storybook dev -p 6006",
@@ -85,7 +86,18 @@
     },
     "jest": {
         "testEnvironment": "jsdom",
-        "setupFilesAfterEnv": ["<rootDir>/src/setupTests.ts"]
+        "setupFilesAfterEnv": ["<rootDir>/src/setupTests.ts"],
+        "collectCoverageFrom": [
+            "src/**/*.{ts,tsx}",
+            "!src/**/*.d.ts",
+            "!src/**/*.test.{ts,tsx}",
+            "!src/**/*.stories.{ts,tsx}",
+            "!src/setupTests.ts",
+            "!src/**/index.ts"
+        ],
+        "coverageDirectory": "coverage",
+        "coverageProvider": "v8",
+        "coverageReporters": ["text", "text-summary", "lcov", "html"]
     },
     "babel": {
         "presets": [
