@@ -1,4 +1,4 @@
-name: "Tests"
+name: "Branch"
 
 on:
   push:
@@ -90,7 +90,6 @@ jobs:
 
   scan:
     name: SonarQube Scan
-    needs: tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
