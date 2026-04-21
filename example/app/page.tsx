@@ -260,13 +260,13 @@ export default function HomePage() {
 
     return (
         <CookieConsentProvider config={config} key={themeKey}>
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+            <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-50">
                 <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
                     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-between items-center h-16">
                             <div className="flex items-center gap-3">
                                 <Shield className="h-6 w-6 text-teal-600" />
-                                <h1 className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                                <h1 className="text-xl font-bold bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
                                     GDPR Cookie Consent
                                 </h1>
                             </div>
