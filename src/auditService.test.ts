@@ -2,7 +2,7 @@ import { AuditService, createAuditService } from './auditService'
 import { AuditConfig } from './types'
 
 // Mock fetch
-global.fetch = jest.fn()
+globalThis.fetch = jest.fn()
 
 describe('AuditService', () => {
     let auditService: AuditService

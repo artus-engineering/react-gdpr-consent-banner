@@ -4,9 +4,9 @@ import { CookieProviderConfig } from '../../types'
 import { SwitchButton } from '../general'
 
 interface ICookieCategory {
-    provider: CookieProviderConfig
-    handleCookieToggle: (category: string, cookieId: string) => void
-    isEnabled: boolean
+    readonly provider: CookieProviderConfig
+    readonly handleCookieToggle: (category: string, cookieId: string) => void
+    readonly isEnabled: boolean
 }
 
 export function CookieCategoryComponent({ provider, handleCookieToggle, isEnabled }: ICookieCategory) {

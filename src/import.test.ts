@@ -3,10 +3,10 @@
  * This test ensures that all exports are available and the package works as expected
  */
 
-import { existsSync } from 'fs'
-import { join } from 'path'
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 
-const distPath = join(__dirname, '../dist/cjs/index.js')
+const distPath = join(__dirname, '../dist/cjs/index.cjs')
 const distExists = existsSync(distPath)
 
 describe('Package Import Tests', () => {
@@ -18,7 +18,7 @@ describe('Package Import Tests', () => {
             return
         }
         // Import the package
-        packageExports = require('../dist/cjs/index.js')
+        packageExports = require('../dist/cjs/index.cjs')
     })
 
     test('should import package successfully', () => {
@@ -109,8 +109,8 @@ describe('Package Import Tests', () => {
         if (!distExists) return
         // This test ensures that the package doesn't try to import CSS files
         // which would cause issues in Node.js environments
-        const fs = require('fs')
-        const cjsContent = fs.readFileSync('./dist/cjs/index.js', 'utf8')
+        const fs = require('node:fs')
+        const cjsContent = fs.readFileSync('./dist/cjs/index.cjs', 'utf8')
         const esmContent = fs.readFileSync('./dist/esm/index.js', 'utf8')
 
         // Check that CSS imports are not present in the built files

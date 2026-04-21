@@ -15,7 +15,7 @@ import { CookieProviderConfig, SectionKeys, SupportedLanguage, TranslationSectio
  * @returns {boolean} True if the code is running on the server, false otherwise.
  */
 export function isServer(): boolean {
-    return typeof window === 'undefined' || typeof document === 'undefined'
+    return typeof globalThis.window === 'undefined' || typeof globalThis.document === 'undefined'
 }
 
 /**
@@ -31,8 +31,9 @@ export function setCookie(key: string, value: string, domain: string, validForDa
         return
     }
 
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    const isHttps = window.location.protocol === 'https:'
+    const isLocalhost =
+        globalThis.window.location.hostname === 'localhost' || globalThis.window.location.hostname === '127.0.0.1'
+    const isHttps = globalThis.window.location.protocol === 'https:'
 
     // For localhost or HTTP, don't use Secure flag
     const secureFlag = isLocalhost || !isHttps ? '' : '; Secure'
@@ -101,7 +102,7 @@ export function persistCookieSelection(
  * @param cookie
  * @returns {string} The key to access the cookie.
  */
-export function cookieAccessor(cookie: Partial<CookieProviderConfig> | Partial<CookieProviderConfig>): string {
+export function cookieAccessor(cookie: Partial<CookieProviderConfig>): string {
     return `${cookie.id}${COOKIE_SUFFIX}`
 }
 
@@ -145,7 +146,7 @@ export function lightenHexColor(hex: string, degree: number): string {
     const rgb = color
         .replace(/^(rgb|rgba)\(/, '')
         .replace(/\)$/, '')
-        .replace(/\s/g, '')
+        .replaceAll(/\s/g, '')
         .split(',')
     const r = Math.min(255, Number.parseInt(rgb[0], 10) + degree)
     const g = Math.min(255, Number.parseInt(rgb[1], 10) + degree)

@@ -1,11 +1,11 @@
 interface IToggleButtonProps {
-    toggled: boolean
-    onToggle: (enabled: boolean) => void
-    name: string
-    bgTrue?: string
-    bgFalse?: string
-    screenReaderLabel?: string
-    disabled?: boolean
+    readonly toggled: boolean
+    readonly onToggle: (enabled: boolean) => void
+    readonly name: string
+    readonly bgTrue?: string
+    readonly bgFalse?: string
+    readonly screenReaderLabel?: string
+    readonly disabled?: boolean
 }
 
 export function SwitchButton({

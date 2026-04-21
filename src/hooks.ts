@@ -155,19 +155,17 @@ export function useCookieState({ cookieProvider }: { cookieProvider: CookieProvi
     const setIsEnabled = (value: boolean | ((prev: boolean) => boolean)) => {
         if (typeof value === 'function') {
             setManualValue(prev => {
-                const currentValue = prev !== null ? prev : consentGiven
+                const currentValue = prev === null ? consentGiven : prev
                 const newValue = value(currentValue)
                 if (newValue === consentGiven) {
                     return null
                 }
                 return newValue
             })
+        } else if (value === consentGiven) {
+            setManualValue(null)
         } else {
-            if (value === consentGiven) {
-                setManualValue(null)
-            } else {
-                setManualValue(value)
-            }
+            setManualValue(value)
         }
     }
 

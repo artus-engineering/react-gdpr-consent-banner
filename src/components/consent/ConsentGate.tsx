@@ -6,8 +6,8 @@ import { CookieCategoryComponent } from '../cookies'
 import { Button } from '../general'
 
 interface IConsentGateProps {
-    cookieProvider: CookieProviderConfig
-    children: React.ReactNode
+    readonly cookieProvider: CookieProviderConfig
+    readonly children: React.ReactNode
 }
 
 export function CookieConsentGate({ cookieProvider, children }: IConsentGateProps): React.ReactElement {
@@ -18,7 +18,7 @@ export function CookieConsentGate({ cookieProvider, children }: IConsentGateProp
     return <ConsentGateContent cookieProvider={cookieProvider} />
 }
 
-export function ConsentGateContent({ cookieProvider }: { cookieProvider: CookieProviderConfig }) {
+export function ConsentGateContent({ cookieProvider }: { readonly cookieProvider: CookieProviderConfig }) {
     const style = useStyle()
     const config = useConfig()
     const { isEnabled } = useCookieState({ cookieProvider })

@@ -9,6 +9,7 @@ on:
 permissions:
   contents: read
   pull-requests: read # allows SonarQube to decorate PRs with analysis results
+  actions: write # upload/download coverage artifact between jobs
 
 jobs:
   tests:
@@ -35,17 +36,37 @@ jobs:
       - name: Linting
         run: pnpm run lint
 
+      - name: Build package
+        run: pnpm run build
+
       - name: Tests
         run: pnpm run test
 
+      - name: Import test (dist)
+        run: pnpm run test:import
+
+      - name: Upload coverage (lcov) for SonarQube
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-lcov
+          path: coverage/lcov.info
+          if-no-files-found: error
+
   scan:
     name: SonarQube Scan
+    needs: tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
         with:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Download coverage report
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-lcov
+          path: coverage
 
       - name: Analyze with SonarQube
         uses: SonarSource/sonarqube-scan-action@v7
@@ -56,3 +77,4 @@ jobs:
         with:
           args: -Dsonar.projectKey=artus-engineering_react-gdpr-consent-banner_77b80343-758e-46a6-aaa4-a2f681f7d05d
             -Dsonar.sources=src -Dsonar.sourceEncoding=UTF-8
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info

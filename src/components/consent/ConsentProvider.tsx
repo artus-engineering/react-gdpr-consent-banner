@@ -8,9 +8,9 @@ import { CookieConsentBanner } from './ConsentBanner'
 import { ConsentStateProviderContext } from './context'
 
 interface ConsentProviderProps {
-    children: React.ReactNode
-    config: CookieConsentBannerConfig
-    includeCookieBanner?: boolean
+    readonly children: React.ReactNode
+    readonly config: CookieConsentBannerConfig
+    readonly includeCookieBanner?: boolean
 }
 
 /**
@@ -71,8 +71,8 @@ export function CookieConsentProvider({
                 category: 'Essential', // Will be overridden in executeHooks
                 consentState,
                 cookies: cookieUtils,
-                gtag: (window as any).gtag,
-                dataLayer: (window as any).dataLayer
+                gtag: (globalThis as any).gtag,
+                dataLayer: (globalThis as any).dataLayer
             }
 
             // Execute onLoad hooks for each category

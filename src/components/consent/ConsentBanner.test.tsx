@@ -678,14 +678,9 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
             fireEvent.click(screen.getByText('Customize'))
             expect(screen.getByText('Cookie Settings')).toBeInTheDocument()
 
-            // Find the backdrop overlay (the outer fixed div)
-            const backdrop = document.querySelector('div[style*="position: fixed"][style*="inset: 0"]')
+            const backdrop = screen.getByTestId('cookie-banner-details-backdrop')
             expect(backdrop).toBeInTheDocument()
-
-            // Click directly on the backdrop (not its children)
-            if (backdrop) {
-                fireEvent.click(backdrop)
-            }
+            fireEvent.click(backdrop)
 
             // Should return to simple banner view
             await waitFor(() => {

@@ -10,19 +10,19 @@ import { CookieCategoryComponent } from '../cookies'
 import { Button } from '../general'
 
 interface IConsentModalProps {
-    cookieProvider: CookieProviderConfig
-    children: React.ReactNode
+    readonly cookieProvider: CookieProviderConfig
+    readonly children: React.ReactNode
 }
 
 interface ModalProps {
-    openModal: boolean
-    setOpenModal: (open: boolean) => void
-    style: CookieConsentStyleWithDefaults
-    config: CookieConsentBannerConfigWithDefaults
-    cookieProvider: CookieProviderConfig
-    isEnabled: boolean
-    setIsEnabled: (enabled: boolean) => void
-    handleAccept: () => void
+    readonly openModal: boolean
+    readonly setOpenModal: (open: boolean) => void
+    readonly style: CookieConsentStyleWithDefaults
+    readonly config: CookieConsentBannerConfigWithDefaults
+    readonly cookieProvider: CookieProviderConfig
+    readonly isEnabled: boolean
+    readonly setIsEnabled: (enabled: boolean) => void
+    readonly handleAccept: () => void
 }
 
 function Modal({
@@ -57,42 +57,53 @@ function Modal({
         return () => dialog.removeEventListener('close', handleClose)
     }, [setOpenModal])
 
-    const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
-        if (e.target === dialogRef.current) {
-            setOpenModal(false)
-        }
-    }
+    useEffect(() => {
+        const dialog = dialogRef.current
+        if (!dialog) return
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLDialogElement>) => {
-        if (e.key === 'Escape' && e.target === dialogRef.current) {
+        const onCancel = (e: Event) => {
+            e.preventDefault()
             setOpenModal(false)
         }
-    }
+        const onClick = (e: MouseEvent) => {
+            if (e.target === dialog) {
+                setOpenModal(false)
+            }
+        }
+        dialog.addEventListener('cancel', onCancel)
+        dialog.addEventListener('click', onClick)
+        return () => {
+            dialog.removeEventListener('cancel', onCancel)
+            dialog.removeEventListener('click', onClick)
+        }
+    }, [setOpenModal])
 
     return (
-        // biome-ignore lint/a11y/noNoninteractiveElementInteractions: native dialog handles backdrop click and Escape
         <dialog
             ref={dialogRef}
             className="relative z-50 max-w-5xl mx-auto my-auto overflow-scroll max-h-[80vh] bg-transparent backdrop:bg-black/30 p-0 open:flex"
-            onClick={handleBackdropClick}
-            onKeyDown={handleKeyDown}
         >
             <div className="relative">
-                {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: decorative close control */}
-                {/* biome-ignore lint/a11y/useKeyWithClickEvents: paired with dialog Escape handling */}
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
+                <button
+                    type="button"
                     onClick={() => setOpenModal(false)}
                     style={{ color: style.textPrimary }}
-                    className="absolute h-6 w-6 top-3 right-3 cursor-pointer"
+                    className="absolute h-6 w-6 top-3 right-3 cursor-pointer border-0 bg-transparent p-0"
+                    aria-label="Close"
                 >
-                    <title>Close Icon</title>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="h-6 w-6"
+                        aria-hidden
+                    >
+                        <title>Close Icon</title>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                </button>
                 <div
                     style={{ backgroundColor: style.bgPrimary, borderColor: style.bgSecondary }}
                     className="p-12 rounded-lg border"
@@ -131,7 +142,7 @@ export function CookieConsentModal({ cookieProvider, children }: IConsentModalPr
         setOpenModal(false)
     }
 
-    function onClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    function onClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         if (!isEnabled) {
             event.stopPropagation()
             setOpenModal(true)
@@ -140,7 +151,7 @@ export function CookieConsentModal({ cookieProvider, children }: IConsentModalPr
         return undefined
     }
 
-    function onKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    function onKeyDown(event: React.KeyboardEvent<HTMLButtonElement>) {
         if (!isEnabled && (event.key === 'Enter' || event.key === ' ')) {
             event.preventDefault()
             event.stopPropagation()
@@ -160,15 +171,18 @@ export function CookieConsentModal({ cookieProvider, children }: IConsentModalPr
                 setIsEnabled={setIsEnabled}
                 handleAccept={handleAccept}
             />
-            <div
-                role="button"
-                tabIndex={0}
-                onClick={onClick}
-                onKeyDown={onKeyDown}
-                className={isEnabled ? undefined : 'opacity-50'}
-            >
-                {children}
-            </div>
+            {isEnabled ? (
+                <>{children}</>
+            ) : (
+                <button
+                    type="button"
+                    onClick={onClick}
+                    onKeyDown={onKeyDown}
+                    className="m-0 w-full cursor-pointer border-0 bg-transparent p-0 text-left opacity-50"
+                >
+                    {children}
+                </button>
+            )}
         </>
     )
 }

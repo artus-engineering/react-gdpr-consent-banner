@@ -47,14 +47,14 @@ export function CookieConsentBanner(): ReactElement | null {
                 }
             }
             acc[cookie.category].cookies[cookie.id] = cookie.category === 'Essential' || getCookieSelection(cookie)
-            acc[cookie.category].enabled = Object.values(acc[cookie.category].cookies).every(value => value)
+            acc[cookie.category].enabled = Object.values(acc[cookie.category].cookies).every(Boolean)
             return acc
         }, {} as CookieConsentState)
     }, [cookieProviders])
 
     // Initialize consent state lazily
     const [consentState, setConsentState] = useState<CookieConsentState>(() => {
-        if (typeof window === 'undefined') return {} as CookieConsentState
+        if (typeof globalThis.window === 'undefined') return {} as CookieConsentState
         return getCookieConsentState()
     })
 
@@ -112,7 +112,7 @@ export function CookieConsentBanner(): ReactElement | null {
                 ...prevState[category as CookieCategory].cookies,
                 [cookieId]: newCookieState
             }
-            const newEnabledState = Object.values(newCookiesState).every(value => value)
+            const newEnabledState = Object.values(newCookiesState).every(Boolean)
             return {
                 ...prevState,
                 [category]: {
@@ -147,8 +147,8 @@ export function CookieConsentBanner(): ReactElement | null {
             category: 'Essential' as CookieCategory,
             consentState,
             cookies: cookieUtils,
-            gtag: (window as any).gtag,
-            dataLayer: (window as any).dataLayer
+            gtag: (globalThis as any).gtag,
+            dataLayer: (globalThis as any).dataLayer
         }
 
         // Execute onAccept hooks for all non-Essential categories
@@ -190,8 +190,8 @@ export function CookieConsentBanner(): ReactElement | null {
             category: 'Essential' as CookieCategory,
             consentState: previousConsentState,
             cookies: cookieUtils,
-            gtag: (window as any).gtag,
-            dataLayer: (window as any).dataLayer
+            gtag: (globalThis as any).gtag,
+            dataLayer: (globalThis as any).dataLayer
         }
 
         // Only execute onReject hooks for categories that had previous consent
@@ -247,8 +247,8 @@ export function CookieConsentBanner(): ReactElement | null {
             category: 'Essential' as CookieCategory,
             consentState: currentConsentState,
             cookies: cookieUtils,
-            gtag: (window as any).gtag,
-            dataLayer: (window as any).dataLayer
+            gtag: (globalThis as any).gtag,
+            dataLayer: (globalThis as any).dataLayer
         }
 
         // Execute appropriate hooks based on state changes
@@ -440,9 +440,7 @@ export function CookieConsentBanner(): ReactElement | null {
     }
 
     return (
-        // biome-ignore lint/a11y/noStaticElementInteractions: modal backdrop closes details on overlay click
         <div
-            role="presentation"
             style={{
                 position: 'fixed',
                 inset: 0,
@@ -451,15 +449,28 @@ export function CookieConsentBanner(): ReactElement | null {
                 alignItems: 'center',
                 justifyContent: 'center',
                 padding: '16px',
-                backgroundColor: 'rgba(0, 0, 0, 0.5)',
                 animation: 'fadeIn 0.2s ease-out'
             }}
-            onClick={e => {
-                if (e.target === e.currentTarget) setShowDetails(false)
-            }}
         >
+            <button
+                type="button"
+                data-testid="cookie-banner-details-backdrop"
+                aria-label={getLabel('buttons', 'back', config)}
+                onClick={() => setShowDetails(false)}
+                style={{
+                    position: 'absolute',
+                    inset: 0,
+                    margin: 0,
+                    padding: 0,
+                    border: 'none',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    cursor: 'pointer'
+                }}
+            />
             <div
                 style={{
+                    position: 'relative',
+                    zIndex: 1,
                     backgroundColor: style.bgPrimary,
                     borderRadius: '12px',
                     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',

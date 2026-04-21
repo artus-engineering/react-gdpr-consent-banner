@@ -3,10 +3,10 @@ import { useStyle } from '../../hooks'
 import { ButtonSubSection, CookieConsentBannerConfigWithDefaults } from '../../types'
 
 interface IButtonProps {
-    onClick: () => void
-    text: ButtonSubSection
-    disabled?: boolean
-    config?: CookieConsentBannerConfigWithDefaults
+    readonly onClick: () => void
+    readonly text: ButtonSubSection
+    readonly disabled?: boolean
+    readonly config?: CookieConsentBannerConfigWithDefaults
 }
 
 export function Button({ onClick, text, disabled = false, config }: IButtonProps) {

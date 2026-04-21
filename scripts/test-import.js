@@ -5,18 +5,21 @@
  * This script can be run independently to verify that the package works correctly
  */
 
-const fs = require('fs')
-const path = require('path')
+import fs from 'node:fs'
+import { createRequire } from 'node:module'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const require = createRequire(import.meta.url)
 
 console.log('🧪 Testing package imports...\n')
 
 try {
-    // Test CJS import
     console.log('📦 Testing CommonJS import...')
-    const cjsExports = require('../dist/cjs/index.js')
+    const cjsExports = require('../dist/cjs/index.cjs')
     console.log('✅ CommonJS import successful')
 
-    // Test ESM import (simulated)
     console.log('📦 Testing ESM build...')
     const esmPath = path.join(__dirname, '../dist/esm/index.js')
     if (fs.existsSync(esmPath)) {
@@ -25,9 +28,8 @@ try {
         throw new Error('ESM build not found')
     }
 
-    // Check for CSS import issues
     console.log('🎨 Checking for CSS import issues...')
-    const cjsContent = fs.readFileSync(path.join(__dirname, '../dist/cjs/index.js'), 'utf8')
+    const cjsContent = fs.readFileSync(path.join(__dirname, '../dist/cjs/index.cjs'), 'utf8')
     const esmContent = fs.readFileSync(path.join(__dirname, '../dist/esm/index.js'), 'utf8')
 
     if (cjsContent.includes('require("./index.css")') || cjsContent.includes('require("./styles/index.css")')) {
@@ -40,7 +42,6 @@ try {
 
     console.log('✅ No CSS import issues found')
 
-    // Check key exports
     console.log('🔍 Checking key exports...')
     const requiredExports = [
         'CookieConsentProvider',
@@ -62,7 +63,6 @@ try {
 
     console.log('✅ All required exports are available')
 
-    // Check type definitions
     console.log('📝 Checking type definitions...')
     const typeDefPath = path.join(__dirname, '../dist/index.d.ts')
     if (fs.existsSync(typeDefPath)) {

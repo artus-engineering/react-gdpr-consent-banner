@@ -5,9 +5,9 @@ import { AuditConfig, ConsentAuditEvent, ConsentAuditPayload, CookieCategory } f
  * GDPR Audit Service for tracking consent changes
  */
 export class AuditService {
-    private config: AuditConfig
-    private websiteName: string
-    private domain: string
+    private readonly config: AuditConfig
+    private readonly websiteName: string
+    private readonly domain: string
 
     constructor(config: AuditConfig, websiteName: string, domain: string) {
         this.config = config
@@ -102,7 +102,7 @@ export function createAuditService(
     websiteName: string,
     domain: string
 ): AuditService | null {
-    if (!auditConfig || !auditConfig.url || !auditConfig.userId) {
+    if (!auditConfig?.url || !auditConfig?.userId) {
         return null
     }
 
