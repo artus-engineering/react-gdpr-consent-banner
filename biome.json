@@ -15,7 +15,8 @@
             "!**/package-lock.json",
             "!**/yarn.lock",
             "!**/*.config.js",
-            "!**/*.config.ts"
+            "!**/*.config.ts",
+            "!example/next-env.d.ts"
         ]
     },
     "formatter": {

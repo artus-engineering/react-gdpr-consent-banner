@@ -8,12 +8,12 @@ exports[`SwitchButton should match the snapshot when disabled 1`] = `
     data-testid="react-gdpr-cookie-consent-switch-button"
     disabled=""
     role="switch"
-    style="position: relative; display: inline-flex; align-items: center; height: 24px; width: 44px; flex-shrink: 0; border-radius: 9999px; padding: 2px; cursor: not-allowed; opacity: 0.5; transition: background-color 200ms ease-in-out;"
+    style="position: relative; display: inline-block; height: 24px; width: 44px; flex-shrink: 0; border-radius: 9999px; padding: 0px; cursor: not-allowed; opacity: 0.5; transition: background-color 200ms ease-in-out; vertical-align: middle;"
     type="button"
   >
     <span
       aria-hidden="true"
-      style="display: inline-block; height: 20px; width: 20px; border-radius: 9999px; background-color: rgb(255, 255, 255); box-shadow: 0 1px 3px rgba(0,0,0,0.2); transform: translateX(20px); transition: transform 200ms ease-in-out; pointer-events: none;"
+      style="position: absolute; top: 2px; left: 22px; height: 20px; width: 20px; border-radius: 9999px; background-color: rgb(255, 255, 255); box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: left 200ms ease-in-out; pointer-events: none;"
     />
   </button>
 </div>
@@ -26,12 +26,12 @@ exports[`SwitchButton should match the snapshot when not toggled 1`] = `
     aria-label="Test Switch Button"
     data-testid="react-gdpr-cookie-consent-switch-button"
     role="switch"
-    style="position: relative; display: inline-flex; align-items: center; height: 24px; width: 44px; flex-shrink: 0; border-radius: 9999px; padding: 2px; cursor: pointer; opacity: 1; transition: background-color 200ms ease-in-out;"
+    style="position: relative; display: inline-block; height: 24px; width: 44px; flex-shrink: 0; border-radius: 9999px; padding: 0px; cursor: pointer; opacity: 1; transition: background-color 200ms ease-in-out; vertical-align: middle;"
     type="button"
   >
     <span
       aria-hidden="true"
-      style="display: inline-block; height: 20px; width: 20px; border-radius: 9999px; background-color: rgb(255, 255, 255); box-shadow: 0 1px 3px rgba(0,0,0,0.2); transform: translateX(0); transition: transform 200ms ease-in-out; pointer-events: none;"
+      style="position: absolute; top: 2px; left: 2px; height: 20px; width: 20px; border-radius: 9999px; background-color: rgb(255, 255, 255); box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: left 200ms ease-in-out; pointer-events: none;"
     />
   </button>
 </div>
@@ -44,12 +44,12 @@ exports[`SwitchButton should match the snapshot with minimal configuration 1`] =
     aria-label="Test Switch Button"
     data-testid="react-gdpr-cookie-consent-switch-button"
     role="switch"
-    style="position: relative; display: inline-flex; align-items: center; height: 24px; width: 44px; flex-shrink: 0; border-radius: 9999px; padding: 2px; cursor: pointer; opacity: 1; transition: background-color 200ms ease-in-out;"
+    style="position: relative; display: inline-block; height: 24px; width: 44px; flex-shrink: 0; border-radius: 9999px; padding: 0px; cursor: pointer; opacity: 1; transition: background-color 200ms ease-in-out; vertical-align: middle;"
     type="button"
   >
     <span
       aria-hidden="true"
-      style="display: inline-block; height: 20px; width: 20px; border-radius: 9999px; background-color: rgb(255, 255, 255); box-shadow: 0 1px 3px rgba(0,0,0,0.2); transform: translateX(20px); transition: transform 200ms ease-in-out; pointer-events: none;"
+      style="position: absolute; top: 2px; left: 22px; height: 20px; width: 20px; border-radius: 9999px; background-color: rgb(255, 255, 255); box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: left 200ms ease-in-out; pointer-events: none;"
     />
   </button>
 </div>
@@ -62,12 +62,12 @@ exports[`SwitchButton should match the snapshot with screen reader label 1`] = `
     aria-label="Test Label"
     data-testid="react-gdpr-cookie-consent-switch-button"
     role="switch"
-    style="position: relative; display: inline-flex; align-items: center; height: 24px; width: 44px; flex-shrink: 0; border-radius: 9999px; padding: 2px; cursor: pointer; opacity: 1; transition: background-color 200ms ease-in-out;"
+    style="position: relative; display: inline-block; height: 24px; width: 44px; flex-shrink: 0; border-radius: 9999px; padding: 0px; cursor: pointer; opacity: 1; transition: background-color 200ms ease-in-out; vertical-align: middle;"
     type="button"
   >
     <span
       aria-hidden="true"
-      style="display: inline-block; height: 20px; width: 20px; border-radius: 9999px; background-color: rgb(255, 255, 255); box-shadow: 0 1px 3px rgba(0,0,0,0.2); transform: translateX(20px); transition: transform 200ms ease-in-out; pointer-events: none;"
+      style="position: absolute; top: 2px; left: 22px; height: 20px; width: 20px; border-radius: 9999px; background-color: rgb(255, 255, 255); box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: left 200ms ease-in-out; pointer-events: none;"
     />
   </button>
 </div>

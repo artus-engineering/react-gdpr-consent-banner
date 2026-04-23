@@ -74,12 +74,12 @@ exports[`CookieConsentGate should render gate content if not consented to cookie
               data-testid="react-gdpr-cookie-consent-switch-button"
               disabled=""
               role="switch"
-              style="position: relative; display: inline-flex; align-items: center; height: 24px; width: 44px; flex-shrink: 0; border-radius: 9999px; padding: 2px; background-color: rgb(248, 250, 252); cursor: not-allowed; opacity: 0.5; transition: background-color 200ms ease-in-out;"
+              style="position: relative; display: inline-block; height: 24px; width: 44px; flex-shrink: 0; border-radius: 9999px; padding: 0px; background-color: rgb(248, 250, 252); cursor: not-allowed; opacity: 0.5; transition: background-color 200ms ease-in-out; vertical-align: middle;"
               type="button"
             >
               <span
                 aria-hidden="true"
-                style="display: inline-block; height: 20px; width: 20px; border-radius: 9999px; background-color: rgb(255, 255, 255); box-shadow: 0 1px 3px rgba(0,0,0,0.2); transform: translateX(0); transition: transform 200ms ease-in-out; pointer-events: none;"
+                style="position: absolute; top: 2px; left: 2px; height: 20px; width: 20px; border-radius: 9999px; background-color: rgb(255, 255, 255); box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: left 200ms ease-in-out; pointer-events: none;"
               />
             </button>
           </div>
@@ -257,7 +257,7 @@ exports[`CookieConsentGate should render gate content if not consented to cookie
     >
       <button
         class="hover:scale-105 px-3 py-2 md:w-max w-full text-sm rounded-lg 
-            duration-300 font-medium opacity-50 cursor-not-allowed"
+            duration-300 font-medium opacity-50 cursor-not-allowed !w-max max-w-full"
         disabled=""
         style="color: rgb(255, 255, 255); background-color: rgb(59, 130, 246);"
         type="button"
@@ -335,12 +335,12 @@ exports[`CookieConsentGate should use serviceProvider when available 1`] = `
               data-testid="react-gdpr-cookie-consent-switch-button"
               disabled=""
               role="switch"
-              style="position: relative; display: inline-flex; align-items: center; height: 24px; width: 44px; flex-shrink: 0; border-radius: 9999px; padding: 2px; background-color: rgb(248, 250, 252); cursor: not-allowed; opacity: 0.5; transition: background-color 200ms ease-in-out;"
+              style="position: relative; display: inline-block; height: 24px; width: 44px; flex-shrink: 0; border-radius: 9999px; padding: 0px; background-color: rgb(248, 250, 252); cursor: not-allowed; opacity: 0.5; transition: background-color 200ms ease-in-out; vertical-align: middle;"
               type="button"
             >
               <span
                 aria-hidden="true"
-                style="display: inline-block; height: 20px; width: 20px; border-radius: 9999px; background-color: rgb(255, 255, 255); box-shadow: 0 1px 3px rgba(0,0,0,0.2); transform: translateX(0); transition: transform 200ms ease-in-out; pointer-events: none;"
+                style="position: absolute; top: 2px; left: 2px; height: 20px; width: 20px; border-radius: 9999px; background-color: rgb(255, 255, 255); box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: left 200ms ease-in-out; pointer-events: none;"
               />
             </button>
           </div>
@@ -518,7 +518,7 @@ exports[`CookieConsentGate should use serviceProvider when available 1`] = `
     >
       <button
         class="hover:scale-105 px-3 py-2 md:w-max w-full text-sm rounded-lg 
-            duration-300 font-medium opacity-50 cursor-not-allowed"
+            duration-300 font-medium opacity-50 cursor-not-allowed !w-max max-w-full"
         disabled=""
         style="color: rgb(255, 255, 255); background-color: rgb(59, 130, 246);"
         type="button"

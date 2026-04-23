@@ -124,7 +124,15 @@ function Modal({
                             isEnabled={isEnabled}
                         />
                     </div>
-                    <Button onClick={handleAccept} disabled={!isEnabled} text={'acceptSelectedCookies'} />
+                    <div className="flex justify-end w-full">
+                        <Button
+                            onClick={handleAccept}
+                            disabled={!isEnabled}
+                            text={'acceptSelectedCookies'}
+                            config={config}
+                            className="!w-max max-w-full"
+                        />
+                    </div>
                 </div>
             </div>
         </dialog>

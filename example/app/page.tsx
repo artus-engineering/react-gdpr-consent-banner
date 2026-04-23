@@ -1,14 +1,14 @@
 'use client'
 
-import { CheckCircle2, Globe, Palette, Settings2, Shield, Zap } from 'lucide-react'
-import { useState } from 'react'
+import { CheckCircle2, Globe, Lock, Palette, Settings2, Shield, Zap } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { CookieConsentProvider } from '../../src/components/consent'
+import { CookieConsentGate, CookieConsentProvider } from '../../src/components/consent'
 import { createGoogleAnalyticsHook } from '../../src/consentHooks'
-import { useCookieConsentContext } from '../../src/hooks'
+import { useCookieConsentContext, useCookieProviders } from '../../src/hooks'
 import { CookieConsentStyle } from '../../src/types'
 import { generateUserId, getUserIdFromClientCookies } from '../lib/userId'
 
@@ -21,6 +21,42 @@ function OpenBannerButton() {
             <Settings2 className="mr-2 h-4 w-4" />
             Cookie-Einstellungen öffnen
         </Button>
+    )
+}
+
+function StripeCheckoutConsentGateDemo() {
+    const [isClient, setIsClient] = useState(false)
+    useEffect(() => {
+        setIsClient(true)
+    }, [])
+
+    const providers = useCookieProviders('StripeCheckoutConsentGateDemo')
+    const stripe = useMemo(() => providers.find(p => p.id === 'stripe'), [providers])
+    if (!stripe) {
+        return null
+    }
+    if (!isClient) {
+        return <div className="min-h-[12rem] rounded-lg border border-dashed border-slate-200 bg-slate-50" />
+    }
+    return (
+        <div className="space-y-4">
+            <p className="text-sm text-slate-600">
+                <code className="rounded bg-slate-100 px-1.5 py-0.5 text-xs font-mono">CookieConsentGate</code> blendet
+                eingebettete Inhalte aus, bis die Nutzerin bzw. der Nutzer dem zugehörigen Cookie-Provider (hier:
+                Stripe, Kategorie <span className="font-medium">Funktional</span>) zustimmt. Nach der Zustimmung
+                erscheint der Block unten.
+            </p>
+            <CookieConsentGate cookieProvider={stripe}>
+                <div className="rounded-xl border-2 border-dashed border-emerald-300/80 bg-emerald-50/50 p-8 text-center">
+                    <CheckCircle2 className="mx-auto mb-3 h-10 w-10 text-emerald-600" />
+                    <p className="font-medium text-slate-800">Zahlung möglich</p>
+                    <p className="mt-1 text-sm text-slate-600">
+                        Funktionale Cookies für Stripe sind erlaubt — ein eingebettetes Checkout oder ein
+                        Zahlungsformular würde hier geladen.
+                    </p>
+                </div>
+            </CookieConsentGate>
+        </div>
     )
 }
 
@@ -487,6 +523,25 @@ export default function HomePage() {
                                         </div>
                                     </div>
                                 </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="border-2">
+                            <CardHeader>
+                                <div className="flex items-center gap-2">
+                                    <Lock className="h-5 w-5 text-teal-600" />
+                                    <CardTitle>Consent-Gate</CardTitle>
+                                </div>
+                                <CardDescription>
+                                    <code className="rounded bg-slate-100 px-1.5 py-0.5 text-xs font-mono">
+                                        CookieConsentGate
+                                    </code>{' '}
+                                    schützt eingebettete Drittanbieter (z. B. Zahlung, Karten, Maps) bis zur passenden
+                                    Cookie-Einwilligung.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <StripeCheckoutConsentGateDemo />
                             </CardContent>
                         </Card>
 

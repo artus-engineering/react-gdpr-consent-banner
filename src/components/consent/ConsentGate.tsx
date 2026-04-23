@@ -48,7 +48,13 @@ export function ConsentGateContent({ cookieProvider }: { readonly cookieProvider
                 />
             </div>
             <div className="flex justify-end w-full">
-                <Button onClick={handleAccept} disabled={!localState} text={'acceptSelectedCookies'} />
+                <Button
+                    onClick={handleAccept}
+                    disabled={!localState}
+                    text={'acceptSelectedCookies'}
+                    config={config}
+                    className="!w-max max-w-full"
+                />
             </div>
         </div>
     )
