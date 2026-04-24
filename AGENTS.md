@@ -135,3 +135,15 @@ To cut a release:
 3. The workflow sets `package.json` version from the tag, runs `lint` → `test` → `build` → `test:import`, and publishes `@artus-engineering/react-gdpr-cookie-consent` to GitHub Packages (`https://npm.pkg.github.com`).
 
 The package inherits the repo's private visibility. Consumers need a GitHub PAT with `read:packages` and an `.npmrc` pointing the `@artus-engineering` scope at `https://npm.pkg.github.com/`.
+
+## Learned User Preferences
+
+- For WordPress work, prefer a ready-to-upload plugin `.zip` pipeline over instructions that require copying generated JavaScript manually.
+- For visual UI fixes, controls must be clearly recognizable; off-state switches should use a primary-color shade or outline rather than blending into surrounding cards.
+
+## Learned Workspace Facts
+
+- The repo includes a WordPress plugin wrapper at `wordpress/react-gdpr-cookie-consent` with PHP settings UI and an esbuild-built React frontend bundle.
+- The WordPress plugin is intended to be German-only; admin UI, defaults, validation messages, and bundled banner copy should avoid English user-facing text.
+- `pnpm run build:wordpress` builds the WordPress frontend bundle and packages `wordpress/react-gdpr-cookie-consent/dist/react-gdpr-cookie-consent.zip` for upload through WordPress admin.
+- Built-in WordPress integrations should provide predefined cookie provider metadata automatically; configuring GA, GTM, or Facebook Pixel should not require manual cookie provider entries for those services.

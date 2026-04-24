@@ -549,8 +549,6 @@ export function CookieConsentBanner(): ReactElement | null {
                                         </div>
                                         <div style={{ flexShrink: 0 }}>
                                             <SwitchButton
-                                                bgTrue={style.primaryColor}
-                                                bgFalse={style.bgSecondary}
                                                 toggled={categoryState.enabled}
                                                 onToggle={() => handleCategoryToggle(category)}
                                                 name={`category-${category}`}
@@ -627,8 +625,6 @@ export function CookieConsentBanner(): ReactElement | null {
                                                         </div>
                                                         <div style={{ flexShrink: 0 }}>
                                                             <SwitchButton
-                                                                bgTrue={style.primaryColor}
-                                                                bgFalse={style.bgSecondary}
                                                                 toggled={isEnabled}
                                                                 onToggle={() =>
                                                                     handleCookieToggle(category, provider.id)

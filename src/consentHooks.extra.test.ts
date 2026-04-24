@@ -45,6 +45,12 @@ function clearAllCookies() {
     }
 }
 
+function getDataLayerCommands(): unknown[] {
+    return ((globalThis.window as any).dataLayer as unknown[]).map(entry =>
+        typeof entry === 'object' && entry !== null ? Array.from(entry as ArrayLike<unknown>) : entry
+    )
+}
+
 describe('ConsentHookManager', () => {
     let manager: ConsentHookManager
 
@@ -226,10 +232,14 @@ describe('createGoogleTagManagerHook (standard)', () => {
 
         await acceptHook.execute(createMockContext('Analytics'))
 
-        expect((globalThis.window as any).dataLayer).toContainEqual({
-            analytics_storage: 'granted',
-            functionality_storage: 'granted'
-        })
+        expect(getDataLayerCommands()).toContainEqual([
+            'consent',
+            'update',
+            {
+                analytics_storage: 'granted',
+                functionality_storage: 'granted'
+            }
+        ])
         expect((globalThis.window as any).dataLayer).toContainEqual({ event: 'analytics_consent_granted' })
     })
 
@@ -281,7 +291,7 @@ describe('createGoogleAnalyticsHook', () => {
 
         expect(typeof (globalThis.window as any).gtag).toBe('function')
         ;(globalThis.window as any).gtag('test', 'payload')
-        expect((globalThis.window as any).dataLayer).toContainEqual(['test', 'payload'])
+        expect(getDataLayerCommands()).toContainEqual(['test', 'payload'])
     })
 
     it('analytics accept hook grants analytics_storage via gtag', async () => {

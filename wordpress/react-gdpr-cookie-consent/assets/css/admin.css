@@ -1,0 +1,151 @@
+.rgcc-admin {
+    max-width: 900px;
+}
+
+/* Tab navigation */
+.rgcc-tab-nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid #c3c4c7;
+    margin-bottom: 20px;
+}
+
+.rgcc-tab-link {
+    display: inline-block;
+    padding: 10px 16px;
+    text-decoration: none;
+    color: #50575e;
+    border: 1px solid transparent;
+    border-bottom: none;
+    margin-bottom: -1px;
+    background: transparent;
+    font-weight: 500;
+}
+
+.rgcc-tab-link:hover {
+    color: #135e96;
+}
+
+.rgcc-tab-link.active {
+    background: #fff;
+    border-color: #c3c4c7;
+    border-bottom-color: #fff;
+    color: #1d2327;
+}
+
+/* Tab panels */
+.rgcc-tab-panel {
+    display: none;
+}
+
+.rgcc-tab-panel.active {
+    display: block;
+}
+
+/* Provider groups */
+.rgcc-provider-group {
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    background: #fff;
+}
+
+.rgcc-provider-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: #f6f7f7;
+    border-bottom: 1px solid #c3c4c7;
+    gap: 12px;
+}
+
+.rgcc-provider-header .rgcc-provider-title {
+    flex: 1;
+}
+
+.rgcc-provider-body {
+    padding: 0 16px 16px;
+}
+
+.rgcc-provider-body .form-table th {
+    width: 160px;
+    padding-left: 0;
+}
+
+/* Remove buttons */
+.rgcc-remove-btn {
+    color: #b32d2e !important;
+}
+
+.rgcc-remove-btn:hover {
+    color: #a00 !important;
+}
+
+/* Cookie rows */
+.rgcc-cookies-list {
+    margin-bottom: 8px;
+}
+
+.rgcc-cookie-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    background: #f6f7f7;
+    border: 1px solid #dcdcde;
+    border-radius: 3px;
+}
+
+.rgcc-cookie-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    flex: 1;
+}
+
+.rgcc-cookie-fields label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 12px;
+}
+
+.rgcc-cookie-fields label span {
+    font-weight: 600;
+    color: #50575e;
+}
+
+.rgcc-cookie-fields input[type="text"],
+.rgcc-cookie-fields input[type="number"] {
+    width: 130px;
+}
+
+.rgcc-cookie-fields .regular-text {
+    width: 200px;
+}
+
+.rgcc-cookie-fields select {
+    min-width: 90px;
+}
+
+.rgcc-remove-cookie {
+    font-size: 20px;
+    line-height: 1;
+    padding: 4px 8px;
+    flex-shrink: 0;
+}
+
+/* Color picker overrides */
+#rgcc-color-fields .wp-picker-container {
+    display: inline-block;
+}
+
+/* Buttons */
+#rgcc-add-provider {
+    margin-top: 8px;
+}
+
+.rgcc-add-cookie {
+    margin-top: 4px;
+}

@@ -27,10 +27,8 @@ export function CookieCategoryComponent({ provider, handleCookieToggle, isEnable
                         </a>
                     </p>
                 </div>
-                <div className="w-24 flex flex-shrink-0 justify-end">
+                <div className="w-24 flex shrink-0 justify-end">
                     <SwitchButton
-                        bgTrue={style.primaryColor}
-                        bgFalse={style.bgSecondary}
                         toggled={isEnabled}
                         onToggle={() => handleCookieToggle(provider.category, provider.id)}
                         name={provider.id}

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { createAuditService } from '../../auditService'
 import { consentHookManager, createCookieUtils } from '../../consentHooks'
 import { CONSENT_DIALOG_HAS_BEEN_DISPLAYED, CONSENT_DIALOG_HAS_BEEN_DISPLAYED_VALUE } from '../../constants'
-import { isServer } from '../../functions'
+import { getCookieSelection, isServer } from '../../functions'
 import { ConsentHookContext, CookieCategory, CookieConsentBannerConfig } from '../../types'
 import { CookieConsentBanner } from './ConsentBanner'
 import { ConsentStateProviderContext } from './context'
@@ -61,7 +61,7 @@ export function CookieConsentProvider({
             // Check current consent state from cookies
             config.providers.forEach(provider => {
                 if (provider.category !== 'Essential') {
-                    const hasConsent = cookieUtils.get(`cookie_consent_${provider.id}`) === 'true'
+                    const hasConsent = getCookieSelection(provider)
                     consentState[provider.category as CookieCategory] =
                         consentState[provider.category as CookieCategory] || hasConsent
                 }

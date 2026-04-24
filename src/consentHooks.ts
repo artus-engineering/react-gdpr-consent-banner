@@ -12,6 +12,13 @@ declare global {
 }
 
 const GTM_CONTAINER_ID_PATTERN = /^GTM-[A-Z0-9]+$/
+type GtmConsentMode = 'default' | 'update'
+type GtmConsentValue = 'granted' | 'denied'
+type GtmConsentUpdate = Record<string, GtmConsentValue | number>
+type GtmConsentEventMeta = {
+    event: string
+    consent_parameter?: string
+}
 
 function isValidGtmContainerId(id: string): boolean {
     return GTM_CONTAINER_ID_PATTERN.test(id)
@@ -21,9 +28,23 @@ function ensureWindowDataLayer(): void {
     globalThis.window.dataLayer = globalThis.window.dataLayer || []
 }
 
-function pushGtmDataLayerConsent(consentUpdate: Record<string, string>, eventMeta: Record<string, string>): void {
+function ensureWindowGtag(): void {
     ensureWindowDataLayer()
-    globalThis.window.dataLayer.push('consent', 'update', consentUpdate, eventMeta)
+    if (!globalThis.window.gtag) {
+        globalThis.window.gtag = function gtag(): void {
+            globalThis.window.dataLayer.push(arguments)
+        }
+    }
+}
+
+function pushGtmConsentCommand(mode: GtmConsentMode, consentUpdate: GtmConsentUpdate): void {
+    ensureWindowGtag()
+    globalThis.window.gtag('consent', mode, consentUpdate)
+}
+
+function pushGtmDataLayerConsent(consentUpdate: GtmConsentUpdate, eventMeta: GtmConsentEventMeta): void {
+    pushGtmConsentCommand('update', consentUpdate)
+    globalThis.window.dataLayer.push(eventMeta)
 }
 
 function removeConsentCookiesForHostname(
@@ -264,8 +285,8 @@ export function createGoogleAnalyticsHook(
                 // Always initialize the script, but with denied consent by default
                 if (!globalThis.window.gtag) {
                     ensureWindowDataLayer()
-                    globalThis.window.gtag = function gtag(...args: any[]) {
-                        globalThis.window.dataLayer.push(args)
+                    globalThis.window.gtag = function gtag(): void {
+                        globalThis.window.dataLayer.push(arguments)
                     }
 
                     const script = document.createElement('script')
@@ -489,11 +510,11 @@ export function createGoogleTagManagerHook(
             return // Already initialized
         }
 
-        ensureWindowDataLayer()
+        ensureWindowGtag()
 
         // CRITICAL: Set default consent state BEFORE loading GTM
         // This ensures GTM respects consent from the very beginning
-        globalThis.window.dataLayer.push('consent', 'default', {
+        pushGtmConsentCommand('default', {
             ad_storage: 'denied',
             analytics_storage: 'denied',
             ad_user_data: 'denied',
@@ -507,6 +528,8 @@ export function createGoogleTagManagerHook(
         // Load GTM script
         const existingScript = document.querySelector(`script[src*="googletagmanager.com/gtm.js?id=${gtmId}"]`)
         if (!existingScript) {
+            globalThis.window.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' })
+
             const script = document.createElement('script')
             script.async = true
             script.src = `https://www.googletagmanager.com/gtm.js?id=${gtmId}`

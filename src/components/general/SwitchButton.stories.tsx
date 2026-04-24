@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { DefaultTheme } from '../../themes'
 import { SwitchButton } from './SwitchButton'
 
 const meta: Meta<typeof SwitchButton> = {
@@ -12,8 +11,6 @@ const meta: Meta<typeof SwitchButton> = {
     args: {
         name: 'example-switch',
         screenReaderLabel: 'Example switch',
-        bgTrue: DefaultTheme.primaryColor,
-        bgFalse: DefaultTheme.bgSecondary,
         onToggle: () => undefined
     }
 }

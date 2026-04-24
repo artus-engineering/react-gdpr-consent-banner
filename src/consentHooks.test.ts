@@ -89,9 +89,8 @@ function expectGranularGtmDataLayerPush(
     eventMeta: { event: string; consent_parameter: string }
 ) {
     const dl = globalThis.window.dataLayer
-    expect(dl).toContainEqual('consent')
-    expect(dl).toContainEqual('update')
-    expect(dl).toContainEqual(consent)
+    const commands = dl.map(entry => (typeof entry === 'object' && entry !== null ? Array.from(entry) : entry))
+    expect(commands).toContainEqual(['consent', 'update', consent])
     expect(dl).toContainEqual(eventMeta)
 }
 
@@ -123,18 +122,23 @@ describe('Google Consent Mode v2 Tests', () => {
             const _hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
 
             // GTM should be initialized immediately with default denied state
-            expect(globalThis.window.dataLayer).toContainEqual('consent')
-            expect(globalThis.window.dataLayer).toContainEqual('default')
-            expect(globalThis.window.dataLayer).toContainEqual({
-                ad_storage: 'denied',
-                analytics_storage: 'denied',
-                ad_user_data: 'denied',
-                ad_personalization: 'denied',
-                functionality_storage: 'denied',
-                personalization_storage: 'denied',
-                security_storage: 'granted',
-                wait_for_update: 500
-            })
+            const commands = globalThis.window.dataLayer.map(entry =>
+                typeof entry === 'object' && entry !== null ? Array.from(entry) : entry
+            )
+            expect(commands).toContainEqual([
+                'consent',
+                'default',
+                {
+                    ad_storage: 'denied',
+                    analytics_storage: 'denied',
+                    ad_user_data: 'denied',
+                    ad_personalization: 'denied',
+                    functionality_storage: 'denied',
+                    personalization_storage: 'denied',
+                    security_storage: 'granted',
+                    wait_for_update: 500
+                }
+            ])
         })
 
         it('should load GTM script with correct container ID', () => {
@@ -387,14 +391,21 @@ describe('Google Consent Mode v2 Tests', () => {
             const _hooks = createGoogleTagManagerHook('GTM-TEST123', { granular: true })
 
             // Check initialization includes all v2 parameters
-            expect(globalThis.window.dataLayer).toContainEqual(
-                expect.objectContaining({
-                    ad_storage: 'denied',
-                    analytics_storage: 'denied',
-                    ad_user_data: 'denied', // v2 parameter
-                    ad_personalization: 'denied', // v2 parameter
-                    security_storage: 'granted'
-                })
+            const commands = globalThis.window.dataLayer.map(entry =>
+                typeof entry === 'object' && entry !== null ? Array.from(entry) : entry
+            )
+            expect(commands).toContainEqual(
+                expect.arrayContaining([
+                    'consent',
+                    'default',
+                    expect.objectContaining({
+                        ad_storage: 'denied',
+                        analytics_storage: 'denied',
+                        ad_user_data: 'denied', // v2 parameter
+                        ad_personalization: 'denied', // v2 parameter
+                        security_storage: 'granted'
+                    })
+                ])
             )
         })
 

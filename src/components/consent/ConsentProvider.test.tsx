@@ -118,6 +118,32 @@ describe('CookieConsentProvider', () => {
         })
     })
 
+    it('executes onLoad hooks when the provider consent cookie was accepted before reload', async () => {
+        document.cookie = 'analytics_consent=given; path=/'
+        const execute = jest.fn()
+        const configWithHooks: CookieConsentBannerConfig = {
+            ...baseConfig,
+            consentHooks: [
+                {
+                    id: 'analytics-load',
+                    category: 'Analytics',
+                    type: 'onLoad',
+                    execute
+                }
+            ]
+        }
+
+        render(
+            <CookieConsentProvider config={configWithHooks} includeCookieBanner={false}>
+                <div>content</div>
+            </CookieConsentProvider>
+        )
+
+        await waitFor(() => {
+            expect(execute).toHaveBeenCalledTimes(1)
+        })
+    })
+
     it('does not create an audit service when no audit config is provided', () => {
         const onContext = jest.fn()
         render(
