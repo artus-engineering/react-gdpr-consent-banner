@@ -26,6 +26,17 @@ jobs:
           registry-url: "https://npm.pkg.github.com"
           scope: "@artus-engineering"
 
+      - name: Validate package version matches release tag
+        run: |
+          TAG_VERSION="${{ github.event.release.tag_name }}"
+          TAG_VERSION="${TAG_VERSION#v}"
+          PACKAGE_VERSION="$(node -p "require('./package.json').version")"
+
+          if [ "$PACKAGE_VERSION" != "$TAG_VERSION" ]; then
+            echo "Release tag ($TAG_VERSION) does not match package.json version ($PACKAGE_VERSION)."
+            exit 1
+          fi
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -51,12 +62,6 @@ jobs:
             mcr.microsoft.com/playwright:v1.59.1-noble bash -lc \
             "npm i -g pnpm@10.33.0 >/dev/null && pnpm install --frozen-lockfile && \
              pnpm run build-storybook && pnpm run test:visual"
-
-      - name: Set version from release tag
-        run: |
-          VERSION="${{ github.event.release.tag_name }}"
-          VERSION="${VERSION#v}"
-          npm version "$VERSION" --no-git-tag-version --allow-same-version
 
       - name: Publish to GitHub Packages
         run: pnpm publish --no-git-checks

@@ -1,6 +1,6 @@
 {
     "name": "@artus-engineering/react-gdpr-cookie-consent",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "publishConfig": {
         "registry": "https://npm.pkg.github.com"
     },
@@ -16,7 +16,7 @@
         "dev:lib": "rollup -c --watch",
         "dev:example": "pnpm --dir example run dev",
         "build": "rollup -c --bundleConfigAsCjs",
-        "test": "pnpm run test:unit && pnpm run test:import && pnpm run test:visual",
+        "test": "pnpm run test:unit && pnpm run test:import && pnpm run build-storybook && pnpm run test:visual",
         "test:unit": "jest --coverage --watchAll=false",
         "test:unit:watch": "jest --coverage --watch",
         "test:import": "node tests/import/test-import.js",
@@ -89,6 +89,7 @@
     "jest": {
         "testEnvironment": "jsdom",
         "setupFilesAfterEnv": ["<rootDir>/src/setupTests.ts"],
+        "watchman": false,
         "testPathIgnorePatterns": ["/node_modules/", "<rootDir>/tests/", "<rootDir>/dist/"],
         "collectCoverageFrom": [
             "src/**/*.{ts,tsx}",
