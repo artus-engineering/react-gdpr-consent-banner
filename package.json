@@ -10,11 +10,7 @@
     "main": "dist/cjs/index.cjs",
     "module": "dist/esm/index.js",
     "types": "dist/index.d.ts",
-    "files": [
-        "dist",
-        "README.md",
-        "LICENSE"
-    ],
+    "files": ["dist", "README.md", "LICENSE"],
     "scripts": {
         "dev": "concurrently \"rollup -c --watch\" \"pnpm --dir example run dev\"",
         "dev:lib": "rollup -c --watch",
@@ -34,14 +30,7 @@
         "lint:fix": "biome check --write .",
         "build:wordpress": "node wordpress/react-gdpr-cookie-consent/esbuild.config.mjs"
     },
-    "keywords": [
-        "gdpr",
-        "cookie",
-        "consent",
-        "react",
-        "privacy",
-        "compliance"
-    ],
+    "keywords": ["gdpr", "cookie", "consent", "react", "privacy", "compliance"],
     "author": "Artus Engineering GmbH",
     "license": "ISC",
     "peerDependencies": {
@@ -99,14 +88,8 @@
     },
     "jest": {
         "testEnvironment": "jsdom",
-        "setupFilesAfterEnv": [
-            "<rootDir>/src/setupTests.ts"
-        ],
-        "testPathIgnorePatterns": [
-            "/node_modules/",
-            "<rootDir>/tests/",
-            "<rootDir>/dist/"
-        ],
+        "setupFilesAfterEnv": ["<rootDir>/src/setupTests.ts"],
+        "testPathIgnorePatterns": ["/node_modules/", "<rootDir>/tests/", "<rootDir>/dist/"],
         "collectCoverageFrom": [
             "src/**/*.{ts,tsx}",
             "!src/**/*.d.ts",
@@ -118,12 +101,7 @@
         ],
         "coverageDirectory": "coverage",
         "coverageProvider": "v8",
-        "coverageReporters": [
-            "text",
-            "text-summary",
-            "lcov",
-            "html"
-        ]
+        "coverageReporters": ["text", "text-summary", "lcov", "html"]
     },
     "babel": {
         "presets": [
@@ -138,16 +116,8 @@
         ]
     },
     "browserslist": {
-        "production": [
-            ">0.2%",
-            "not dead",
-            "not op_mini all"
-        ],
-        "development": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
-        ]
+        "production": [">0.2%", "not dead", "not op_mini all"],
+        "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
     },
     "repository": {
         "type": "git",
@@ -157,10 +127,6 @@
         "overrides": {
             "yaml": "^2.8.3"
         },
-        "ignoredBuiltDependencies": [
-            "esbuild",
-            "sharp",
-            "unrs-resolver"
-        ]
+        "ignoredBuiltDependencies": ["esbuild", "sharp", "unrs-resolver"]
     }
 }

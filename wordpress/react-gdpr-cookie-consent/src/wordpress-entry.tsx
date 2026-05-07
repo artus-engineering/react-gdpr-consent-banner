@@ -12,9 +12,11 @@ import type {
     ConsentHook,
     CookieBannerTheme,
     CookieConsentBannerConfig,
+    CookieConsentLabels,
     CookieProviderConfig,
     SupportedLanguage
 } from '../../../src/types'
+import { getLanguageLabels } from './german-translations'
 
 type CookieProvider = CookieProviderConfig
 
@@ -46,6 +48,8 @@ interface WordPressConfig {
     domain: string
     lang: string
     cookiesValidForDays: string | number
+    bannerHeading?: string
+    bannerIntro?: string
     theme: Record<string, string>
     providers: WordPressProvider[]
     integrations: WordPressIntegrations
@@ -312,6 +316,18 @@ function mergeProviders(
     return [...configuredProviders, ...missingPredefinedProviders]
 }
 
+function buildWordPressLabels(raw: WordPressConfig): CookieConsentLabels {
+    const base = getLanguageLabels('deDE')
+    const heading = (raw.bannerHeading ?? '').trim() || base.headings.banner
+    const intro = (raw.bannerIntro ?? '').trim() || base.descriptions.cookieDetails
+
+    return {
+        ...base,
+        headings: { ...base.headings, banner: heading },
+        descriptions: { ...base.descriptions, cookieDetails: intro }
+    }
+}
+
 function buildConfig(raw: WordPressConfig): CookieConsentBannerConfig {
     const theme: CookieBannerTheme = {
         bgPrimary: raw.theme.bgPrimary || '#ffffff',
@@ -331,6 +347,7 @@ function buildConfig(raw: WordPressConfig): CookieConsentBannerConfig {
             typeof raw.cookiesValidForDays === 'string'
                 ? parseInt(raw.cookiesValidForDays, 10) || 183
                 : raw.cookiesValidForDays || 183,
+        labels: buildWordPressLabels(raw),
         theme,
         providers: mergeProviders(mapProviders(raw.providers || []), buildPredefinedProviders(raw.integrations)),
         consentHooks: buildConsentHooks(raw.integrations)

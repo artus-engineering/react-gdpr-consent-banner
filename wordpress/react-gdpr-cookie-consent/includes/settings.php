@@ -44,6 +44,8 @@ function rgcc_sanitize_general(mixed $input): array {
         'domain'                 => sanitize_text_field($input['domain'] ?? $defaults['domain']),
         'lang'                   => 'deDE',
         'cookies_valid_for_days' => absint($input['cookies_valid_for_days'] ?? $defaults['cookies_valid_for_days']),
+        'banner_heading'         => sanitize_text_field($input['banner_heading'] ?? $defaults['banner_heading']),
+        'banner_intro'           => sanitize_textarea_field($input['banner_intro'] ?? $defaults['banner_intro']),
     ];
 }
 
@@ -152,7 +154,7 @@ function rgcc_sanitize_providers(mixed $input): array {
 }
 
 function rgcc_build_frontend_config(): array {
-    $general      = get_option('rgcc_general', rgcc_get_default_config()['general']);
+    $general      = rgcc_get_general_settings();
     $theme        = get_option('rgcc_theme', rgcc_get_default_config()['theme']);
     $integrations = get_option('rgcc_integrations', rgcc_get_default_config()['integrations']);
     $providers    = get_option('rgcc_providers', []);
@@ -197,6 +199,8 @@ function rgcc_build_frontend_config(): array {
         'domain'              => $general['domain'],
         'lang'                => 'deDE',
         'cookiesValidForDays' => (int) $general['cookies_valid_for_days'],
+        'bannerHeading'       => $general['banner_heading'],
+        'bannerIntro'         => $general['banner_intro'],
         'theme'               => $theme_colors,
         'providers'           => $js_providers,
         'integrations'        => [

@@ -9,7 +9,7 @@ function rgcc_render_admin_page(): void {
         return;
     }
 
-    $general      = get_option('rgcc_general', rgcc_get_default_config()['general']);
+    $general      = rgcc_get_general_settings();
     $theme        = get_option('rgcc_theme', rgcc_get_default_config()['theme']);
     $integrations = get_option('rgcc_integrations', rgcc_get_default_config()['integrations']);
     $providers    = get_option('rgcc_providers', []);
@@ -43,6 +43,26 @@ function rgcc_render_admin_page(): void {
                             <td>
                                 <input type="text" id="rgcc_general_website_name" name="rgcc_general[website_name]"
                                        value="<?php echo esc_attr($general['website_name']); ?>" class="regular-text">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">
+                                <label for="rgcc_general_banner_heading"><?php esc_html_e('Banner-Überschrift', 'react-gdpr-cookie-consent'); ?></label>
+                            </th>
+                            <td>
+                                <input type="text" id="rgcc_general_banner_heading" name="rgcc_general[banner_heading]"
+                                       value="<?php echo esc_attr($general['banner_heading']); ?>" class="large-text">
+                                <p class="description"><?php esc_html_e('Überschrift im Einwilligungs-Banner (oberhalb des Einleitungstexts).', 'react-gdpr-cookie-consent'); ?></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">
+                                <label for="rgcc_general_banner_intro"><?php esc_html_e('Banner-Text', 'react-gdpr-cookie-consent'); ?></label>
+                            </th>
+                            <td>
+                                <textarea id="rgcc_general_banner_intro" name="rgcc_general[banner_intro]" rows="4"
+                                          class="large-text"><?php echo esc_textarea($general['banner_intro']); ?></textarea>
+                                <p class="description"><?php esc_html_e('Einleitungstext im Banner. Der Satz endet in der Oberfläche direkt vor dem Link zur Cookie-Richtlinie.', 'react-gdpr-cookie-consent'); ?></p>
                             </td>
                         </tr>
                         <tr>

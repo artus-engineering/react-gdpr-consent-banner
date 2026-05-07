@@ -12,6 +12,11 @@ function rgcc_get_default_config(): array {
             'domain'               => wp_parse_url(home_url(), PHP_URL_HOST) ?: '',
             'lang'                 => 'deDE',
             'cookies_valid_for_days' => 183,
+            'banner_heading'       => __('Wir schätzen Ihre Privatsphäre', 'react-gdpr-cookie-consent'),
+            'banner_intro'         => __(
+                'Wir verwenden Cookies auf unserer Website, um Ihre Nutzererfahrung zu verbessern. Einige dieser Cookies sind notwendig, während andere uns helfen, unsere Online-Dienste wirtschaftlich zu betreiben und zu verbessern. Sie können Ihre Einwilligung jederzeit widerrufen oder anpassen. Weitere Details finden Sie in unserer',
+                'react-gdpr-cookie-consent'
+            ),
         ],
         'theme' => [
             'preset'        => 'default',
@@ -74,6 +79,19 @@ function rgcc_get_theme_presets(): array {
             'label' => __('Benutzerdefiniert', 'react-gdpr-cookie-consent'),
         ],
     ];
+}
+
+/**
+ * @return array<string, mixed>
+ */
+function rgcc_get_general_settings(): array {
+    $defaults = rgcc_get_default_config()['general'];
+    $stored   = get_option('rgcc_general', []);
+    if (!is_array($stored)) {
+        return $defaults;
+    }
+
+    return array_merge($defaults, $stored);
 }
 
 function rgcc_get_cookie_categories(): array {
