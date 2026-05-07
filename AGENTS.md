@@ -98,7 +98,8 @@ Jest (jsdom) runs behavior tests. Playwright runs visual tests against a built S
 ```bash
 pnpm install                 # workspace install
 pnpm run lint                # biome check
-pnpm run test                # jest with coverage (jsdom)
+pnpm run test                # full suite (unit + import + storybook + visual)
+pnpm run test:unit           # jest with coverage (jsdom)
 pnpm run test:import         # dist-level smoke test
 pnpm run test:all            # jest + import smoke
 pnpm run build               # rollup cjs+esm+dts build
@@ -131,8 +132,9 @@ Releases are driven by GitHub Releases, not local npm scripts. See `.github/work
 To cut a release:
 
 1. Ensure `main` is green.
-2. Create a GitHub Release with a semver tag, e.g. `v0.1.12` (leading `v` is stripped automatically).
-3. The workflow sets `package.json` version from the tag, runs `lint` → `test` → `build` → `test:import`, and publishes `@artus-engineering/react-gdpr-cookie-consent` to GitHub Packages (`https://npm.pkg.github.com`).
+2. Bump the committed `package.json` version to the same semver as the release tag.
+3. Create a GitHub Release with a semver tag, e.g. `v0.1.12` (leading `v` is stripped automatically).
+4. The workflow validates that the release tag matches `package.json`, runs `lint` → `build` → `test:import` → `test:unit` → visual tests, and publishes `@artus-engineering/react-gdpr-cookie-consent` to GitHub Packages (`https://npm.pkg.github.com`).
 
 The package inherits the repo's private visibility. Consumers need a GitHub PAT with `read:packages` and an `.npmrc` pointing the `@artus-engineering` scope at `https://npm.pkg.github.com/`.
 
@@ -147,3 +149,5 @@ The package inherits the repo's private visibility. Consumers need a GitHub PAT 
 - The WordPress plugin is intended to be German-only; admin UI, defaults, validation messages, and bundled banner copy should avoid English user-facing text.
 - `pnpm run build:wordpress` builds the WordPress frontend bundle and packages `wordpress/react-gdpr-cookie-consent/dist/react-gdpr-cookie-consent.zip` for upload through WordPress admin.
 - Built-in WordPress integrations should provide predefined cookie provider metadata automatically; configuring GA, GTM, or Facebook Pixel should not require manual cookie provider entries for those services.
+- Release publishing requires the committed `package.json` version to match the GitHub Release tag; the workflow does not rewrite the source version in CI.
+- Jest has `watchman: false` in `package.json` because local Watchman crawling can hang before test discovery on macOS.
