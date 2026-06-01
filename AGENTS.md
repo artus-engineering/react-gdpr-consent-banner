@@ -52,7 +52,7 @@ Jest (jsdom) runs behavior tests. Playwright runs visual tests against a built S
   ```bash
   docker run --rm --ipc=host -e CI=true -v "$(pwd)":/work -w /work \
     mcr.microsoft.com/playwright:v1.59.1-noble bash -lc \
-    "npm i -g pnpm@10.33.0 >/dev/null && pnpm install --frozen-lockfile && \
+    "npm i -g pnpm@11.5.0 >/dev/null && pnpm install --frozen-lockfile && \
      pnpm run build-storybook && pnpm run test:visual:update"
   ```
 - Review the regenerated PNGs visually before committing. Never commit `-actual.png` / `-diff.png` outputs (ignored by `.gitignore`).
