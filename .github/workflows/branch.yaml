@@ -48,7 +48,7 @@ jobs:
       - name: Run visual regression tests (Playwright Docker)
         run: |
           docker run --rm --ipc=host -e CI=true -v "$PWD":/work -w /work \
-            mcr.microsoft.com/playwright:v1.59.1-noble bash -lc \
+            mcr.microsoft.com/playwright:v1.60.0-noble bash -lc \
             "npm i -g pnpm@11.5.0 >/dev/null && pnpm install --frozen-lockfile && \
              pnpm run build-storybook && pnpm run test:visual"
 
