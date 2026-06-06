@@ -9,7 +9,7 @@ const meta: Meta<typeof CookieConsentBanner> = {
     decorators: [withConsentProvider],
     parameters: {
         layout: 'fullscreen',
-        consent: { includeCookieBanner: false }
+        consent: { includeCookieBanner: false, forceBannerOpen: true }
     }
 }
 
