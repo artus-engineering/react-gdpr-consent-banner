@@ -135,7 +135,7 @@ To cut a release:
 2. Create a GitHub Release with a semver tag, e.g. `v1.0.5` (leading `v` is stripped automatically).
 3. The workflow sets `package.json` version from the release tag, runs `lint` → `build` → `test:import` → `test:unit` → visual tests, and publishes `@artus_engineering/react-gdpr-cookie-consent` to the public npm registry.
 
-The repository needs an `NPM_TOKEN` secret with publish access to the `@artus_engineering` scope.
+Publishing uses [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/) (OIDC) via the GitHub connection configured on npmjs.com for `publish.yaml`. No `NPM_TOKEN` secret is required. Do not set `NODE_AUTH_TOKEN` in the publish step — it overrides OIDC authentication.
 
 ## Learned User Preferences
 

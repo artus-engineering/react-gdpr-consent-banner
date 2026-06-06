@@ -240,7 +240,7 @@ Packages are published to [npm](https://www.npmjs.com/package/@artus_engineering
 
 1. Ensure `main` is green.
 2. Create a GitHub Release with a semver tag, e.g. `v1.0.5`.
-3. The publish workflow runs tests, builds `dist/`, and publishes to npm.
+3. The publish workflow runs tests, builds `dist/`, and publishes to npm via [Trusted Publishing](https://docs.npmjs.com/trusted-publishers/) (no npm token required).
 
 The release tag (without the leading `v`) becomes the package version.
 
