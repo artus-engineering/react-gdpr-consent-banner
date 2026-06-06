@@ -1,9 +1,6 @@
 {
-    "name": "@artus-engineering/react-gdpr-cookie-consent",
+    "name": "@artus_engineering/react-gdpr-cookie-consent",
     "version": "1.0.4",
-    "publishConfig": {
-        "registry": "https://npm.pkg.github.com"
-    },
     "packageManager": "pnpm@11.5.0",
     "type": "module",
     "description": "A simple and customizable GDPR cookie consent component for React.",
@@ -32,7 +29,8 @@
     },
     "keywords": ["gdpr", "cookie", "consent", "react", "privacy", "compliance"],
     "author": "Artus Engineering GmbH",
-    "license": "ISC",
+    "homepage": "https://github.com/artus-engineering/react-gdpr-consent-banner#readme",
+    "license": "PolyForm-Noncommercial-1.0.0",
     "peerDependencies": {
         "react": ">=19.0.0",
         "react-dom": ">=19.0.0"
@@ -120,9 +118,12 @@
         "production": [">0.2%", "not dead", "not op_mini all"],
         "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
     },
+    "bugs": {
+        "url": "https://github.com/artus-engineering/react-gdpr-consent-banner/issues"
+    },
     "repository": {
         "type": "git",
-        "url": "https://github.com/artus-engineering/react-gdpr-consent-banner.git"
+        "url": "git+https://github.com/artus-engineering/react-gdpr-consent-banner.git"
     },
     "pnpm": {
         "ignoredBuiltDependencies": ["esbuild", "sharp", "unrs-resolver"]

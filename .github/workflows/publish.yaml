@@ -7,11 +7,11 @@ on:
 
 jobs:
   publish:
-    name: Publish to GitHub Packages
+    name: Publish to npm
     runs-on: ubuntu-latest
     permissions:
+      id-token: write
       contents: read
-      packages: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
@@ -23,19 +23,13 @@ jobs:
           node-version: "24.x"
           cache: "pnpm"
           cache-dependency-path: "pnpm-lock.yaml"
-          registry-url: "https://npm.pkg.github.com"
-          scope: "@artus-engineering"
+          registry-url: "https://registry.npmjs.org"
 
-      - name: Validate package version matches release tag
+      - name: Update package.json version
         run: |
-          TAG_VERSION="${{ github.event.release.tag_name }}"
-          TAG_VERSION="${TAG_VERSION#v}"
-          PACKAGE_VERSION="$(node -p "require('./package.json').version")"
-
-          if [ "$PACKAGE_VERSION" != "$TAG_VERSION" ]; then
-            echo "Release tag ($TAG_VERSION) does not match package.json version ($PACKAGE_VERSION)."
-            exit 1
-          fi
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION#v}"
+          npm version "$VERSION" --no-git-tag-version --allow-same-version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -53,7 +47,7 @@ jobs:
         run: pnpm run test:unit
 
       # Baselines live under *-chromium-linux.png and must match the Playwright
-      # Docker image (see AGENTS.md). The hosted runner’s bundled Chromium/fonts
+      # Docker image (see AGENTS.md). The hosted runner's bundled Chromium/fonts
       # differ from that image, so we run the suite inside the same container
       # used for `test:visual:update`.
       - name: Run visual regression tests (Playwright Docker)
@@ -63,7 +57,7 @@ jobs:
             "npm i -g pnpm@11.5.0 >/dev/null && pnpm install --frozen-lockfile && \
              pnpm run build-storybook && pnpm run test:visual"
 
-      - name: Publish to GitHub Packages
-        run: pnpm publish --no-git-checks
+      - name: Publish to npm
+        run: npm publish --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

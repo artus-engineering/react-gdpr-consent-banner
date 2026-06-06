@@ -11,17 +11,6 @@ updates:
       all:
         patterns:
           - "*"
-  - package-ecosystem: "npm"
-    directory: "/example"
-    target-branch: main
-    schedule:
-      interval: "monthly"
-    assignees:
-      - "jonasscholl"
-    groups:
-      all:
-        patterns:
-          - "*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
