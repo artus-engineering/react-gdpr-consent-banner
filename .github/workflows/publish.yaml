@@ -25,17 +25,17 @@ jobs:
           cache-dependency-path: "pnpm-lock.yaml"
           registry-url: "https://registry.npmjs.org"
 
-      - name: Update package.json version
-        run: |
-          VERSION="${{ github.event.release.tag_name }}"
-          VERSION="${VERSION#v}"
-          npm version "$VERSION" --no-git-tag-version --allow-same-version
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Linting
         run: pnpm run lint
+
+      - name: Update package.json version
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION#v}"
+          npm version "$VERSION" --no-git-tag-version --allow-same-version
 
       - name: Build
         run: pnpm run build
