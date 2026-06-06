@@ -42,12 +42,6 @@ describe('Package Import Tests', () => {
         expect(typeof packageExports.CookieConsentBanner).toBe('function')
     })
 
-    test('should export CookieConsentModal', () => {
-        if (!distExists) return
-        expect(packageExports.CookieConsentModal).toBeDefined()
-        expect(typeof packageExports.CookieConsentModal).toBe('function')
-    })
-
     test('should export CookieConsentGate', () => {
         if (!distExists) return
         expect(packageExports.CookieConsentGate).toBeDefined()
@@ -91,7 +85,6 @@ describe('Package Import Tests', () => {
         const expectedExports = [
             'CookieConsentProvider',
             'CookieConsentBanner',
-            'CookieConsentModal',
             'CookieConsentGate',
             'CookiePolicy',
             'DefaultTheme',

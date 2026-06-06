@@ -51,7 +51,6 @@ try {
     const requiredExports = [
         'CookieConsentProvider',
         'CookieConsentBanner',
-        'CookieConsentModal',
         'CookieConsentGate',
         'CookiePolicy',
         'DefaultTheme',

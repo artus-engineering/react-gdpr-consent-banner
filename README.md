@@ -10,6 +10,7 @@
   <a href="https://www.npmjs.com/package/@artus_engineering/react-gdpr-cookie-consent"><img alt="NPM Version" src="https://img.shields.io/npm/v/%40artus_engineering%2Freact-gdpr-cookie-consent"></a>
   <a href="https://github.com/artus-engineering/react-gdpr-consent-banner/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/npm/l/%40artus_engineering%2Freact-gdpr-cookie-consent"></a>
   <a href="https://github.com/artus-engineering/react-gdpr-consent-banner/actions/workflows/branch.yaml"><img alt="CI Status" src="https://img.shields.io/github/actions/workflow/status/artus-engineering/react-gdpr-consent-banner/.github%2Fworkflows%2Fbranch.yaml?label=CI&logo=GitHub"></a>
+  <a href="https://artus-engineering.github.io/react-gdpr-consent-banner/"><img alt="Storybook" src="https://img.shields.io/badge/Storybook-live-ff4785?logo=storybook&logoColor=white"></a>
 </div>
 
 <hr />
@@ -138,8 +139,7 @@ Set `includeCookieBanner={false}` on the provider if you only need context and h
 | --- | --- |
 | `CookieConsentProvider` | Root provider; manages consent state, hooks, and optional banner |
 | `CookieConsentBanner` | Standalone banner (usually rendered by the provider) |
-| `CookieConsentModal` | Detailed per-provider consent dialog |
-| `CookieConsentGate` | Hides children until consent is granted for a given provider |
+| `CookieConsentGate` | Blocks content until consent is granted for a given provider |
 | `CookiePolicy` | Renders a cookie policy table from configured providers |
 
 ### Consent gate example
@@ -218,7 +218,7 @@ Clone the repository and install dependencies:
 
 ```bash
 pnpm install
-pnpm run storybook    # component docs and visual baselines
+pnpm run storybook    # local component docs (live docs: https://artus-engineering.github.io/react-gdpr-consent-banner/)
 pnpm run dev          # library watch + Next.js example app
 ```
 

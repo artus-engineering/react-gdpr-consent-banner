@@ -12,8 +12,12 @@ const config: StorybookConfig = {
     },
     async viteFinal(config) {
         const { default: tailwindcss } = await import('@tailwindcss/vite')
+        const basePath = process.env.STORYBOOK_BASE_PATH
         config.plugins = config.plugins || []
         config.plugins.push(tailwindcss())
+        if (basePath) {
+            config.base = basePath
+        }
         return config
     }
 }
