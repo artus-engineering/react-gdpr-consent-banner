@@ -46,7 +46,7 @@ function StripeCheckoutConsentGateDemo({
         return null
     }
     if (!isClient) {
-        return <div className="min-h-[12rem] rounded-lg border border-dashed border-slate-200 bg-slate-50" />
+        return <div className="min-h-48 rounded-lg border border-dashed border-slate-200 bg-slate-50" />
     }
     return (
         <CookieConsentGate cookieProvider={stripe}>
