@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "node scripts/dev.mjs",
         "build": "next build",
+        "build:pages": "node scripts/build-pages.mjs",
         "start": "next start",
         "lint": "pnpm --workspace-root exec biome check ./example",
         "db:init": "node scripts/init-db.js"

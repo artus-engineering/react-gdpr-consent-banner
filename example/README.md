@@ -2,6 +2,8 @@
 
 This directory contains a complete example of the GDPR Cookie Consent library implemented in a Next.js application.
 
+The live demo at [react-gdpr-consent-banner.artus-engineering.de](https://react-gdpr-consent-banner.artus-engineering.de/) is built with `pnpm run build:pages` as a static export (no API routes or audit backend). The site is available in German (`/de/`) and English (`/en/`); visiting `/` redirects based on browser language. Privacy policies: `/de/datenschutz/` and `/en/privacy/`. Run `pnpm run dev` locally for the full stack including PostgreSQL audit logging.
+
 ## Features Demonstrated
 
 - **GDPR-compliant cookie consent banner**

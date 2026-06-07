@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { v4 as uuidv4 } from 'uuid'
+import { detectLocaleFromAcceptLanguage } from './lib/i18n/detect-locale'
+import { getHomePath } from './lib/i18n/paths'
 
 const USER_ID_COOKIE = 'gdpr_user_id'
 const USER_ID_HEADER = 'x-gdpr-user-id'
 
 export function proxy(request: NextRequest) {
+    const { pathname } = request.nextUrl
+
+    if (pathname === '/') {
+        const locale = detectLocaleFromAcceptLanguage(request.headers.get('accept-language'))
+        return NextResponse.redirect(new URL(getHomePath(locale), request.url))
+    }
+
     const response = NextResponse.next()
 
     let userId = request.cookies.get(USER_ID_COOKIE)?.value

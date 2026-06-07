@@ -1,4 +1,4 @@
-name: Storybook GitHub Pages
+name: Example GitHub Pages
 
 on:
   push:
@@ -35,20 +35,23 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build Storybook
-        run: pnpm run build-storybook
+      - name: Build library
+        run: pnpm run build
+
+      - name: Build example for GitHub Pages
+        run: pnpm --dir example run build:pages
         env:
           # Custom domain (react-gdpr-consent-banner.artus-engineering.de) serves from /.
-          # Use /react-gdpr-consent-banner/ only for the default *.github.io/<repo>/ URL.
-          STORYBOOK_BASE_PATH: /
+          # Set NEXT_BASE_PATH=/react-gdpr-consent-banner for the default *.github.io/<repo>/ URL.
+          NEXT_BASE_PATH: ""
 
       - name: Disable Jekyll processing
-        run: touch storybook-static/.nojekyll
+        run: touch example/out/.nojekyll
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: storybook-static
+          path: example/out
 
       - id: deploy
         name: Deploy to GitHub Pages

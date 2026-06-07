@@ -1,15 +1,21 @@
 import './globals.css'
-import type { Metadata } from 'next'
-
-export const metadata: Metadata = {
-    title: 'GDPR Cookie Consent Example',
-    description: 'Next.js example for GDPR-compliant cookie consent with audit trail'
-}
+import { LangAttribute } from '@/components/LangAttribute'
+import { getRootRedirectScript } from '@/lib/i18n/root-redirect-script'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en">
-            <body>{children}</body>
+        <html lang="de" suppressHydrationWarning>
+            <head>
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: getRootRedirectScript()
+                    }}
+                />
+            </head>
+            <body>
+                <LangAttribute />
+                {children}
+            </body>
         </html>
     )
 }

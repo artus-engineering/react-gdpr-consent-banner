@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>React GDPR Cookie Consent</h1>
+  <img alt="Artus Engineering" src="assets/Artus-Engineering-Logos_artus-logo-groß-wort-und-bildmarke-zweizeilig-violet.svg" width="400" />
 </div>
 
 <p align="center">
@@ -10,7 +10,7 @@
   <a href="https://www.npmjs.com/package/@artus_engineering/react-gdpr-cookie-consent"><img alt="NPM Version" src="https://img.shields.io/npm/v/%40artus_engineering%2Freact-gdpr-cookie-consent"></a>
   <a href="https://github.com/artus-engineering/react-gdpr-consent-banner/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/npm/l/%40artus_engineering%2Freact-gdpr-cookie-consent"></a>
   <a href="https://github.com/artus-engineering/react-gdpr-consent-banner/actions/workflows/branch.yaml"><img alt="CI Status" src="https://img.shields.io/github/actions/workflow/status/artus-engineering/react-gdpr-consent-banner/.github%2Fworkflows%2Fbranch.yaml?label=CI&logo=GitHub"></a>
-  <a href="https://artus-engineering.github.io/react-gdpr-consent-banner/"><img alt="Storybook" src="https://img.shields.io/badge/Storybook-live-ff4785?logo=storybook&logoColor=white"></a>
+  <a href="https://artus-engineering.github.io/react-gdpr-consent-banner/"><img alt="Live demo" src="https://img.shields.io/badge/demo-live-0ea5e9?logo=next.js&logoColor=white"></a>
 </div>
 
 <hr />
@@ -218,8 +218,8 @@ Clone the repository and install dependencies:
 
 ```bash
 pnpm install
-pnpm run storybook    # local component docs (live docs: https://artus-engineering.github.io/react-gdpr-consent-banner/)
-pnpm run dev          # library watch + Next.js example app
+pnpm run storybook    # local component docs
+pnpm run dev          # library watch + Next.js example app (live demo: https://artus-engineering.github.io/react-gdpr-consent-banner/)
 ```
 
 Run the full test suite before opening a pull request:
