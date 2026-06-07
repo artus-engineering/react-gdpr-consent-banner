@@ -60,7 +60,7 @@ representative at an online or offline event.
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the community leaders responsible for enforcement at
-[info@artus-engineering.de](mailto:info@artus-engineering.de).
+[hi@artus-engineering.de](mailto:hi@artus-engineering.de).
 
 All complaints will be reviewed and investigated promptly and fairly.
 

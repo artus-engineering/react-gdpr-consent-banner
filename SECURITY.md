@@ -4,7 +4,7 @@ If you discover a security vulnerability in `@artus_engineering/react-gdpr-cooki
 
 **Preferred:** Open a [GitHub Security Advisory](https://github.com/artus-engineering/react-gdpr-consent-banner/security/advisories/new) (private disclosure).
 
-**Alternative:** Email [info@artus-engineering.de](mailto:info@artus-engineering.de) with a description of the issue and steps to reproduce.
+**Alternative:** Email [hi@artus-engineering.de](mailto:hi@artus-engineering.de) with a description of the issue and steps to reproduce.
 
 Please do not open a public issue for security vulnerabilities.
 
