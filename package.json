@@ -66,7 +66,7 @@
         "baseline-browser-mapping": "^2.10.34",
         "concurrently": "^10.0.3",
         "diff-sequences": "^29.6.3",
-        "esbuild": "0.28.0",
+        "esbuild": "0.28.1",
         "http-server": "14.1.1",
         "husky": "9.1.7",
         "jest": "30.4.2",
