@@ -15,7 +15,7 @@ jobs:
       actions: write # upload/download coverage artifact between jobs
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - uses: pnpm/action-setup@v6
 
@@ -87,7 +87,7 @@ jobs:
       pull-requests: read # allows SonarQube to decorate PRs with analysis results
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
