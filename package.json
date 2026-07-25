@@ -72,7 +72,7 @@
         "jest": "30.4.2",
         "jest-environment-jsdom": "30.4.1",
         "jest-get-type": "^29.6.3",
-        "postcss": "8.5.16",
+        "postcss": "8.5.18",
         "rollup": "4.62.2",
         "rollup-plugin-analyzer": "4.0.0",
         "rollup-plugin-dts": "6.4.1",
