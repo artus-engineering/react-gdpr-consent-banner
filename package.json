@@ -1,6 +1,6 @@
 {
     "name": "@artus_engineering/react-gdpr-cookie-consent",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "packageManager": "pnpm@11.5.0",
     "type": "module",
     "description": "A simple and customizable GDPR cookie consent component for React.",
