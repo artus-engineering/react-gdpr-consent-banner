@@ -10,12 +10,22 @@ import { getLanguageLabels } from './translations'
 import { CookieProviderConfig, SectionKeys, SupportedLanguage, TranslationSections, Unit } from './types'
 
 /**
+ * Mutable SSR check so tests can simulate a server environment when jsdom
+ * exposes non-configurable `window` / `document` globals.
+ */
+export const serverEnvironment = {
+    isServer(): boolean {
+        return globalThis.window === undefined || globalThis.document === undefined
+    }
+}
+
+/**
  * Check if the code is running on the server.
  *
  * @returns {boolean} True if the code is running on the server, false otherwise.
  */
 export function isServer(): boolean {
-    return globalThis.window === undefined || globalThis.document === undefined
+    return serverEnvironment.isServer()
 }
 
 /**

@@ -15,6 +15,7 @@ import {
     isServer,
     lightenHexColor,
     persistCookieSelection,
+    serverEnvironment,
     setCookie,
     setCookieConsentDisplayed
 } from './functions'
@@ -82,13 +83,12 @@ describe('functions', () => {
         })
 
         it('is a no-op when running on the server', () => {
-            const originalWindow = globalThis.window
-            // @ts-expect-error simulate server environment
-            delete (globalThis as any).window
+            const serverSpy = jest.spyOn(serverEnvironment, 'isServer').mockReturnValue(true)
             try {
                 expect(() => setCookie('server_key', 'x', 'example.com', 1)).not.toThrow()
+                expect(document.cookie).not.toContain('server_key=')
             } finally {
-                ;(globalThis as any).window = originalWindow
+                serverSpy.mockRestore()
             }
         })
     })

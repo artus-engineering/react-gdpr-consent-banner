@@ -7,6 +7,15 @@ updates:
       interval: "monthly"
     assignees:
       - "jonasscholl"
+    # Babel 8.0.x does not strip TS call/new type args (useState<T>(), createContext<T>()),
+    # which breaks babel-jest. Revisit when @babel/preset-typescript > 8.0.1 ships a fix.
+    ignore:
+      - dependency-name: "@babel/preset-env"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@babel/preset-react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@babel/preset-typescript"
+        update-types: ["version-update:semver-major"]
     groups:
       all:
         patterns:
