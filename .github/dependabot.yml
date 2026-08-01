@@ -9,12 +9,17 @@ updates:
       - "jonasscholl"
     # Babel 8.0.x does not strip TS call/new type args (useState<T>(), createContext<T>()),
     # which breaks babel-jest. Revisit when @babel/preset-typescript > 8.0.1 ships a fix.
+    # TypeScript 7 is the Go-native compiler and no longer ships the JS Compiler API
+    # (ModuleKind, createProgram, …). @rollup/plugin-typescript and Storybook tooling
+    # still require that API. Revisit when those tools support typescript@7 / typescript/unstable.
     ignore:
       - dependency-name: "@babel/preset-env"
         update-types: ["version-update:semver-major"]
       - dependency-name: "@babel/preset-react"
         update-types: ["version-update:semver-major"]
       - dependency-name: "@babel/preset-typescript"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
     groups:
       all:
