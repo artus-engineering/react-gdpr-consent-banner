@@ -51,7 +51,7 @@ Jest (jsdom) runs behavior tests. Playwright runs visual tests against a built S
 - After adding or changing a story, regenerate baselines in the Playwright Linux container from the repo root:
   ```bash
   docker run --rm --ipc=host -e CI=true -v "$(pwd)":/work -w /work \
-    mcr.microsoft.com/playwright:v1.61.1-noble bash -lc \
+    mcr.microsoft.com/playwright:v1.62.0-noble bash -lc \
     "npm i -g pnpm@11.5.0 >/dev/null && pnpm install --frozen-lockfile && \
      pnpm run build-storybook && pnpm run test:visual:update"
   ```
