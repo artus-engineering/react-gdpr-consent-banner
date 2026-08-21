@@ -10,6 +10,7 @@
   <a href="https://www.npmjs.com/package/@artus_engineering/react-gdpr-cookie-consent"><img alt="NPM Version" src="https://img.shields.io/npm/v/%40artus_engineering%2Freact-gdpr-cookie-consent"></a>
   <a href="https://github.com/artus-engineering/react-gdpr-consent-banner/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/npm/l/%40artus_engineering%2Freact-gdpr-cookie-consent"></a>
   <a href="https://github.com/artus-engineering/react-gdpr-consent-banner/actions/workflows/branch.yaml"><img alt="CI Status" src="https://img.shields.io/github/actions/workflow/status/artus-engineering/react-gdpr-consent-banner/.github%2Fworkflows%2Fbranch.yaml?label=CI&logo=GitHub"></a>
+  <a href="https://sonar.artus-engineering.de/dashboard?id=artus-engineering_react-gdpr-consent-banner_77b80343-758e-46a6-aaa4-a2f681f7d05d"><img alt="SonarQube Quality Gate" src="https://sonar.artus-engineering.de/api/project_badges/measure?project=artus-engineering_react-gdpr-consent-banner_77b80343-758e-46a6-aaa4-a2f681f7d05d&amp;metric=alert_status&amp;token=sqb_88234c043e5593851d73ec5aa1c1e6e0a41d0d17"></a>
   <a href="https://artus-engineering.github.io/react-gdpr-consent-banner/"><img alt="Live demo" src="https://img.shields.io/badge/demo-live-0ea5e9?logo=next.js&logoColor=white"></a>
 </div>
 
