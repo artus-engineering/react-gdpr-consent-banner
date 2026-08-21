@@ -12,6 +12,9 @@ updates:
     # TypeScript 7 is the Go-native compiler and no longer ships the JS Compiler API
     # (ModuleKind, createProgram, …). @rollup/plugin-typescript and Storybook tooling
     # still require that API. Revisit when those tools support typescript@7 / typescript/unstable.
+    # baseline-browser-mapping publishes almost daily. The caret range already
+    # allows lockfile bumps, so grouped pnpm updates throw NoChangeError and
+    # fail the whole Dependabot job. Revisit if Dependabot maps that as skip.
     ignore:
       - dependency-name: "@babel/preset-env"
         update-types: ["version-update:semver-major"]
@@ -21,6 +24,7 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "baseline-browser-mapping"
     groups:
       all:
         patterns:
