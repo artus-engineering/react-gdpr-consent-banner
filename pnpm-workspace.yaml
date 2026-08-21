@@ -8,6 +8,8 @@ allowBuilds:
 overrides:
   # next@16.2.11 resolves ^2.9.19 to 2.11.7, which is younger than minimumReleaseAge (24h).
   baseline-browser-mapping: 2.11.6
+  # 1.2.0 peers only on emnapi 2.x-alpha; 1.2.3 accepts 1.x (oxc/unrs) and 2.x (rolldown).
+  "@napi-rs/wasm-runtime": 1.2.3
 minimumReleaseAgeExclude:
   - concurrently@10.0.1
   - postcss@8.5.10
