@@ -1,7 +1,9 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useMemo, useState, useSyncExternalStore } from 'react'
 import { ConsentState, ConsentStateProviderContext } from './components/consent/context'
-import { COOKIE_VALUE_TRUE, DEFAULT_COOKIE_VALIDITY, DEFAULT_LANGUAGE } from './constants'
-import { cookieAccessor, getLabel, persistCookieSelection } from './functions'
+import { resolveConsentCookieName } from './consentState'
+import { DEFAULT_COOKIE_VALIDITY, DEFAULT_LANGUAGE } from './constants'
+import { getLabel } from './functions'
+import { ConsentSnapshot } from './store'
 import { DefaultTheme } from './themes'
 import {
     CookieConsentBannerConfigWithDefaults,
@@ -23,17 +25,20 @@ export function useOpenCookieBanner() {
     return openBanner
 }
 
+/**
+ * Subscribe to the current consent snapshot: the decision per provider and
+ * whether the stored consent is valid, partial, stale, or absent.
+ */
+export function useConsentSnapshot(parentHookName?: string): ConsentSnapshot {
+    const { store } = useCookieConsentContext(parentHookName || 'useConsentSnapshot')
+    return useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot)
+}
+
 export function useSetStrictlyNecessaryCookiesOnly() {
-    const config = useConfig('useSetStrictlyNecessaryCookiesOnly')
+    const { store } = useCookieConsentContext('useSetStrictlyNecessaryCookiesOnly')
     return useCallback(() => {
-        config.providers.forEach(provider => {
-            if (provider.category === 'Essential') {
-                persistCookieSelection(provider, true, config.domain, config.cookiesValidForDays)
-            } else {
-                persistCookieSelection(provider, false, config.domain, config.cookiesValidForDays)
-            }
-        })
-    }, [config.providers, config.domain, config.cookiesValidForDays])
+        store.rejectAll()
+    }, [store])
 }
 
 /**
@@ -75,38 +80,6 @@ export function useStyle(): CookieConsentStyleWithDefaults {
     )
 }
 
-/**
- * Listen to changes of a cookie.
- *
- * @param cookieName The name of the cookie to listen to.
- * @returns The value of the cookie.
- */
-export function useCookieListener(cookieName: string) {
-    const [cookieValue, setCookieValue] = useState<string | null>(
-        document.cookie
-            .split('; ')
-            .find(row => row.startsWith(cookieName))
-            ?.split('=')[1] || null
-    )
-
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            const newCookieValue =
-                document.cookie
-                    .split('; ')
-                    .find(row => row.startsWith(cookieName))
-                    ?.split('=')[1] || null
-            if (newCookieValue !== cookieValue) {
-                setCookieValue(newCookieValue)
-            }
-        }, 1000)
-
-        return () => clearInterval(intervalId)
-    }, [cookieName, cookieValue])
-
-    return cookieValue
-}
-
 export function useCookieProviders(parentHookName?: string): CookieProviderConfig[] {
     const config = useConfig(parentHookName || 'useCookieProviders')
 
@@ -118,15 +91,15 @@ export function useCookieProviders(parentHookName?: string): CookieProviderConfi
             category: 'Essential',
             description: getLabel('cookiePolicy', 'autoCookieDescription', config),
             dataProtectionLink: config.cookiePolicyLink,
-            cookies: config.providers.map(provider => {
-                return {
-                    name: cookieAccessor(provider),
-                    duration: config.cookiesValidForDays,
-                    unit: 'days',
-                    accessors: [config.domain],
+            cookies: [
+                {
+                    name: resolveConsentCookieName(config),
+                    duration: 13,
+                    unit: 'months',
+                    accessors: [config.cookieDomain || config.domain],
                     purpose: getLabel('cookiePolicy', 'autoCookiePurpose', config)
                 }
-            })
+            ]
         }
 
         return [cookieConsentProvider, ...config.providers] as CookieProviderConfig[]
@@ -145,10 +118,17 @@ export function useCookieProvidersByCategory(): CookieProvidersByCategory {
 }
 
 export function useCookieState({ cookieProvider }: { cookieProvider: CookieProviderConfig }) {
-    const cookieName = cookieAccessor(cookieProvider)
-    const cookieValue = useCookieListener(cookieName)
-    const consentGiven = cookieValue === COOKIE_VALUE_TRUE
+    const snapshot = useConsentSnapshot('useCookieState')
+    const consentGiven = cookieProvider.category === 'Essential' || snapshot.decisions[cookieProvider.id] === true
     const [manualValue, setManualValue] = useState<boolean | null>(null)
+    const [lastConsentGiven, setLastConsentGiven] = useState(consentGiven)
+
+    // A real consent change (accept/reject/revoke) supersedes any manual
+    // override — otherwise the hook would keep reporting a stale value.
+    if (consentGiven !== lastConsentGiven) {
+        setLastConsentGiven(consentGiven)
+        setManualValue(null)
+    }
 
     const isEnabled = manualValue === null ? consentGiven : manualValue
 

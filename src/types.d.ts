@@ -1,3 +1,5 @@
+import type { IntegrationDescriptor } from './integrations'
+
 export type SupportedLanguage = 'deDE' | 'enUS'
 export type Unit = 'days' | 'weeks' | 'months' | 'years' | 'session'
 export type TranslationSections =
@@ -12,7 +14,7 @@ export type TranslationSections =
     | 'cookieCategoryDescriptions'
     | 'consentGate'
     | 'cookiePolicy'
-export type DescriptionSubSection = 'cookieDetails'
+export type DescriptionSubSection = 'cookieDetails' | 'reconsentNotice'
 export type CommonSubSection = 'of'
 export type ButtonSubSection =
     | 'acceptAllCookies'
@@ -49,9 +51,15 @@ export type CookieCategory = 'Essential' | 'Functional' | 'Analytics' | 'Marketi
 export type CookieConsentState = Record<CookieCategory, { enabled: boolean; cookies: { [cookieId: string]: boolean } }>
 export type CookieProvidersByCategory = Record<CookieCategory, CookieProviderConfig[]>
 
-// Consent Hook System - Flexible integration for any tool
+/**
+ * Consent Hook System
+ *
+ * @deprecated Use the declarative `integrations` config instead. Consent hooks
+ * remain functional throughout 2.x and will be removed in 3.0.
+ */
 export type ConsentHookType = 'onAccept' | 'onReject' | 'onLoad'
 
+/** @deprecated Use the declarative `integrations` config instead. */
 export interface ConsentHook {
     id: string
     category: CookieCategory
@@ -60,6 +68,7 @@ export interface ConsentHook {
     description?: string
 }
 
+/** @deprecated Use the declarative `integrations` config instead. */
 export interface ConsentHookContext {
     category: CookieCategory
     consentState: Record<CookieCategory, boolean>
@@ -100,22 +109,48 @@ export type CookieConsentLabels = {
     cookieCategoryDescriptions: Record<CookieCategory, string>
 }
 
+/** Partial label overrides — any subset of sections and keys. */
+export type PartialCookieConsentLabels = {
+    [S in TranslationSections]?: Partial<CookieConsentLabels[S]>
+}
+
 export interface CookieConsentBannerConfig {
     cookiePolicyLink: string
     websiteName: string
     providers: CookieProviderConfig[]
     domain: string
-    crossSubDomainConsent?: string[]
-    cookiesValidForDays?: number
+    /**
+     * Written as the cookie `Domain=` attribute for subdomain-wide consent
+     * (e.g. `.example.com`). Defaults to `domain`.
+     */
+    cookieDomain?: string
+    /** Name of the consent cookie. Defaults to `artus_consent`. */
+    cookieName?: string
+    /**
+     * Hex purposes hash (16–64 chars) identifying the material configuration
+     * this consent refers to; a mismatch with the stored cookie triggers
+     * re-consent. Computed by the platform at publish time. Without it, a
+     * local fingerprint over provider ids and categories is used.
+     */
+    purposesHash?: string
+    /** Declarative tool integrations, injected only after consent (strict loading). */
+    integrations?: IntegrationDescriptor[]
     lang?: SupportedLanguage
-    labels?: CookieConsentLabels
+    labels?: PartialCookieConsentLabels
     theme?: CookieConsentStyle
 
-    // Consent Hook System - Flexible integration for any tool
+    /**
+     * @deprecated Use the declarative `integrations` config instead. Consent
+     * hooks remain functional throughout 2.x and will be removed in 3.0.
+     */
     consentHooks?: ConsentHook[]
-
-    // GDPR Audit Trail Configuration
-    audit?: AuditConfig
+    /** @deprecated Display-only in v1; use `cookieDomain` for real subdomain-wide consent. */
+    crossSubDomainConsent?: string[]
+    /**
+     * @deprecated The v2 consent cookie has a fixed max age (400 days, the
+     * Chrome cap) and is renewed on every visit; consent itself does not expire.
+     */
+    cookiesValidForDays?: number
 }
 
 export interface CookieConsentBannerConfigWithDefaults extends CookieConsentBannerConfig {
@@ -133,11 +168,14 @@ export interface CookieConsentStyleWithDefaults {
     buttonText: string
 }
 
+/** Localizable text — locale-style keys (`deDE`) or platform short codes (`de`). */
+export type LocalizedText = string | Partial<Record<SupportedLanguage | 'de' | 'en', string>>
+
 export interface Cookie {
     name: string
     duration: number
     unit: Unit
-    purpose: string | Record<SupportedLanguage, string>
+    purpose: LocalizedText
     accessors?: string[]
 }
 
@@ -145,37 +183,10 @@ export interface CookieProviderConfig {
     id: string
     name: string
     category: CookieCategory
-    description: string | Record<SupportedLanguage, string>
+    description: LocalizedText
     cookies: Cookie[]
     dataProtectionLink: string
     serviceProvider?: string
-    code?: () => JSX.Element
 }
 
 export interface CookieBannerTheme extends CookieConsentStyleWithDefaults {}
-
-// GDPR Audit Trail Types
-export interface AuditConfig {
-    url: string
-    userId: string
-    additionalData?: Record<string, any>
-}
-
-export interface ConsentAuditEvent {
-    userId: string
-    timestamp: string
-    action: 'accept' | 'reject' | 'change'
-    category: CookieCategory
-    previousState?: Record<CookieCategory, boolean>
-    currentState: Record<CookieCategory, boolean>
-    userAgent: string
-    ipAddress?: string
-    sessionId?: string
-    additionalData?: Record<string, any>
-}
-
-export interface ConsentAuditPayload {
-    event: ConsentAuditEvent
-    websiteName: string
-    domain: string
-}

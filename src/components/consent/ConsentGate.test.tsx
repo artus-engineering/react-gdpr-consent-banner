@@ -62,6 +62,13 @@ describe('CookieConsentGate', () => {
         useCookieStateMock = jest
             .spyOn(hooks, 'useCookieState')
             .mockReturnValue({ isEnabled: true, setIsEnabled: setIsEnabledMock })
+        jest.spyOn(hooks, 'useCookieConsentContext').mockReturnValue({
+            isBannerOpen: false,
+            setIsBannerOpen: jest.fn(),
+            openBanner: jest.fn(),
+            config: mockConfig as unknown as CookieConsentBannerConfigWithDefaults,
+            store: { grantForGate: jest.fn() } as never
+        })
     })
 
     afterEach(() => {

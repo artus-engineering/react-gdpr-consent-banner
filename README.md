@@ -3,7 +3,7 @@
 </div>
 
 <p align="center">
-  A <a href="https://react.dev" target="_blank">React</a> library for GDPR-compliant cookie consent banners with theming, consent gates, audit trails, and pre-built integration hooks.
+  A <a href="https://react.dev" target="_blank">React</a> library for GDPR-compliant cookie consent banners with theming, consent gates, and declarative tool integrations with Google Consent Mode v2.
 </p>
 
 <div align="center">
@@ -23,8 +23,9 @@
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Configuration](#configuration)
+- [Consent storage & re-consent](#consent-storage--re-consent)
 - [Components](#components)
-- [Consent Hooks](#consent-hooks)
+- [Integrations](#integrations)
 - [Hooks](#hooks)
 - [WordPress Plugin](#wordpress-plugin)
 - [Development](#development)
@@ -33,12 +34,14 @@
 ## Features
 
 - **Drop-in banner** — Add a full cookie consent UI with `CookieConsentProvider`
+- **Strict loading** — No third-party script is injected before the visitor consents; Google Consent Mode v2 defaults to denied
+- **Declarative integrations** — JSON-serializable descriptors for Google Tag Manager, GA4, Google Ads, Meta Pixel, and custom scripts
+- **Privacy-minimal consent cookie** — One first-party cookie without any user id; rejection is stored too, so visitors are not re-asked
+- **Re-consent on material change** — A purposes hash ties consent to the provider set; only material changes re-prompt
 - **Consent gates** — Block embedded third-party content until the matching provider is accepted
-- **Pre-built integrations** — Hooks for Google Analytics, Google Ads, Google Tag Manager, and Facebook Pixel
-- **Audit trail** — Optional server-side logging of consent changes
 - **Theming** — Customize colors and typography to match your brand
 - **i18n** — Built-in German and English copy with extensible provider descriptions
-- **Full TypeScript support** — Complete type definitions for configuration and hooks
+- **Full TypeScript support** — Complete type definitions for configuration and integrations
 - **React 19 compatible** — Built for modern React applications
 
 ## License
@@ -67,10 +70,7 @@ yarn add @artus-engineering/react-gdpr-cookie-consent
 Wrap your application with `CookieConsentProvider` and configure your cookie providers:
 
 ```tsx
-import {
-  CookieConsentProvider,
-  createGoogleAnalyticsHook,
-} from "@artus-engineering/react-gdpr-cookie-consent";
+import { CookieConsentProvider } from "@artus-engineering/react-gdpr-cookie-consent";
 
 const config = {
   cookiePolicyLink: "/privacy-policy",
@@ -101,7 +101,14 @@ const config = {
       ],
     },
   ],
-  consentHooks: createGoogleAnalyticsHook("G-XXXXXXXXXX"),
+  integrations: [
+    {
+      id: "int_ga4",
+      type: "ga4",
+      providerId: "google-analytics",
+      params: { measurementId: "G-XXXXXXXXXX" },
+    },
+  ],
 };
 
 export function App({ children }: { children: React.ReactNode }) {
@@ -123,16 +130,40 @@ The provider renders the consent banner automatically. Re-open it later with `us
 | --- | --- | --- |
 | `providers` | `CookieProvider[]` | Cookie providers grouped by category (Essential, Functional, Analytics, Marketing) |
 | `websiteName` | `string` | Display name shown in the banner |
-| `domain` | `string` | Cookie domain for consent persistence |
+| `domain` | `string` | Primary domain of the website |
+| `cookieDomain` | `string?` | Cookie `Domain=` attribute for subdomain-wide consent (e.g. `.example.com`) |
+| `cookieName` | `string?` | Name of the consent cookie (default: `artus_consent`) |
+| `purposesHash` | `string?` | Hex hash identifying the material configuration; a mismatch with the stored cookie triggers re-consent. Without it, a local fingerprint over provider ids and categories is used |
+| `integrations` | `IntegrationDescriptor[]?` | Declarative tool integrations, injected only after consent |
 | `cookiePolicyLink` | `string` | Link to your privacy / cookie policy |
-| `lang` | `SupportedLanguage` | Banner locale (`enUS`, `deDE`, …) |
+| `lang` | `SupportedLanguage` | Banner locale (`enUS`, `deDE`) |
 | `theme` | `CookieConsentStyle` | Optional color overrides |
-| `consentHooks` | `ConsentHook[]` | Hooks that run on load, accept, or reject |
-| `audit` | `AuditConfig` | Optional endpoint for consent change logging |
-| `crossSubDomainConsent` | `string[]` | Share consent across subdomains |
-| `cookiesValidForDays` | `number` | Consent cookie lifetime (default: 365) |
+| `labels` | `PartialCookieConsentLabels?` | Partial overrides of any banner copy |
+| `consentHooks` | `ConsentHook[]?` | **Deprecated** — use `integrations`; removed in 3.0 |
+| `crossSubDomainConsent` | `string[]?` | **Deprecated** — display-only; use `cookieDomain` |
+| `cookiesValidForDays` | `number?` | **Deprecated** — the v2 cookie has a fixed max age (400 days) and is renewed on every visit |
 
 Set `includeCookieBanner={false}` on the provider if you only need context and hooks without rendering the banner.
+
+## Consent storage & re-consent
+
+Consent is stored in **one first-party cookie** (`artus_consent`) that contains only the decision per
+non-essential provider, plus a short purposes-hash prefix identifying the configuration the consent
+refers to — no user id, no timestamp, no fingerprint. A cookie is also written on rejection, so
+returning visitors are not asked again.
+
+```json
+{ "v": 2, "ph": "9f2b4c11d8a0e5f6", "d": { "gtm": 1, "ga4": 1, "meta": 0 } }
+```
+
+Consent does not expire. The cookie is written with a 400-day max age (the Chrome cap) and renewed on
+every visit. The banner re-prompts only when the **material** configuration changes (providers
+added/removed or categories changed — reflected in `purposesHash`); previous grants are then treated
+as absent until the visitor decides again (fail-closed). Cosmetic changes (texts, theme) never
+re-prompt.
+
+Existing v1 per-provider cookies (`{id}_consent`) are migrated automatically on first load and
+removed afterwards.
 
 ## Components
 
@@ -164,33 +195,36 @@ function PaymentSection() {
 }
 ```
 
-## Consent Hooks
+## Integrations
 
-Pre-built hook factories wire common tools to consent events:
+Integrations are plain JSON descriptors. Scripts are injected **only after** the matching provider
+has been granted (strict loading); for Google tools, Consent Mode v2 defaults are pushed as `denied`
+before anything loads and updated from the visitor's category decisions. On revocation, the cookies
+declared for the provider (wildcards like `_ga_*` supported) are deleted.
 
-| Factory | Category | Integrates |
+| Type | Params | Integrates |
 | --- | --- | --- |
-| `createGoogleAnalyticsHook` | Analytics | Google Analytics 4 |
-| `createGoogleAdsHook` | Marketing | Google Ads conversion tracking |
-| `createGoogleTagManagerHook` | Analytics / Marketing | Google Tag Manager with Consent Mode |
-| `createGranularGoogleTagManagerHook` | Analytics / Marketing | GTM with per-category consent signals |
-| `createFacebookPixelHook` | Marketing | Meta Pixel |
-| `createCustomToolHook` | Any | Custom onLoad / onAccept / onReject handlers |
+| `gtm` | `containerId` | Google Tag Manager |
+| `ga4` | `measurementId`, `anonymizeIp?` | Google Analytics 4 |
+| `google-ads` | `conversionId` | Google Ads conversion tracking |
+| `meta-pixel` | `pixelId` | Meta Pixel |
+| `custom-script` | `src` (https only), `attrs?` | Any third-party script |
 
 ```tsx
-import {
-  createGoogleTagManagerHook,
-  createFacebookPixelHook,
-} from "@artus-engineering/react-gdpr-cookie-consent";
-
 const config = {
   // …other config
-  consentHooks: [
-    ...createGoogleTagManagerHook("GTM-XXXXXXX"),
-    ...createFacebookPixelHook("1234567890"),
+  integrations: [
+    { id: "int_gtm", type: "gtm", providerId: "gtm", params: { containerId: "GTM-XXXXXXX" } },
+    { id: "int_meta", type: "meta-pixel", providerId: "meta", params: { pixelId: "1234567890" } },
   ],
 };
 ```
+
+The v1 `consentHooks` factories (`createGoogleAnalyticsHook`, `createGoogleTagManagerHook`,
+`createFacebookPixelHook`, `createGoogleAdsHook`, `createCustomToolHook`) remain available but are
+**deprecated** and will be removed in 3.0. Note that they follow the old loading model (Google
+scripts load before consent with denied defaults), while `integrations` never load anything
+pre-consent.
 
 ## Hooks
 
@@ -198,8 +232,9 @@ const config = {
 | --- | --- |
 | `useCookieConsentContext` | Banner open state and provider context |
 | `useOpenCookieBanner` | Programmatically open the consent banner |
+| `useConsentSnapshot` | Subscribe to the consent status (`none`/`partial`/`stale`/`valid`) and per-provider decisions |
 | `useCookieProviders` | Access configured providers (optionally filtered) |
-| `useCookieState` | Read whether a provider/category has consent |
+| `useCookieState` | Read whether a provider has consent |
 | `useConfig` | Read the resolved banner configuration |
 | `useStyle` | Read the resolved theme styles |
 

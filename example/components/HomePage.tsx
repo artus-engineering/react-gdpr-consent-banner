@@ -11,10 +11,8 @@ import { Separator } from '@/components/ui/separator'
 import { consentLangByLocale } from '@/lib/i18n/config'
 import { getPrivacyPath } from '@/lib/i18n/paths'
 import { CookieConsentGate, CookieConsentProvider } from '../../src/components/consent'
-import { createGoogleAnalyticsHook } from '../../src/consentHooks'
 import { useCookieConsentContext, useCookieProviders } from '../../src/hooks'
 import { CookieConsentStyle } from '../../src/types'
-import { generateUserId, getUserIdFromClientCookies } from '../lib/userId'
 
 // Component to open the banner (must be inside CookieConsentProvider)
 function OpenBannerButton({ label }: { label: string }) {
@@ -102,10 +100,6 @@ export function HomePage() {
     const presetLabels = h.presetLabels
     const [customTheme, setCustomTheme] = useState<CookieConsentStyle>(presetThemes.light)
     const [themeKey, setThemeKey] = useState(0)
-
-    const getUserId = () => {
-        return getUserIdFromClientCookies() || generateUserId()
-    }
 
     // Normalize hex color to ensure it's valid
     const normalizeHexColor = (color: string): string => {
@@ -279,22 +273,14 @@ export function HomePage() {
         ],
         ...(process.env.NEXT_PUBLIC_STATIC_DEMO !== 'true'
             ? {
-                  audit: {
-                      url: '/api/gdpr/audit',
-                      userId: getUserId(),
-                      additionalData: {
-                          source: 'nextjs-example',
-                          version: '1.0.0'
+                  integrations: [
+                      {
+                          id: 'int_ga4',
+                          type: 'ga4' as const,
+                          providerId: 'google_analytics',
+                          params: { measurementId: 'G-XXXXXXXXXX' }
                       }
-                  }
-              }
-            : {}),
-        ...(process.env.NEXT_PUBLIC_STATIC_DEMO !== 'true'
-            ? {
-                  consentHooks: createGoogleAnalyticsHook('GA_MEASUREMENT_ID', {
-                      anonymizeIp: true,
-                      cookieFlags: 'SameSite=Strict;Secure'
-                  })
+                  ]
               }
             : {})
     }

@@ -48,3 +48,18 @@ describe('i18n utilities', () => {
         })
     })
 })
+
+describe('getLocalizedText — platform short language codes', () => {
+    it('resolves platform-style short keys', () => {
+        expect(getLocalizedText({ de: 'Hallo', en: 'Hello' }, 'deDE')).toBe('Hallo')
+        expect(getLocalizedText({ de: 'Hallo', en: 'Hello' }, 'enUS')).toBe('Hello')
+    })
+
+    it('prefers locale-style keys over short keys when both exist', () => {
+        expect(getLocalizedText({ deDE: 'Hallo (lang)', de: 'Hallo (kurz)' }, 'deDE')).toBe('Hallo (lang)')
+    })
+
+    it('falls back across key styles', () => {
+        expect(getLocalizedText({ en: 'Hello' }, 'deDE')).toBe('Hello')
+    })
+})

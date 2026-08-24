@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-import { AuditService } from '../../auditService'
+import { ConsentStore } from '../../store'
 import { CookieConsentBannerConfig } from '../../types'
 
 export interface ConsentState {
@@ -7,7 +7,7 @@ export interface ConsentState {
     setIsBannerOpen: (isOpen: boolean) => void
     openBanner: () => void
     config: CookieConsentBannerConfig
-    auditService: AuditService | null
+    store: ConsentStore
 }
 
 export const ConsentStateProviderContext = createContext<ConsentState | null>(null)

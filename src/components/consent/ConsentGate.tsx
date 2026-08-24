@@ -1,6 +1,6 @@
 import React from 'react'
-import { getLabel, hexToRGBA, persistCookieSelection } from '../../functions'
-import { useConfig, useCookieState, useStyle } from '../../hooks'
+import { getLabel, hexToRGBA } from '../../functions'
+import { useConfig, useCookieConsentContext, useCookieState, useStyle } from '../../hooks'
 import { CookieProviderConfig } from '../../types'
 import { CookieCategoryComponent } from '../cookies'
 import { Button } from '../general'
@@ -21,11 +21,14 @@ export function CookieConsentGate({ cookieProvider, children }: IConsentGateProp
 export function ConsentGateContent({ cookieProvider }: { readonly cookieProvider: CookieProviderConfig }) {
     const style = useStyle()
     const config = useConfig()
+    const { store } = useCookieConsentContext('ConsentGateContent')
     const { isEnabled } = useCookieState({ cookieProvider })
     const [localState, setLocalState] = React.useState(isEnabled)
 
     function handleAccept() {
-        persistCookieSelection(cookieProvider, localState, config.domain, config.cookiesValidForDays)
+        if (localState) {
+            store.grantForGate(cookieProvider.id)
+        }
     }
 
     return (

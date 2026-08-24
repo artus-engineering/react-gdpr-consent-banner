@@ -1,58 +1,9 @@
-import {
-    CONSENT_DIALOG_HAS_BEEN_DISPLAYED,
-    CONSENT_DIALOG_HAS_BEEN_DISPLAYED_VALUE,
-    COOKIE_SUFFIX,
-    COOKIE_VALUE_FALSE,
-    COOKIE_VALUE_TRUE
-} from './constants'
-import {
-    cookieAccessor,
-    getCookieSelection,
-    getLabel,
-    getLocalizedCookieText,
-    getUnit,
-    hexToRGBA,
-    isServer,
-    lightenHexColor,
-    persistCookieSelection,
-    serverEnvironment,
-    setCookie,
-    setCookieConsentDisplayed
-} from './functions'
-import { CookieProviderConfig } from './types'
-
-function clearAllCookies() {
-    for (const cookie of document.cookie.split(';')) {
-        const name = cookie.split('=')[0]?.trim()
-        if (name) {
-            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`
-        }
-    }
-}
-
-const provider: CookieProviderConfig = {
-    id: 'test',
-    name: 'Test Provider',
-    category: 'Analytics',
-    description: 'A test provider',
-    dataProtectionLink: 'https://example.com/privacy',
-    cookies: []
-}
+import { getLabel, getLocalizedCookieText, getUnit, hexToRGBA, isServer, lightenHexColor } from './functions'
 
 describe('functions', () => {
-    beforeEach(() => {
-        clearAllCookies()
-    })
-
     describe('isServer', () => {
         it('returns false in jsdom environment', () => {
             expect(isServer()).toBe(false)
-        })
-    })
-
-    describe('cookieAccessor', () => {
-        it('appends the cookie suffix to the id', () => {
-            expect(cookieAccessor({ id: 'foo' })).toBe(`foo${COOKIE_SUFFIX}`)
         })
     })
 
@@ -76,60 +27,6 @@ describe('functions', () => {
         })
     })
 
-    describe('setCookie', () => {
-        it('writes a cookie to document.cookie', () => {
-            setCookie('my_key', 'my_value', 'example.com', 1)
-            expect(document.cookie).toContain('my_key=my_value')
-        })
-
-        it('is a no-op when running on the server', () => {
-            const serverSpy = jest.spyOn(serverEnvironment, 'isServer').mockReturnValue(true)
-            try {
-                expect(() => setCookie('server_key', 'x', 'example.com', 1)).not.toThrow()
-                expect(document.cookie).not.toContain('server_key=')
-            } finally {
-                serverSpy.mockRestore()
-            }
-        })
-    })
-
-    describe('setCookieConsentDisplayed', () => {
-        it('persists the consent dialog displayed cookie', () => {
-            setCookieConsentDisplayed('example.com', 1)
-            expect(document.cookie).toContain(
-                `${CONSENT_DIALOG_HAS_BEEN_DISPLAYED}=${CONSENT_DIALOG_HAS_BEEN_DISPLAYED_VALUE}`
-            )
-        })
-    })
-
-    describe('persistCookieSelection', () => {
-        it('writes the "given" value when consent is granted', () => {
-            persistCookieSelection(provider, true, 'example.com', 1)
-            expect(document.cookie).toContain(`${cookieAccessor(provider)}=${COOKIE_VALUE_TRUE}`)
-        })
-
-        it('writes the "not_given" value when consent is denied', () => {
-            persistCookieSelection(provider, false, 'example.com', 1)
-            expect(document.cookie).toContain(`${cookieAccessor(provider)}=${COOKIE_VALUE_FALSE}`)
-        })
-    })
-
-    describe('getCookieSelection', () => {
-        it('returns true when consent has been given for the provider', () => {
-            persistCookieSelection(provider, true, 'example.com', 1)
-            expect(getCookieSelection(provider)).toBe(true)
-        })
-
-        it('returns false when consent has been denied', () => {
-            persistCookieSelection(provider, false, 'example.com', 1)
-            expect(getCookieSelection(provider)).toBe(false)
-        })
-
-        it('returns false when no cookie is set for the provider', () => {
-            expect(getCookieSelection(provider)).toBe(false)
-        })
-    })
-
     describe('getLabel', () => {
         it('returns the default English label when no custom labels provided', () => {
             expect(getLabel('buttons', 'acceptAllCookies', {})).toBe('Accept All')
@@ -140,8 +37,18 @@ describe('functions', () => {
         })
 
         it('returns the custom label override when provided', () => {
-            const labels: any = { buttons: { acceptAllCookies: 'Yes please' } }
+            const labels = { buttons: { acceptAllCookies: 'Yes please' } }
             expect(getLabel('buttons', 'acceptAllCookies', { labels })).toBe('Yes please')
+        })
+
+        it('falls back to defaults for keys missing from a partial override', () => {
+            const labels = { buttons: { acceptAllCookies: 'Yes please' } }
+            expect(getLabel('buttons', 'back', { labels })).toBe('Back')
+        })
+
+        it('provides a re-consent notice label in both languages', () => {
+            expect(getLabel('descriptions', 'reconsentNotice', {})).toContain('updated')
+            expect(getLabel('descriptions', 'reconsentNotice', { lang: 'deDE' })).toContain('aktualisiert')
         })
     })
 

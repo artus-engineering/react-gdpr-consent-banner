@@ -1,6 +1,5 @@
 import {
     ConsentHookManager,
-    consentHookManager,
     createCookieUtils,
     createCustomToolHook,
     createFacebookPixelHook,
@@ -9,6 +8,9 @@ import {
     createGoogleTagManagerHook,
     createGranularGoogleTagManagerHook
 } from './consentHooks'
+
+const consentHookManager = new ConsentHookManager()
+
 import { ConsentHookContext, CookieCategory } from './types'
 
 const BASE_CONSENT_STATE: Record<CookieCategory, boolean> = {
