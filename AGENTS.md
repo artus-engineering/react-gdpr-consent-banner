@@ -126,7 +126,7 @@ Run locally before pushing:
 - [ ] `pnpm --dir example run build` when the example or public API changed
 - [ ] Stories, tests, and the example app all reflect every public API change
 
-CI (`.github/workflows/branch.yaml`) enforces `lint`, `build`, `test`, `test:import`, visual tests, SonarQube scan, and quality gate on `artus-arm64-runners`. A PR that ships a public-API change without a corresponding story, test, or example update should not be merged.
+CI (`.github/workflows/branch.yaml`) enforces `lint`, `build`, `test`, `test:import`, visual tests, SonarQube scan, and quality gate on `ubuntu-latest` (public repo). A PR that ships a public-API change without a corresponding story, test, or example update should not be merged.
 
 **Dependabot** runs yearly; weekly dependency maintenance is handled by Cursor Automation.
 

@@ -1,6 +1,6 @@
 # CI (GitHub Actions)
 
-Runner: `artus-arm64-runners` (ARC) for private `artus-engineering/*` repos. Cross-project tooling: [Repository Tooling (SonarQube, CI, Cursor Agents)](https://github.com/artus-engineering/agency-portal/blob/main/docs/dev-tooling.md) — also in the Artus portal wiki under SWE → Wissen → Software Engineering.
+Runner: `ubuntu-latest` (public repo). Cross-project tooling: [Repository Tooling (SonarQube, CI, Cursor Agents)](https://github.com/artus-engineering/agency-portal/blob/main/docs/dev-tooling.md) — also in the Artus portal wiki under SWE → Wissen → Software Engineering.
 
 ## Workflows
 
@@ -10,17 +10,11 @@ Runner: `artus-arm64-runners` (ARC) for private `artus-engineering/*` repos. Cro
 
 ## Required checks
 
-After rollout, enable on `main`:
+On `main`:
 
 - **Tests**
 - **SonarQube Scan**
-- **SonarQube Quality Gate**
+
+The quality gate runs inside the **SonarQube Scan** job — a failed gate fails that check.
 
 Secrets: `SONAR_TOKEN`, `SONAR_HOST_URL`.
-
-## ARC notes
-
-- `libatomic1` before `setup-node` on jobs that run Node
-- Sonar scan job: `dirmngr`, `gnupg`, `locales`, Node, UTF-8 `LANG` / `SONAR_SCANNER_OPTS`
-
-See [agency-portal docs/ci.md](https://github.com/artus-engineering/agency-portal/blob/main/docs/ci.md) for details.
