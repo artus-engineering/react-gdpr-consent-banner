@@ -3,6 +3,7 @@ packages:
   - example
 allowBuilds:
   esbuild: false
+  lefthook: true
   sharp: false
   unrs-resolver: false
 overrides:

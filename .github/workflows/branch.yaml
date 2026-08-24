@@ -1,10 +1,16 @@
 name: "Branch"
 
+# Runner: ubuntu-latest (public repo) — see docs/ci.md.
+
 on:
   push:
     branches:
       - main
   pull_request_target:
+
+concurrency:
+  group: branch-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   tests:
@@ -103,7 +109,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        with:
-          args: -Dsonar.projectKey=artus-engineering_react-gdpr-consent-banner_77b80343-758e-46a6-aaa4-a2f681f7d05d
-            -Dsonar.sources=src -Dsonar.sourceEncoding=UTF-8
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+
+      - name: SonarQube Quality Gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
