@@ -23,6 +23,13 @@ lib-cov
 coverage
 *.lcov
 
+.scannerwork/
+
+# VS Code — share team settings; ignore local overrides
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
 # nyc test coverage
 .nyc_output
 

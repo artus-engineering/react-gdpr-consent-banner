@@ -89,6 +89,9 @@ Jest (jsdom) runs behavior tests. Playwright runs visual tests against a built S
 
 - TypeScript strict; public types live in `src/types.d.ts`.
 - Biome owns formatting and linting (`pnpm run lint` / `pnpm run lint:fix`). Do not introduce ESLint/Prettier configs.
+- **Lefthook** formats and lints staged files on commit (`lefthook.yml`); installed via `pnpm install` → `prepare`.
+- **SonarQube:** SonarLint Connected Mode + MCP `analyze_code_snippet` on changed `*.ts`/`*.tsx`/`*.js`/`*.jsx` before agent commits (see `.cursor/rules/sonarqube_mcp_instructions.mdc`). Lefthook/Biome is not a substitute.
+- Cross-project tooling guide: Artus portal wiki **Repository Tooling (SonarQube, CI, Cursor Agents)** or [agency-portal `docs/dev-tooling.md`](https://github.com/artus-engineering/agency-portal/blob/main/docs/dev-tooling.md).
 - No comments that narrate code (`// Import X`, `// Set Y`). Keep comments for non-obvious intent, constraints, or trade-offs only.
 - Avoid adding emojis to code or comments unless explicitly requested.
 - Internal helpers (e.g. `src/constants.ts`, most of `src/functions.ts`) stay internal — do not re-export from `src/index.ts`.
@@ -123,7 +126,9 @@ Run locally before pushing:
 - [ ] `pnpm --dir example run build` when the example or public API changed
 - [ ] Stories, tests, and the example app all reflect every public API change
 
-CI (`.github/workflows/branch.yaml`) enforces `lint`, `build`, `test`, `test:import`, visual tests, and SonarQube. A PR that ships a public-API change without a corresponding story, test, or example update should not be merged.
+CI (`.github/workflows/branch.yaml`) enforces `lint`, `build`, `test`, `test:import`, visual tests, SonarQube scan, and quality gate on `artus-arm64-runners`. A PR that ships a public-API change without a corresponding story, test, or example update should not be merged.
+
+**Dependabot** runs yearly; weekly dependency maintenance is handled by Cursor Automation.
 
 ## Publishing
 
