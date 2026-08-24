@@ -1,5 +1,5 @@
 {
-    "name": "@artus_engineering/react-gdpr-cookie-consent",
+    "name": "@artus-engineering/react-gdpr-cookie-consent",
     "version": "1.0.7",
     "packageManager": "pnpm@11.23.0",
     "type": "module",

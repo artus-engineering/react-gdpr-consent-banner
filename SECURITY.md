@@ -1,6 +1,6 @@
 # Reporting a Vulnerability
 
-If you discover a security vulnerability in `@artus_engineering/react-gdpr-cookie-consent`, please report it responsibly.
+If you discover a security vulnerability in `@artus-engineering/react-gdpr-cookie-consent`, please report it responsibly.
 
 **Preferred:** Open a [GitHub Security Advisory](https://github.com/artus-engineering/react-gdpr-consent-banner/security/advisories/new) (private disclosure).
 

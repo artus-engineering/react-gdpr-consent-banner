@@ -163,7 +163,7 @@ importers:
 
   example:
     dependencies:
-      '@artus_engineering/react-gdpr-cookie-consent':
+      '@artus-engineering/react-gdpr-cookie-consent':
         specifier: file:..
         version: file:(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@radix-ui/react-separator':
@@ -243,7 +243,7 @@ packages:
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
     engines: {node: '>=10'}
 
-  '@artus_engineering/react-gdpr-cookie-consent@file:':
+  '@artus-engineering/react-gdpr-cookie-consent@file:':
     resolution: {directory: '', type: directory}
     peerDependencies:
       react: '>=19.0.0'
@@ -5219,7 +5219,7 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
-  '@artus_engineering/react-gdpr-cookie-consent@file:(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@artus-engineering/react-gdpr-cookie-consent@file:(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)

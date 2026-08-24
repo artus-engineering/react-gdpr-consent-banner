@@ -12,7 +12,7 @@
         "db:init": "node scripts/init-db.js"
     },
     "dependencies": {
-        "@artus_engineering/react-gdpr-cookie-consent": "file:..",
+        "@artus-engineering/react-gdpr-cookie-consent": "file:..",
         "@radix-ui/react-separator": "^1.1.8",
         "@radix-ui/react-slot": "^1.2.4",
         "@radix-ui/react-switch": "^1.2.6",

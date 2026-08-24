@@ -7,8 +7,8 @@
 </p>
 
 <div align="center">
-  <a href="https://www.npmjs.com/package/@artus_engineering/react-gdpr-cookie-consent"><img alt="NPM Version" src="https://img.shields.io/npm/v/%40artus_engineering%2Freact-gdpr-cookie-consent"></a>
-  <a href="https://github.com/artus-engineering/react-gdpr-consent-banner/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/npm/l/%40artus_engineering%2Freact-gdpr-cookie-consent"></a>
+  <a href="https://www.npmjs.com/package/@artus-engineering/react-gdpr-cookie-consent"><img alt="NPM Version" src="https://img.shields.io/npm/v/%40artus-engineering%2Freact-gdpr-cookie-consent"></a>
+  <a href="https://github.com/artus-engineering/react-gdpr-consent-banner/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/npm/l/%40artus-engineering%2Freact-gdpr-cookie-consent"></a>
   <a href="https://github.com/artus-engineering/react-gdpr-consent-banner/actions/workflows/branch.yaml"><img alt="CI Status" src="https://img.shields.io/github/actions/workflow/status/artus-engineering/react-gdpr-consent-banner/.github%2Fworkflows%2Fbranch.yaml?label=CI&logo=GitHub"></a>
   <a href="https://sonar.artus-engineering.de/dashboard?id=artus-engineering_react-gdpr-consent-banner_77b80343-758e-46a6-aaa4-a2f681f7d05d"><img alt="SonarQube Quality Gate" src="https://sonar.artus-engineering.de/api/project_badges/measure?project=artus-engineering_react-gdpr-consent-banner_77b80343-758e-46a6-aaa4-a2f681f7d05d&amp;metric=alert_status&amp;token=sqb_88234c043e5593851d73ec5aa1c1e6e0a41d0d17"></a>
   <a href="https://artus-engineering.github.io/react-gdpr-consent-banner/"><img alt="Live demo" src="https://img.shields.io/badge/demo-live-0ea5e9?logo=next.js&logoColor=white"></a>
@@ -51,13 +51,13 @@ This software is licensed under the [PolyForm Noncommercial License 1.0.0](LICEN
 
 ```bash
 # npm
-npm install @artus_engineering/react-gdpr-cookie-consent
+npm install @artus-engineering/react-gdpr-cookie-consent
 
 # pnpm
-pnpm add @artus_engineering/react-gdpr-cookie-consent
+pnpm add @artus-engineering/react-gdpr-cookie-consent
 
 # yarn
-yarn add @artus_engineering/react-gdpr-cookie-consent
+yarn add @artus-engineering/react-gdpr-cookie-consent
 ```
 
 **Requirements:** React 19.0.0 or higher
@@ -70,7 +70,7 @@ Wrap your application with `CookieConsentProvider` and configure your cookie pro
 import {
   CookieConsentProvider,
   createGoogleAnalyticsHook,
-} from "@artus_engineering/react-gdpr-cookie-consent";
+} from "@artus-engineering/react-gdpr-cookie-consent";
 
 const config = {
   cookiePolicyLink: "/privacy-policy",
@@ -149,7 +149,7 @@ Set `includeCookieBanner={false}` on the provider if you only need context and h
 import {
   CookieConsentGate,
   useCookieProviders,
-} from "@artus_engineering/react-gdpr-cookie-consent";
+} from "@artus-engineering/react-gdpr-cookie-consent";
 
 function PaymentSection() {
   const providers = useCookieProviders();
@@ -181,7 +181,7 @@ Pre-built hook factories wire common tools to consent events:
 import {
   createGoogleTagManagerHook,
   createFacebookPixelHook,
-} from "@artus_engineering/react-gdpr-cookie-consent";
+} from "@artus-engineering/react-gdpr-cookie-consent";
 
 const config = {
   // …other config
@@ -237,7 +237,7 @@ See [AGENTS.md](AGENTS.md) for contributor conventions.
 
 ## Releases
 
-Packages are published to [npm](https://www.npmjs.com/package/@artus_engineering/react-gdpr-cookie-consent) when a [GitHub Release](https://github.com/artus-engineering/react-gdpr-consent-banner/releases) is published.
+Packages are published to [npm](https://www.npmjs.com/package/@artus-engineering/react-gdpr-cookie-consent) when a [GitHub Release](https://github.com/artus-engineering/react-gdpr-consent-banner/releases) is published.
 
 1. Ensure `main` is green.
 2. Create a GitHub Release with a semver tag, e.g. `v1.0.5`.

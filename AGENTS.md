@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Canonical contributor and AI-agent guide for `@artus_engineering/react-gdpr-cookie-consent`. Cursor rules in `.cursor/rules/*.mdc` point here; keep this file as the single source of truth.
+Canonical contributor and AI-agent guide for `@artus-engineering/react-gdpr-cookie-consent`. Cursor rules in `.cursor/rules/*.mdc` point here; keep this file as the single source of truth.
 
 ## Repository map
 
@@ -138,7 +138,7 @@ To cut a release:
 
 1. Ensure `main` is green.
 2. Create a GitHub Release with a semver tag, e.g. `v1.0.5` (leading `v` is stripped automatically).
-3. The workflow sets `package.json` version from the release tag, runs `lint` → `build` → `test:import` → `test:unit` → visual tests, and publishes `@artus_engineering/react-gdpr-cookie-consent` to the public npm registry.
+3. The workflow sets `package.json` version from the release tag, runs `lint` → `build` → `test:import` → `test:unit` → visual tests, and publishes `@artus-engineering/react-gdpr-cookie-consent` to the public npm registry.
 
 Publishing uses [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/) (OIDC) via the GitHub connection configured on npmjs.com for `publish.yaml`. No `NPM_TOKEN` secret is required. Do not set `NODE_AUTH_TOKEN` in the publish step — it overrides OIDC authentication.
 
