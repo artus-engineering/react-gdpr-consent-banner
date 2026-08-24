@@ -3,9 +3,11 @@ export * from './consentHooks'
 export {
     type ConsentCookiePayload,
     type ConsentDecisions,
+    type ConsentStateConfig,
     type ConsentStatus,
     getConsentStatus,
     readConsentCookie,
+    refreshConsentCookie,
     resolveConsentCookieName,
     resolvePurposesHashPrefix
 } from './consentState'

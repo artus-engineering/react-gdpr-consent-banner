@@ -220,6 +220,23 @@ const config = {
 };
 ```
 
+### Headless entry point
+
+Non-React consumers — script loaders, WordPress bridges, edge workers — import from
+`@artus_engineering/react-gdpr-cookie-consent/headless`, which exposes the consent cookie logic
+(`getConsentStatus`, `readConsentCookie`, `writeConsentCookie`, `refreshConsentCookie`,
+`resolveConsentCookieName`, `resolvePurposesHashPrefix`), the `ConsentStore` and the
+`IntegrationRegistry` without pulling React into the bundle. The main entry cannot be tree-shaken
+down to these: it re-exports components whose module scope calls `createContext`, which bundlers
+must treat as a side effect.
+
+```ts
+import {
+  getConsentStatus,
+  IntegrationRegistry,
+} from "@artus_engineering/react-gdpr-cookie-consent/headless";
+```
+
 The v1 `consentHooks` factories (`createGoogleAnalyticsHook`, `createGoogleTagManagerHook`,
 `createFacebookPixelHook`, `createGoogleAdsHook`, `createCustomToolHook`) remain available but are
 **deprecated** and will be removed in 3.0. Note that they follow the old loading model (Google

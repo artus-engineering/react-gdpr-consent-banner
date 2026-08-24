@@ -13,6 +13,11 @@
             "import": "./dist/esm/index.js",
             "require": "./dist/cjs/index.cjs"
         },
+        "./headless": {
+            "types": "./dist/headless.d.ts",
+            "import": "./dist/esm/headless.js",
+            "require": "./dist/cjs/headless.cjs"
+        },
         "./package.json": "./package.json"
     },
     "sideEffects": false,
