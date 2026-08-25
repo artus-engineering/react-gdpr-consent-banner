@@ -90,7 +90,7 @@ Jest (jsdom) runs behavior tests. Playwright runs visual tests against a built S
 - TypeScript strict; public types live in `src/types.d.ts`.
 - Biome owns formatting and linting (`pnpm run lint` / `pnpm run lint:fix`). Do not introduce ESLint/Prettier configs.
 - **Lefthook** formats and lints staged files on commit (`lefthook.yml`); installed via `pnpm install` → `prepare`.
-- **SonarQube:** SonarLint Connected Mode + MCP `analyze_code_snippet` on changed `*.ts`/`*.tsx`/`*.js`/`*.jsx` before agent commits (see `.cursor/rules/sonarqube_mcp_instructions.mdc`). Lefthook/Biome is not a substitute.
+- **SonarQube:** SonarLint Connected Mode + MCP analysis on changed `*.ts`/`*.tsx`/`*.js`/`*.jsx` before agent commits (tool priority: `analyze_file_list` → `run_advanced_code_analysis` if present → `analyze_code_snippet` last resort; see `.cursor/rules/sonarqube_mcp_instructions.mdc`). Lefthook/Biome is not a substitute.
 - Cross-project tooling guide: Artus portal wiki **Repository Tooling (SonarQube, CI, Cursor Agents)** or [agency-portal `docs/dev-tooling.md`](https://github.com/artus-engineering/agency-portal/blob/main/docs/dev-tooling.md).
 - No comments that narrate code (`// Import X`, `// Set Y`). Keep comments for non-obvious intent, constraints, or trade-offs only.
 - Avoid adding emojis to code or comments unless explicitly requested.
