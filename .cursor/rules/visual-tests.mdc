@@ -11,7 +11,7 @@ Playwright visual regression rules. See the `Visual test rules` section of [AGEN
   ```bash
   docker run --rm --ipc=host -e CI=true -v "$(pwd)":/work -w /work \
     mcr.microsoft.com/playwright:v1.62.0-noble bash -lc \
-    "npm i -g pnpm@11.23.0 >/dev/null && pnpm install --frozen-lockfile && \
+    "npm i -g pnpm@11.24.0 >/dev/null && pnpm install --frozen-lockfile && \
      pnpm run build-storybook && pnpm run test:visual:update"
   ```
 - Review the regenerated PNGs visually before committing. Never commit `-actual.png` / `-diff.png` outputs.
