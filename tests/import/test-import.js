@@ -56,7 +56,12 @@ try {
         'DefaultTheme',
         'useCookieConsentContext',
         'useCookieState',
-        'getLocalizedCookieText'
+        'useConsentSnapshot',
+        'getLocalizedCookieText',
+        'ConsentStore',
+        'IntegrationRegistry',
+        'getConsentStatus',
+        'readConsentCookie'
     ]
 
     const missingExports = requiredExports.filter(exportName => !cjsExports[exportName])

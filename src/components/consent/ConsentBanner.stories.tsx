@@ -19,6 +19,12 @@ type Story = StoryObj<typeof CookieConsentBanner>
 
 export const Collapsed: Story = {}
 
+export const ReconsentNotice: Story = {
+    parameters: {
+        consent: { includeCookieBanner: false, forceBannerOpen: true, preSetStaleConsent: true }
+    }
+}
+
 export const DetailsExpanded: Story = {
     play: async ({ canvasElement }) => {
         const root = canvasElement.ownerDocument ?? document

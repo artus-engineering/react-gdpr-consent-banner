@@ -1,7 +1,8 @@
 import type { Decorator } from '@storybook/react'
 import { type ReactNode, useEffect } from 'react'
 import { CookieConsentProvider } from '../src/components/consent'
-import { CONSENT_DIALOG_HAS_BEEN_DISPLAYED, CONSENT_DIALOG_HAS_BEEN_DISPLAYED_VALUE } from '../src/constants'
+import { resolveConsentCookieName, resolvePurposesHashPrefix, writeConsentCookie } from '../src/consentState'
+import { LEGACY_CONSENT_DIALOG_HAS_BEEN_DISPLAYED } from '../src/constants'
 import { useCookieConsentContext } from '../src/hooks'
 import { defaultStoryConfig } from '../src/test-utils/fixtures'
 import type { CookieConsentBannerConfig } from '../src/types'
@@ -9,7 +10,13 @@ import type { CookieConsentBannerConfig } from '../src/types'
 export interface ConsentStoryParameters {
     config?: Partial<CookieConsentBannerConfig>
     includeCookieBanner?: boolean
+    /** Raw cookies written before mounting (escape hatch). */
     preSetCookies?: Record<string, string>
+    /** Writes a valid v2 consent cookie with these per-provider decisions. */
+    preSetDecisions?: Record<string, boolean>
+    /** Writes a v2 consent cookie with a mismatching purposes hash (re-consent state). */
+    preSetStaleConsent?: boolean
+    /** Writes a valid all-denied v2 consent cookie so the banner stays closed. */
     markBannerDismissed?: boolean
     forceBannerOpen?: boolean
 }
@@ -46,7 +53,11 @@ function clearConsentCookies(config: CookieConsentBannerConfig) {
         return
     }
 
-    const names = [CONSENT_DIALOG_HAS_BEEN_DISPLAYED, ...config.providers.map(p => `${p.id}_consent`)]
+    const names = [
+        resolveConsentCookieName(config),
+        LEGACY_CONSENT_DIALOG_HAS_BEEN_DISPLAYED,
+        ...config.providers.map(p => `${p.id}_consent`)
+    ]
     const domainVariants = getCookieDomainVariants(document.location.hostname, config.domain)
 
     for (const name of names) {
@@ -54,6 +65,14 @@ function clearConsentCookies(config: CookieConsentBannerConfig) {
             expireCookie(name, domain)
         }
     }
+}
+
+function writeDecisionCookie(config: CookieConsentBannerConfig, decisions: Record<string, boolean>, stale = false) {
+    writeConsentCookie({
+        cookieName: resolveConsentCookieName(config),
+        purposesHashPrefix: stale ? '0000000000000000' : resolvePurposesHashPrefix(config),
+        decisions
+    })
 }
 
 function ForceBannerOpen({ enabled, children }: { enabled?: boolean; children: ReactNode }) {
@@ -79,7 +98,18 @@ export const withConsentProvider: Decorator = (Story, context) => {
     clearConsentCookies(config)
 
     if (params.markBannerDismissed) {
-        document.cookie = `${CONSENT_DIALOG_HAS_BEEN_DISPLAYED}=${CONSENT_DIALOG_HAS_BEEN_DISPLAYED_VALUE}; path=/`
+        const denied = Object.fromEntries(
+            config.providers.filter(p => p.category !== 'Essential').map(p => [p.id, false])
+        )
+        writeDecisionCookie(config, denied)
+    }
+
+    if (params.preSetDecisions) {
+        writeDecisionCookie(config, params.preSetDecisions)
+    }
+
+    if (params.preSetStaleConsent) {
+        writeDecisionCookie(config, {}, true)
     }
 
     if (params.preSetCookies) {

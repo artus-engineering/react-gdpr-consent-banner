@@ -46,9 +46,8 @@ export const Allowed: Story = {
     parameters: {
         consent: {
             includeCookieBanner: false,
-            markBannerDismissed: true,
-            preSetCookies: {
-                [`${analyticsProvider.id}_consent`]: 'given'
+            preSetDecisions: {
+                [analyticsProvider.id]: true
             }
         }
     }

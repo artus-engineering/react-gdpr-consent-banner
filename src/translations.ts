@@ -5,7 +5,8 @@ const cookieConsentTranslations: Record<SupportedLanguage, CookieConsentLabels> 
         descriptions: {
             cookieDetails: `Wir verwenden Cookies auf unserer Website, um Ihre Nutzererfahrung zu verbessern. Einige dieser Cookies sind
                 notwendig, während andere uns helfen, unsere Online-Dienste wirtschaftlich zu betreiben und zu verbessern. Sie können Ihre
-                Einwilligung jederzeit widerrufen oder anpassen. Weitere Details finden Sie in unserer`
+                Einwilligung jederzeit widerrufen oder anpassen. Weitere Details finden Sie in unserer`,
+            reconsentNotice: 'Wir haben unsere Dienste aktualisiert. Bitte treffen Sie Ihre Auswahl erneut.'
         },
         common: {
             of: 'von'
@@ -77,7 +78,8 @@ const cookieConsentTranslations: Record<SupportedLanguage, CookieConsentLabels> 
         descriptions: {
             cookieDetails: `We use cookies on our website to improve your user experience. Some of these cookies are necessary, while others
                 help us to improve our online services and operate them economically. You can withdraw or adjust your consent at any time.
-                Further details can be found in our`
+                Further details can be found in our`,
+            reconsentNotice: 'We have updated our services. Please make your selection again.'
         },
         common: {
             of: 'of'

@@ -1,10 +1,11 @@
 import { act, renderHook } from '@testing-library/react'
 import React from 'react'
 import { ConsentStateProviderContext } from './components/consent/context'
-import { COOKIE_VALUE_FALSE, COOKIE_VALUE_TRUE, DEFAULT_COOKIE_VALIDITY, DEFAULT_LANGUAGE } from './constants'
-import { cookieAccessor } from './functions'
+import { readConsentCookie, resolvePurposesHashPrefix } from './consentState'
+import { DEFAULT_CONSENT_COOKIE_NAME, DEFAULT_COOKIE_VALIDITY, DEFAULT_LANGUAGE } from './constants'
 import {
     useConfig,
+    useConsentSnapshot,
     useCookieConsentContext,
     useCookieProviders,
     useCookieProvidersByCategory,
@@ -13,6 +14,7 @@ import {
     useSetStrictlyNecessaryCookiesOnly,
     useStyle
 } from './hooks'
+import { ConsentStore } from './store'
 import { DefaultTheme } from './themes'
 import { CookieConsentBannerConfig, CookieProviderConfig } from './types'
 
@@ -46,25 +48,32 @@ const analyticsProvider: CookieProviderConfig = {
 function createWrapper(configOverrides: Partial<CookieConsentBannerConfig> = {}) {
     const setIsBannerOpen = jest.fn()
     const openBanner = jest.fn()
+    const config: CookieConsentBannerConfig = {
+        domain: 'example.com',
+        websiteName: 'Example',
+        cookiePolicyLink: 'https://example.com/cookies',
+        providers: [essentialProvider, analyticsProvider],
+        ...configOverrides
+    }
+    const store = new ConsentStore(config)
     const contextValue = {
         isBannerOpen: false,
         setIsBannerOpen,
         openBanner,
-        auditService: null,
-        config: {
-            domain: 'example.com',
-            cookiesValidForDays: 30,
-            websiteName: 'Example',
-            cookiePolicyLink: 'https://example.com/cookies',
-            providers: [essentialProvider, analyticsProvider],
-            ...configOverrides
-        }
+        config,
+        store
     }
 
     const wrapper = ({ children }: { children: React.ReactNode }) =>
-        React.createElement(ConsentStateProviderContext.Provider, { value: contextValue as any }, children)
+        React.createElement(ConsentStateProviderContext.Provider, { value: contextValue }, children)
 
-    return { wrapper, contextValue, setIsBannerOpen, openBanner }
+    return { wrapper, contextValue, store, setIsBannerOpen, openBanner }
+}
+
+function writeValidConsentCookie(decisions: Record<string, 0 | 1>) {
+    const ph = resolvePurposesHashPrefix({ providers: [essentialProvider, analyticsProvider] })
+    const payload = encodeURIComponent(JSON.stringify({ v: 2, ph, d: decisions }))
+    document.cookie = `${DEFAULT_CONSENT_COOKIE_NAME}=${payload}; path=/`
 }
 
 describe('hooks', () => {
@@ -135,8 +144,30 @@ describe('hooks', () => {
         })
     })
 
+    describe('useConsentSnapshot', () => {
+        it('exposes the current consent status and decisions', () => {
+            writeValidConsentCookie({ analytics: 1 })
+            const { wrapper } = createWrapper()
+            const { result } = renderHook(() => useConsentSnapshot(), { wrapper })
+            expect(result.current.status).toBe('valid')
+            expect(result.current.decisions).toEqual({ analytics: true })
+        })
+
+        it('updates when the store changes', () => {
+            const { wrapper, store } = createWrapper()
+            const { result } = renderHook(() => useConsentSnapshot(), { wrapper })
+            expect(result.current.status).toBe('none')
+
+            act(() => {
+                store.acceptAll()
+            })
+            expect(result.current.status).toBe('valid')
+            expect(result.current.decisions).toEqual({ analytics: true })
+        })
+    })
+
     describe('useSetStrictlyNecessaryCookiesOnly', () => {
-        it('accepts essentials and rejects all other categories', () => {
+        it('stores a full rejection of all non-essential providers', () => {
             const { wrapper } = createWrapper()
             const { result } = renderHook(() => useSetStrictlyNecessaryCookiesOnly(), { wrapper })
 
@@ -144,8 +175,8 @@ describe('hooks', () => {
                 result.current()
             })
 
-            expect(document.cookie).toContain(`${cookieAccessor(essentialProvider)}=${COOKIE_VALUE_TRUE}`)
-            expect(document.cookie).toContain(`${cookieAccessor(analyticsProvider)}=${COOKIE_VALUE_FALSE}`)
+            const payload = readConsentCookie(DEFAULT_CONSENT_COOKIE_NAME)
+            expect(payload?.d).toEqual({ analytics: 0 })
         })
     })
 
@@ -158,14 +189,12 @@ describe('hooks', () => {
             expect(result.current.slice(1)).toEqual([essentialProvider, analyticsProvider])
         })
 
-        it('creates one auto-cookie per configured provider', () => {
+        it('documents the single consent cookie', () => {
             const { wrapper } = createWrapper()
             const { result } = renderHook(() => useCookieProviders(), { wrapper })
-            expect(result.current[0].cookies).toHaveLength(2)
-            expect(result.current[0].cookies.map(c => c.name)).toEqual([
-                cookieAccessor(essentialProvider),
-                cookieAccessor(analyticsProvider)
-            ])
+            expect(result.current[0].cookies).toHaveLength(1)
+            expect(result.current[0].cookies[0].name).toBe(DEFAULT_CONSENT_COOKIE_NAME)
+            expect(result.current[0].cookies[0].unit).toBe('months')
         })
     })
 
@@ -179,8 +208,8 @@ describe('hooks', () => {
     })
 
     describe('useCookieState', () => {
-        it('reflects the stored cookie consent value', () => {
-            document.cookie = `${cookieAccessor(analyticsProvider)}=${COOKIE_VALUE_TRUE}; path=/`
+        it('reflects the stored consent decision', () => {
+            writeValidConsentCookie({ analytics: 1 })
             const { wrapper } = createWrapper()
             const { result } = renderHook(() => useCookieState({ cookieProvider: analyticsProvider }), { wrapper })
             expect(result.current.isEnabled).toBe(true)
@@ -190,6 +219,12 @@ describe('hooks', () => {
             const { wrapper } = createWrapper()
             const { result } = renderHook(() => useCookieState({ cookieProvider: analyticsProvider }), { wrapper })
             expect(result.current.isEnabled).toBe(false)
+        })
+
+        it('is always enabled for essential providers', () => {
+            const { wrapper } = createWrapper()
+            const { result } = renderHook(() => useCookieState({ cookieProvider: essentialProvider }), { wrapper })
+            expect(result.current.isEnabled).toBe(true)
         })
 
         it('supports manually overriding the enabled state', () => {

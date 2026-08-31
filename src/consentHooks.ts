@@ -134,6 +134,9 @@ function createGranularGtmHooks(): ConsentHook[] {
 
 /**
  * Consent Hook Manager - Scalable system for handling consent-driven code execution
+ *
+ * @deprecated Use the declarative `integrations` config (see `IntegrationRegistry`)
+ * instead. Consent hooks remain functional throughout 2.x and will be removed in 3.0.
  */
 export class ConsentHookManager {
     private readonly hooks: Map<string, ConsentHook> = new Map()
@@ -210,11 +213,6 @@ export class ConsentHookManager {
         this.executedHooks.clear()
     }
 }
-
-/**
- * Global consent hook manager instance
- */
-export const consentHookManager = new ConsentHookManager()
 
 /**
  * Create cookie utilities for the consent hook context

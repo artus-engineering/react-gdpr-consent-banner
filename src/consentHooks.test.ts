@@ -1,4 +1,7 @@
-import { consentHookManager, createGoogleTagManagerHook } from './consentHooks'
+import { ConsentHookManager, createGoogleTagManagerHook } from './consentHooks'
+
+const consentHookManager = new ConsentHookManager()
+
 import { ConsentHookContext, CookieCategory } from './types'
 
 // Mock window.dataLayer and global types for Jest

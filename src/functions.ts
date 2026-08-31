@@ -1,13 +1,13 @@
-import {
-    CONSENT_DIALOG_HAS_BEEN_DISPLAYED,
-    CONSENT_DIALOG_HAS_BEEN_DISPLAYED_VALUE,
-    COOKIE_SUFFIX,
-    COOKIE_VALUE_FALSE,
-    COOKIE_VALUE_TRUE
-} from './constants'
 import { getLocalizedText } from './i18n'
 import { getLanguageLabels } from './translations'
-import { CookieProviderConfig, SectionKeys, SupportedLanguage, TranslationSections, Unit } from './types'
+import {
+    LocalizedText,
+    PartialCookieConsentLabels,
+    SectionKeys,
+    SupportedLanguage,
+    TranslationSections,
+    Unit
+} from './types'
 
 /**
  * Mutable SSR check so tests can simulate a server environment when jsdom
@@ -26,107 +26,6 @@ export const serverEnvironment = {
  */
 export function isServer(): boolean {
     return serverEnvironment.isServer()
-}
-
-/**
- * Set a cookie with proper security settings.
- *
- * @param key The key of the cookie.
- * @param value The value of the cookie.
- * @param domain The domain of the cookie.
- * @param validForDays The validity of the cookie in days.
- */
-export function setCookie(key: string, value: string, domain: string, validForDays: number) {
-    if (isServer()) {
-        return
-    }
-
-    const isLocalhost =
-        globalThis.window.location.hostname === 'localhost' || globalThis.window.location.hostname === '127.0.0.1'
-    const isHttps = globalThis.window.location.protocol === 'https:'
-
-    // For localhost or HTTP, don't use Secure flag
-    const secureFlag = isLocalhost || !isHttps ? '' : '; Secure'
-
-    // For localhost, don't set domain attribute (browsers reject domain=localhost)
-    const domainAttr = isLocalhost ? '' : `; domain=${domain}`
-
-    const cookieString = `${key}=${value}${domainAttr}; path=/; max-age=${validForDays * 86400}; SameSite=Lax${secureFlag}`
-
-    try {
-        document.cookie = cookieString
-
-        // Verify the cookie was set - check after a small delay to ensure it's readable
-        if (process.env.NODE_ENV === 'development') {
-            // Use setTimeout to check after the cookie is actually written
-            setTimeout(() => {
-                const wasSet = document.cookie.split(';').some(c => c.trim().startsWith(`${key}=`))
-                console.warn('[CookieConsent] Cookie set:', {
-                    key,
-                    value,
-                    domain: isLocalhost ? '(no domain attr)' : domain,
-                    wasSet,
-                    cookieString,
-                    allCookies: document.cookie.split(';').map(c => c.trim())
-                })
-            }, 0)
-        }
-    } catch (error) {
-        console.error('[CookieConsent] Failed to set cookie:', {
-            key,
-            error
-        })
-    }
-}
-
-/**
- * Set the cookie consent has been given.
- *
- * @param {string} domain The domain of the cookie.
- * @param {number} validForDays The validity of the cookie in days.
- */
-export function setCookieConsentDisplayed(domain: string, validForDays: number) {
-    setCookie(CONSENT_DIALOG_HAS_BEEN_DISPLAYED, CONSENT_DIALOG_HAS_BEEN_DISPLAYED_VALUE, domain, validForDays)
-}
-
-/**
- * Set the cookie selection.
- *
- * @param {CookieProviderConfig} cookie The cookie the consent has been given for.
- * @param {boolean} consentGiven True if the user has given consent, false otherwise.
- * @param {string} domain The domain of the cookie.
- * @param {number} validForDays The validity of the cookie in days.
- */
-export function persistCookieSelection(
-    cookie: CookieProviderConfig,
-    consentGiven: boolean,
-    domain: string,
-    validForDays: number
-) {
-    setCookie(cookieAccessor(cookie), consentGiven ? COOKIE_VALUE_TRUE : COOKIE_VALUE_FALSE, domain, validForDays)
-}
-
-/**
- * Get the cookie accessor.
- *
- * @param cookie
- * @returns {string} The key to access the cookie.
- */
-export function cookieAccessor(cookie: Partial<CookieProviderConfig>): string {
-    return `${cookie.id}${COOKIE_SUFFIX}`
-}
-
-/**
- * Get the cookie selection.
- *
- * @param {CookieProviderConfig} cookie The cookie to check.
- * @returns {boolean} True if the user has given consent, false otherwise.
- */
-export function getCookieSelection(cookie: CookieProviderConfig): boolean {
-    if (isServer()) {
-        return false
-    }
-    return document.cookie.includes(`${cookieAccessor(cookie)}=${COOKIE_VALUE_TRUE}`)
 }
 
 /**
@@ -175,10 +74,10 @@ export function lightenHexColor(hex: string, degree: number): string {
 export function getLabel<S extends TranslationSections, K extends SectionKeys<S>>(
     section: S,
     key: K,
-    config: { labels?: any; lang?: SupportedLanguage }
+    config: { labels?: PartialCookieConsentLabels; lang?: SupportedLanguage }
 ): string {
     const { labels, lang = 'enUS' } = config
-    const customText = labels?.[section]?.[key]
+    const customText = labels?.[section]?.[key as keyof PartialCookieConsentLabels[S]]
     if (customText) {
         return customText as string
     }
@@ -194,11 +93,8 @@ export function getLabel<S extends TranslationSections, K extends SectionKeys<S>
  * @param lang The language to use
  * @returns Localized text based on current language configuration
  */
-export function getLocalizedCookieText(
-    text: string | Record<SupportedLanguage, string>,
-    lang: SupportedLanguage = 'enUS'
-): string {
-    return getLocalizedText(text, lang)
+export function getLocalizedCookieText(text: LocalizedText, lang: SupportedLanguage = 'enUS'): string {
+    return getLocalizedText(text as string | Record<string, string>, lang)
 }
 
 /**
@@ -209,7 +105,11 @@ export function getLocalizedCookieText(
  * @param config The configuration object containing labels and language
  * @returns {string} The unit in singular or plural form
  */
-export function getUnit(number: number, unit: Unit, config: { labels?: any; lang?: SupportedLanguage }): string {
+export function getUnit(
+    number: number,
+    unit: Unit,
+    config: { labels?: PartialCookieConsentLabels; lang?: SupportedLanguage }
+): string {
     if (number > 1) {
         return getLabel('units', `${unit}Plural` as Unit, config)
     }

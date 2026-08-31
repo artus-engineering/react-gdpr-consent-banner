@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import * as functions from '../../functions'
 import * as hooks from '../../hooks'
+import { ConsentSnapshot } from '../../store'
 import { DefaultTheme } from '../../themes'
 import { CookieConsentBannerConfigWithDefaults, CookieProviderConfig } from '../../types'
 import { CookieConsentBanner } from './ConsentBanner'
@@ -11,14 +11,13 @@ jest.mock('../../hooks', () => ({
     useConfig: jest.fn(),
     useStyle: jest.fn(),
     useCookieProviders: jest.fn(),
-    useSetStrictlyNecessaryCookiesOnly: jest.fn(),
+    useConsentSnapshot: jest.fn(),
     useCookieConsentContext: jest.fn()
 }))
 
 // Mock functions module
 jest.mock('../../functions', () => ({
     isServer: jest.fn(() => false),
-    getCookieSelection: jest.fn(),
     getLabel: jest.fn((section, key) => {
         const labels: Record<string, Record<string, string>> = {
             headings: {
@@ -26,7 +25,8 @@ jest.mock('../../functions', () => ({
                 details: 'Cookie Settings'
             },
             descriptions: {
-                cookieDetails: 'We use cookies to enhance your experience.'
+                cookieDetails: 'We use cookies to enhance your experience.',
+                reconsentNotice: 'We have updated our services. Please make your selection again.'
             },
             buttons: {
                 acceptAllCookies: 'Accept All',
@@ -65,15 +65,28 @@ jest.mock('../../functions', () => ({
         return labels[section]?.[key] || key
     }),
     hexToRGBA: jest.fn((_hex, alpha = 1) => `rgba(0, 0, 0, ${alpha})`),
-    persistCookieSelection: jest.fn(),
-    setCookieConsentDisplayed: jest.fn(),
     getUnit: jest.fn(() => 'days'),
     getLocalizedCookieText: jest.fn(text => (typeof text === 'string' ? text : text.enUS))
 }))
 
+interface MockStore {
+    acceptAll: jest.Mock
+    rejectAll: jest.Mock
+    applySelection: jest.Mock
+}
+
+function createMockStore(): MockStore {
+    return {
+        acceptAll: jest.fn(),
+        rejectAll: jest.fn(),
+        applySelection: jest.fn()
+    }
+}
+
 describe('CookieConsentBanner - GDPR Compliance Tests', () => {
     let mockSetIsBannerOpen: jest.Mock
-    let mockSetStrictlyNecessaryCookiesOnly: jest.Mock
+    let mockStore: MockStore
+    let mockSnapshot: ConsentSnapshot
 
     const essentialProvider: CookieProviderConfig = {
         id: 'session',
@@ -127,26 +140,22 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
 
     const allProviders = [essentialProvider, analyticsProvider, marketingProvider, functionalProvider]
 
+    const noDecisions = { google_analytics: false, facebook_pixel: false, preferences: false }
+
     beforeEach(() => {
+        jest.clearAllMocks()
         mockSetIsBannerOpen = jest.fn()
-        mockSetStrictlyNecessaryCookiesOnly = jest.fn()
+        mockStore = createMockStore()
+        mockSnapshot = { status: 'none', decisions: { ...noDecisions } }
         ;(hooks.useConfig as jest.Mock).mockReturnValue(mockConfig)
         ;(hooks.useStyle as jest.Mock).mockReturnValue(DefaultTheme)
         ;(hooks.useCookieProviders as jest.Mock).mockReturnValue(allProviders)
-        ;(hooks.useSetStrictlyNecessaryCookiesOnly as jest.Mock).mockReturnValue(mockSetStrictlyNecessaryCookiesOnly)
-        ;(hooks.useCookieConsentContext as jest.Mock).mockReturnValue({
+        ;(hooks.useConsentSnapshot as jest.Mock).mockImplementation(() => mockSnapshot)
+        ;(hooks.useCookieConsentContext as jest.Mock).mockImplementation(() => ({
             isBannerOpen: true,
-            setIsBannerOpen: mockSetIsBannerOpen
-        })
-
-        // Default: no cookies selected
-        ;(functions.getCookieSelection as jest.Mock).mockReturnValue(false)
-
-        jest.clearAllMocks()
-    })
-
-    afterEach(() => {
-        jest.clearAllMocks()
+            setIsBannerOpen: mockSetIsBannerOpen,
+            store: mockStore
+        }))
     })
 
     describe('Initial Banner Display', () => {
@@ -156,10 +165,11 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
         })
 
         it('should not render banner when isBannerOpen is false', () => {
-            ;(hooks.useCookieConsentContext as jest.Mock).mockReturnValue({
+            ;(hooks.useCookieConsentContext as jest.Mock).mockImplementation(() => ({
                 isBannerOpen: false,
-                setIsBannerOpen: mockSetIsBannerOpen
-            })
+                setIsBannerOpen: mockSetIsBannerOpen,
+                store: mockStore
+            }))
 
             const { container } = render(<CookieConsentBanner />)
             expect(container.innerHTML).toBe('')
@@ -177,37 +187,40 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
             const policyLink = screen.getByRole('link', { name: /cookie policy/i })
             expect(policyLink).toHaveAttribute('href', 'https://example.com/cookies')
         })
+
+        it('should not show the re-consent notice without a stale consent', () => {
+            render(<CookieConsentBanner />)
+            expect(screen.queryByText(/updated our services/i)).not.toBeInTheDocument()
+        })
+    })
+
+    describe('Re-Consent After Material Change', () => {
+        it('should show the re-consent notice when the stored consent is stale', () => {
+            mockSnapshot = { status: 'stale', decisions: { ...noDecisions } }
+            render(<CookieConsentBanner />)
+            expect(screen.getByText(/updated our services/i)).toBeInTheDocument()
+        })
+
+        it('should not apply previous grants when the stored consent is stale', async () => {
+            mockSnapshot = { status: 'stale', decisions: { ...noDecisions } }
+            const user = userEvent.setup()
+            render(<CookieConsentBanner />)
+
+            await user.click(screen.getByText('Customize'))
+
+            const analyticsSwitch = screen.getByRole('switch', { name: /category-analytics/i })
+            expect(analyticsSwitch).not.toBeChecked()
+        })
     })
 
     describe('Accept All Cookies', () => {
-        it('should persist acceptance for all cookie providers when Accept All is clicked', async () => {
+        it('should accept all providers through the consent store when Accept All is clicked', async () => {
             const user = userEvent.setup()
             render(<CookieConsentBanner />)
 
             await user.click(screen.getByText('Accept All'))
 
-            // Should persist consent for all providers
-            expect(functions.persistCookieSelection).toHaveBeenCalledTimes(4)
-            allProviders.forEach(provider => {
-                expect(functions.persistCookieSelection).toHaveBeenCalledWith(
-                    provider,
-                    true,
-                    mockConfig.domain,
-                    mockConfig.cookiesValidForDays
-                )
-            })
-        })
-
-        it('should mark consent as displayed after accepting all', async () => {
-            const user = userEvent.setup()
-            render(<CookieConsentBanner />)
-
-            await user.click(screen.getByText('Accept All'))
-
-            expect(functions.setCookieConsentDisplayed).toHaveBeenCalledWith(
-                mockConfig.domain,
-                mockConfig.cookiesValidForDays
-            )
+            expect(mockStore.acceptAll).toHaveBeenCalledTimes(1)
         })
 
         it('should close banner after accepting all cookies', async () => {
@@ -221,25 +234,13 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
     })
 
     describe('Reject All Non-Essential Cookies', () => {
-        it('should only accept essential cookies when Reject All is clicked', async () => {
+        it('should store the rejection when Reject All is clicked', async () => {
             const user = userEvent.setup()
             render(<CookieConsentBanner />)
 
             await user.click(screen.getByText('Reject All'))
 
-            expect(mockSetStrictlyNecessaryCookiesOnly).toHaveBeenCalled()
-        })
-
-        it('should mark consent as displayed after rejecting all', async () => {
-            const user = userEvent.setup()
-            render(<CookieConsentBanner />)
-
-            await user.click(screen.getByText('Reject All'))
-
-            expect(functions.setCookieConsentDisplayed).toHaveBeenCalledWith(
-                mockConfig.domain,
-                mockConfig.cookiesValidForDays
-            )
+            expect(mockStore.rejectAll).toHaveBeenCalledTimes(1)
         })
 
         it('should close banner after rejecting non-essential cookies', async () => {
@@ -323,7 +324,6 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
 
             await user.click(screen.getByText('Customize'))
 
-            // Find the Essential category toggle - it should be disabled
             const essentialSwitch = screen.getByRole('switch', { name: /category-essential/i })
             expect(essentialSwitch).toBeDisabled()
         })
@@ -334,19 +334,17 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
 
             await user.click(screen.getByText('Customize'))
 
-            // Find the Session Management toggle - it should be disabled as it's Essential
             const sessionSwitch = screen.getByRole('switch', { name: /session/i })
             expect(sessionSwitch).toBeDisabled()
         })
 
-        it('should always persist Essential cookies as accepted', async () => {
+        it('should keep essential cookies out of the stored decision when rejecting', async () => {
             const user = userEvent.setup()
             render(<CookieConsentBanner />)
 
             await user.click(screen.getByText('Reject All'))
 
-            // Even on reject, essential cookies should be accepted
-            expect(mockSetStrictlyNecessaryCookiesOnly).toHaveBeenCalled()
+            expect(mockStore.rejectAll).toHaveBeenCalled()
         })
     })
 
@@ -357,17 +355,15 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
 
             await user.click(screen.getByText('Customize'))
 
-            // Find Analytics category toggle
             const analyticsSwitch = screen.getByRole('switch', { name: /category-analytics/i })
-
-            // Click to enable
             await user.click(analyticsSwitch)
-
-            // Click Save Preferences
             await user.click(screen.getByText('Save Preferences'))
 
-            // Should have saved preferences
-            expect(functions.persistCookieSelection).toHaveBeenCalled()
+            expect(mockStore.applySelection).toHaveBeenCalledWith({
+                google_analytics: true,
+                facebook_pixel: false,
+                preferences: false
+            })
         })
 
         it('should not allow toggling Essential category', async () => {
@@ -377,8 +373,6 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
             await user.click(screen.getByText('Customize'))
 
             const essentialSwitch = screen.getByRole('switch', { name: /category-essential/i })
-
-            // Attempt to click should not change state (disabled)
             expect(essentialSwitch).toBeDisabled()
         })
     })
@@ -390,7 +384,6 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
 
             await user.click(screen.getByText('Customize'))
 
-            // Find Google Analytics provider toggle
             const gaSwitch = screen.getByRole('switch', { name: /google_analytics/i })
             expect(gaSwitch).not.toBeDisabled()
         })
@@ -401,7 +394,6 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
 
             await user.click(screen.getByText('Customize'))
 
-            // Find Session Management provider toggle
             const sessionSwitch = screen.getByRole('switch', { name: /session/i })
             expect(sessionSwitch).toBeDisabled()
         })
@@ -414,31 +406,29 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
 
             await user.click(screen.getByText('Customize'))
 
-            // Enable Analytics category
             const analyticsSwitch = screen.getByRole('switch', { name: /category-analytics/i })
             await user.click(analyticsSwitch)
 
             await user.click(screen.getByText('Save Preferences'))
 
-            expect(functions.persistCookieSelection).toHaveBeenCalled()
-            expect(functions.setCookieConsentDisplayed).toHaveBeenCalled()
+            expect(mockStore.applySelection).toHaveBeenCalledWith({
+                google_analytics: true,
+                facebook_pixel: false,
+                preferences: false
+            })
             expect(mockSetIsBannerOpen).toHaveBeenCalledWith(false)
         })
     })
 
     describe('Reopening Banner - Restore Previous Selections', () => {
         it('should restore previously accepted cookies when banner is reopened', async () => {
-            // Mock that Analytics cookies were previously accepted
-            ;(functions.getCookieSelection as jest.Mock).mockImplementation(provider => {
-                return provider.category === 'Analytics'
-            })
+            mockSnapshot = { status: 'valid', decisions: { ...noDecisions, google_analytics: true } }
 
             const user = userEvent.setup()
             render(<CookieConsentBanner />)
 
             await user.click(screen.getByText('Customize'))
 
-            // Analytics should be pre-selected
             const analyticsSwitch = screen.getByRole('switch', { name: /category-analytics/i })
             expect(analyticsSwitch).toBeChecked()
         })
@@ -454,7 +444,7 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
         })
 
         it('should show unchecked state for previously rejected cookies', async () => {
-            ;(functions.getCookieSelection as jest.Mock).mockReturnValue(false)
+            mockSnapshot = { status: 'valid', decisions: { ...noDecisions } }
 
             const user = userEvent.setup()
             render(<CookieConsentBanner />)
@@ -468,51 +458,47 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
 
     describe('Changing Consent', () => {
         it('should allow changing previously accepted consent to rejected', async () => {
-            // Start with Analytics accepted
-            ;(functions.getCookieSelection as jest.Mock).mockImplementation(provider => {
-                return provider.category === 'Analytics'
-            })
+            mockSnapshot = { status: 'valid', decisions: { ...noDecisions, google_analytics: true } }
 
             const user = userEvent.setup()
             render(<CookieConsentBanner />)
 
             await user.click(screen.getByText('Customize'))
 
-            // Analytics should be enabled
             const analyticsSwitch = screen.getByRole('switch', { name: /category-analytics/i })
             expect(analyticsSwitch).toBeChecked()
 
-            // Toggle off
             await user.click(analyticsSwitch)
             expect(analyticsSwitch).not.toBeChecked()
 
-            // Save
             await user.click(screen.getByText('Save Preferences'))
 
-            // Should have persisted the change
-            expect(functions.persistCookieSelection).toHaveBeenCalled()
+            expect(mockStore.applySelection).toHaveBeenCalledWith({
+                google_analytics: false,
+                facebook_pixel: false,
+                preferences: false
+            })
         })
 
         it('should allow changing previously rejected consent to accepted', async () => {
-            ;(functions.getCookieSelection as jest.Mock).mockReturnValue(false)
-
             const user = userEvent.setup()
             render(<CookieConsentBanner />)
 
             await user.click(screen.getByText('Customize'))
 
-            // Marketing should be disabled
             const marketingSwitch = screen.getByRole('switch', { name: /category-marketing/i })
             expect(marketingSwitch).not.toBeChecked()
 
-            // Toggle on
             await user.click(marketingSwitch)
             expect(marketingSwitch).toBeChecked()
 
-            // Save
             await user.click(screen.getByText('Save Preferences'))
 
-            expect(functions.persistCookieSelection).toHaveBeenCalled()
+            expect(mockStore.applySelection).toHaveBeenCalledWith({
+                google_analytics: false,
+                facebook_pixel: true,
+                preferences: false
+            })
         })
     })
 
@@ -523,11 +509,9 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
 
             await user.click(screen.getByText('Customize'))
 
-            // Find and click expand button for a provider
             const expandButtons = screen.getAllByText('Show cookie details')
             await user.click(expandButtons[0])
 
-            // Should show cookie names
             expect(screen.getByText('session_id')).toBeInTheDocument()
         })
 
@@ -537,11 +521,9 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
 
             await user.click(screen.getByText('Customize'))
 
-            // Expand cookie details
             const expandButtons = screen.getAllByText('Show cookie details')
             await user.click(expandButtons[0])
 
-            // Should show duration
             expect(screen.getByText('Duration')).toBeInTheDocument()
         })
     })
@@ -556,19 +538,18 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
             expect(screen.getByText('example.com')).toBeInTheDocument()
         })
 
-        it('should display multiple domains for cross-subdomain consent', async () => {
-            const configWithCrossSubdomain = {
+        it('should display the subdomain-wide scope when a cookie domain is configured', async () => {
+            ;(hooks.useConfig as jest.Mock).mockReturnValue({
                 ...mockConfig,
-                crossSubDomainConsent: ['example.com', 'app.example.com', 'api.example.com']
-            }
-            ;(hooks.useConfig as jest.Mock).mockReturnValue(configWithCrossSubdomain)
+                cookieDomain: '.example.com'
+            })
 
             const user = userEvent.setup()
             render(<CookieConsentBanner />)
 
             await user.click(screen.getByText('Customize'))
 
-            expect(screen.getByText('example.com, app.example.com, api.example.com')).toBeInTheDocument()
+            expect(screen.getByText('*.example.com')).toBeInTheDocument()
         })
     })
 
@@ -579,7 +560,6 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
 
             await user.click(screen.getByText('Customize'))
 
-            // Check for provider privacy links
             const googlePrivacyLinks = screen.getAllByRole('link', { name: /privacy policy of google/i })
             expect(googlePrivacyLinks.length).toBeGreaterThan(0)
             expect(googlePrivacyLinks[0]).toHaveAttribute('href', 'https://policies.google.com/privacy')
@@ -606,7 +586,6 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
 
             await user.click(screen.getByText('Customize'))
 
-            // All switches should have accessible names
             const switches = screen.getAllByRole('switch')
             switches.forEach(switchEl => {
                 expect(switchEl).toHaveAttribute('aria-checked')
@@ -617,7 +596,6 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
             const user = userEvent.setup()
             render(<CookieConsentBanner />)
 
-            // Tab through the banner - first focusable element should be interactive
             await user.tab()
             const activeElement = document.activeElement as HTMLElement
             const focusableElements = ['button', 'a', 'input', 'select', 'textarea']
@@ -630,7 +608,6 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
             const germanConfig = { ...mockConfig, lang: 'deDE' as const }
             ;(hooks.useConfig as jest.Mock).mockReturnValue(germanConfig)
 
-            // Labels are mocked, but in real implementation would show German
             render(<CookieConsentBanner />)
             expect(screen.getByText('Cookie Consent')).toBeInTheDocument()
         })
@@ -638,17 +615,13 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
 
     describe('Mixed Consent State', () => {
         it('should handle partial category acceptance correctly', async () => {
-            // Only one provider in Analytics accepted
-            ;(functions.getCookieSelection as jest.Mock).mockImplementation(provider => {
-                return provider.id === 'google_analytics'
-            })
+            mockSnapshot = { status: 'valid', decisions: { ...noDecisions, google_analytics: true } }
 
             const user = userEvent.setup()
             render(<CookieConsentBanner />)
 
             await user.click(screen.getByText('Customize'))
 
-            // The GA provider toggle should be checked
             const gaSwitch = screen.getByRole('switch', { name: /google_analytics/i })
             expect(gaSwitch).toBeChecked()
         })
@@ -662,10 +635,8 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
             await user.click(screen.getByText('Customize'))
             expect(screen.getByText('Cookie Settings')).toBeInTheDocument()
 
-            // Click Back button to return to simple view
             await user.click(screen.getByText('Back'))
 
-            // Should return to simple banner view
             await waitFor(() => {
                 expect(screen.getByText('Cookie Consent')).toBeInTheDocument()
             })
@@ -674,7 +645,6 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
         it('should close details view when clicking overlay backdrop', async () => {
             render(<CookieConsentBanner />)
 
-            // Open details view
             fireEvent.click(screen.getByText('Customize'))
             expect(screen.getByText('Cookie Settings')).toBeInTheDocument()
 
@@ -682,7 +652,6 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
             expect(backdrop).toBeInTheDocument()
             fireEvent.click(backdrop)
 
-            // Should return to simple banner view
             await waitFor(() => {
                 expect(screen.getByText('Cookie Consent')).toBeInTheDocument()
             })
@@ -692,7 +661,7 @@ describe('CookieConsentBanner - GDPR Compliance Tests', () => {
 
 describe('CookieConsentBanner - Edge Cases', () => {
     let mockSetIsBannerOpen: jest.Mock
-    let mockSetStrictlyNecessaryCookiesOnly: jest.Mock
+    let mockStore: MockStore
 
     const minimalProvider: CookieProviderConfig = {
         id: 'minimal',
@@ -713,17 +682,18 @@ describe('CookieConsentBanner - Edge Cases', () => {
     }
 
     beforeEach(() => {
+        jest.clearAllMocks()
         mockSetIsBannerOpen = jest.fn()
-        mockSetStrictlyNecessaryCookiesOnly = jest.fn()
+        mockStore = createMockStore()
         ;(hooks.useConfig as jest.Mock).mockReturnValue(mockConfig)
         ;(hooks.useStyle as jest.Mock).mockReturnValue(DefaultTheme)
         ;(hooks.useCookieProviders as jest.Mock).mockReturnValue([minimalProvider])
-        ;(hooks.useSetStrictlyNecessaryCookiesOnly as jest.Mock).mockReturnValue(mockSetStrictlyNecessaryCookiesOnly)
-        ;(hooks.useCookieConsentContext as jest.Mock).mockReturnValue({
+        ;(hooks.useConsentSnapshot as jest.Mock).mockReturnValue({ status: 'none', decisions: {} })
+        ;(hooks.useCookieConsentContext as jest.Mock).mockImplementation(() => ({
             isBannerOpen: true,
-            setIsBannerOpen: mockSetIsBannerOpen
-        })
-        ;(functions.getCookieSelection as jest.Mock).mockReturnValue(false)
+            setIsBannerOpen: mockSetIsBannerOpen,
+            store: mockStore
+        }))
     })
 
     it('should handle configuration with only Essential cookies', async () => {
@@ -732,7 +702,6 @@ describe('CookieConsentBanner - Edge Cases', () => {
 
         await user.click(screen.getByText('Customize'))
 
-        // Should still show Essential category
         expect(screen.getByText('Essential')).toBeInTheDocument()
     })
 
@@ -748,7 +717,6 @@ describe('CookieConsentBanner - Edge Cases', () => {
 
         await user.click(screen.getByText('Customize'))
 
-        // Should not crash
         expect(screen.getByText('Cookie Settings')).toBeInTheDocument()
     })
 })
@@ -757,6 +725,7 @@ describe('CookieConsentBanner - Server-Side Rendering', () => {
     let mockSetIsBannerOpen: jest.Mock
 
     beforeEach(() => {
+        jest.clearAllMocks()
         mockSetIsBannerOpen = jest.fn()
         ;(hooks.useConfig as jest.Mock).mockReturnValue({
             cookiePolicyLink: 'https://example.com/cookies',
@@ -768,20 +737,17 @@ describe('CookieConsentBanner - Server-Side Rendering', () => {
         })
         ;(hooks.useStyle as jest.Mock).mockReturnValue(DefaultTheme)
         ;(hooks.useCookieProviders as jest.Mock).mockReturnValue([])
-        ;(hooks.useSetStrictlyNecessaryCookiesOnly as jest.Mock).mockReturnValue(jest.fn())
-        ;(hooks.useCookieConsentContext as jest.Mock).mockReturnValue({
+        ;(hooks.useConsentSnapshot as jest.Mock).mockReturnValue({ status: 'none', decisions: {} })
+        ;(hooks.useCookieConsentContext as jest.Mock).mockImplementation(() => ({
             isBannerOpen: true,
-            setIsBannerOpen: mockSetIsBannerOpen
-        })
+            setIsBannerOpen: mockSetIsBannerOpen,
+            store: createMockStore()
+        }))
     })
 
     it('should not render content before client-side hydration', () => {
-        // The component uses useState with isClient to handle SSR
-        // Initial render should be empty
         const { container } = render(<CookieConsentBanner />)
 
-        // After the useEffect runs, it should show content
-        // This is tested implicitly by other tests that check for content
         expect(container).toBeDefined()
     })
 })

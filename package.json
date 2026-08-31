@@ -1,12 +1,26 @@
 {
     "name": "@artus-engineering/react-gdpr-cookie-consent",
-    "version": "1.0.8",
+    "version": "2.0.0",
     "packageManager": "pnpm@11.23.0",
     "type": "module",
     "description": "A simple and customizable GDPR cookie consent component for React.",
     "main": "dist/cjs/index.cjs",
     "module": "dist/esm/index.js",
     "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/esm/index.js",
+            "require": "./dist/cjs/index.cjs"
+        },
+        "./headless": {
+            "types": "./dist/headless.d.ts",
+            "import": "./dist/esm/headless.js",
+            "require": "./dist/cjs/headless.cjs"
+        },
+        "./package.json": "./package.json"
+    },
+    "sideEffects": false,
     "files": ["dist", "README.md", "LICENSE"],
     "scripts": {
         "dev": "concurrently \"rollup -c --watch\" \"pnpm --dir example run dev\"",

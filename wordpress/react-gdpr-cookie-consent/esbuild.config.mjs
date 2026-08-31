@@ -1,4 +1,4 @@
-import archiver from 'archiver'
+import { execFileSync } from 'child_process'
 import { build } from 'esbuild'
 import { createReadStream, createWriteStream, readdirSync, statSync } from 'fs'
 import { dirname, join, relative, resolve } from 'path'
@@ -64,38 +64,31 @@ async function buildJs() {
 async function createZip() {
     console.log('\n--- WordPress-Plugin als .zip packen ---')
 
-    const { mkdirSync, existsSync } = await import('fs')
+    const { mkdirSync, existsSync, rmSync, cpSync, statSync: stat } = await import('fs')
     if (!existsSync(DIST_DIR)) {
         mkdirSync(DIST_DIR, { recursive: true })
     }
 
     const zipPath = resolve(DIST_DIR, `${PLUGIN_NAME}.zip`)
+    const stageRoot = resolve(DIST_DIR, '.stage')
+    const stageDir = resolve(stageRoot, PLUGIN_NAME)
+    rmSync(stageRoot, { recursive: true, force: true })
+    mkdirSync(stageDir, { recursive: true })
 
-    return new Promise((resolvePromise, reject) => {
-        const output = createWriteStream(zipPath)
-        const archive = archiver('zip', { zlib: { level: 9 } })
+    const files = [...PLUGIN_FILES, 'assets/js/cookie-consent-banner.js']
+    for (const filePath of files) {
+        const target = resolve(stageDir, filePath)
+        mkdirSync(dirname(target), { recursive: true })
+        cpSync(resolve(PLUGIN_DIR, filePath), target)
+    }
 
-        output.on('close', () => {
-            const sizeKb = (archive.pointer() / 1024).toFixed(1)
-            console.log(`  ${PLUGIN_NAME}.zip: ${sizeKb} KB`)
-            console.log(`  Output: ${zipPath}`)
-            resolvePromise()
-        })
+    rmSync(zipPath, { force: true })
+    execFileSync('zip', ['-r', '-9', '-q', zipPath, PLUGIN_NAME], { cwd: stageRoot })
+    rmSync(stageRoot, { recursive: true, force: true })
 
-        archive.on('error', reject)
-        archive.pipe(output)
-
-        for (const filePath of PLUGIN_FILES) {
-            const fullPath = resolve(PLUGIN_DIR, filePath)
-            archive.file(fullPath, { name: `${PLUGIN_NAME}/${filePath}` })
-        }
-
-        archive.file(resolve(PLUGIN_DIR, 'assets/js/cookie-consent-banner.js'), {
-            name: `${PLUGIN_NAME}/assets/js/cookie-consent-banner.js`
-        })
-
-        archive.finalize()
-    })
+    const sizeKb = (stat(zipPath).size / 1024).toFixed(1)
+    console.log(`  ${PLUGIN_NAME}.zip: ${sizeKb} KB`)
+    console.log(`  Output: ${zipPath}`)
 }
 
 await buildJs()
