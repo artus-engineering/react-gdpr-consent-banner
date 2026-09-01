@@ -5,17 +5,11 @@ const config: CookieConsentBannerConfig = {
     cookiePolicyLink: '/privacy',
     websiteName: 'Test',
     providers: [],
-    domain: 'example.com',
-    consentHooks: [],
-    crossSubDomainConsent: ['app.example.com'],
-    cookiesValidForDays: 7
+    domain: 'example.com'
 }
 
 describe('legacyFieldsOf', () => {
-    it('reads 2.x compatibility fields from the public config', () => {
-        const legacy = legacyFieldsOf(config)
-        expect(legacy.consentHooks).toEqual([])
-        expect(legacy.crossSubDomainConsent).toEqual(['app.example.com'])
-        expect(legacy.cookiesValidForDays).toBe(7)
+    it('exposes the same object for 2.x compatibility field reads', () => {
+        expect(legacyFieldsOf(config)).toBe(config)
     })
 })

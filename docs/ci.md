@@ -18,3 +18,5 @@ On `main`:
 The quality gate runs inside the **SonarQube Scan** job — a failed gate fails that check.
 
 Secrets: `SONAR_TOKEN`, `SONAR_HOST_URL`.
+
+PRs use the `pull_request` event so tests and Sonar analyze the PR head. `pull_request_target` checks out the base branch (`main`), and the community branch plugin then records the run as `branch=main` — the quality gate fails on existing main issues and never sees the PR fixes.
