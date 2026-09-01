@@ -158,7 +158,7 @@ export function resolveConsentCookieName(config: Pick<CookieConsentBannerConfig,
 function fnv1a32(input: string, seed: number): number {
     let hash = seed >>> 0
     for (let index = 0; index < input.length; index++) {
-        hash ^= input.charCodeAt(index)
+        hash ^= input.codePointAt(index) ?? 0
         hash = Math.imul(hash, 0x01000193) >>> 0
     }
     return hash >>> 0
@@ -181,7 +181,15 @@ export function derivePurposesFingerprint(
     providers: readonly CookieProviderConfig[],
     integrations: readonly MaterialIntegrationRef[] = []
 ): string {
-    const byCodeUnits = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0)
+    const byCodeUnits = (a: string, b: string): number => {
+        if (a < b) {
+            return -1
+        }
+        if (a > b) {
+            return 1
+        }
+        return 0
+    }
     const canonical = JSON.stringify({
         p: providers.map(provider => [provider.id, provider.category]).sort((a, b) => byCodeUnits(a[0], b[0])),
         i: integrations
@@ -377,12 +385,13 @@ export function refreshConsentCookie(state: ConsentStateConfig): void {
         return
     }
     const payload = readConsentCookie(state.cookieName)
-    if (!payload || payload.ph !== state.purposesHashPrefix) {
+    const purposesHash = payload?.ph
+    if (!payload || purposesHash !== state.purposesHashPrefix) {
         return
     }
     writeConsentCookie({
         cookieName: state.cookieName,
-        purposesHashPrefix: payload.ph,
+        purposesHashPrefix: purposesHash,
         decisions: Object.fromEntries(Object.entries(payload.d).map(([id, value]) => [id, value === 1])),
         partial: payload.p === 1,
         domain: state.domain,

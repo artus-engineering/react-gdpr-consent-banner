@@ -15,5 +15,5 @@ export const LEGACY_CONSENT_DIALOG_HAS_BEEN_DISPLAYED = 'cookie_consent_displaye
 export const LEGACY_CONSENT_DIALOG_HAS_BEEN_DISPLAYED_VALUE = 'true'
 export const LEGACY_COOKIE_SUFFIX = '_consent'
 export const LEGACY_COOKIE_VALUE_TRUE = 'given'
-/** @deprecated v1 concept — the v2 cookie has a fixed max age and is refreshed per visit. */
+/** v1 leftover — the v2 cookie has a fixed max age and is refreshed per visit. */
 export const DEFAULT_COOKIE_VALIDITY = 183

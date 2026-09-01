@@ -6,10 +6,13 @@ on:
   push:
     branches:
       - main
-  pull_request_target:
+  # pull_request (not pull_request_target): checkout and analyze the PR head.
+  # pull_request_target checks out the base branch, so the scanner treated the
+  # run as branch=main and failed the quality gate on the unfixed base.
+  pull_request:
 
 concurrency:
-  group: branch-${{ github.ref }}
+  group: branch-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -22,6 +25,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - uses: pnpm/action-setup@v6
 
@@ -58,7 +63,7 @@ jobs:
         run: |
           docker run --rm --ipc=host -e CI=true -v "$PWD":/work -w /work \
             mcr.microsoft.com/playwright:v1.62.0-noble bash -lc \
-            "npm i -g pnpm@11.23.0 >/dev/null && pnpm install --frozen-lockfile && \
+            "npm i -g pnpm@11.24.0 >/dev/null && pnpm install --frozen-lockfile && \
              pnpm run build-storybook && pnpm run test:visual"
 
       - name: Upload Unit Test Coverage (lcov) for SonarQube
@@ -96,6 +101,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Download coverage report
         uses: actions/download-artifact@v8
@@ -109,6 +115,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: ${{ github.event_name == 'pull_request' && format('-Dsonar.pullrequest.key={0} -Dsonar.pullrequest.branch={1} -Dsonar.pullrequest.base={2}', github.event.pull_request.number, github.event.pull_request.head.ref, github.event.pull_request.base.ref) || '' }}
 
       - name: SonarQube Quality Gate
         uses: SonarSource/sonarqube-quality-gate-action@v1

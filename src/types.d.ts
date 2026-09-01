@@ -54,12 +54,11 @@ export type CookieProvidersByCategory = Record<CookieCategory, CookieProviderCon
 /**
  * Consent Hook System
  *
- * @deprecated Use the declarative `integrations` config instead. Consent hooks
- * remain functional throughout 2.x and will be removed in 3.0.
+ * Package consumers should prefer the declarative `integrations` config.
+ * Consent hooks remain functional throughout 2.x and will be removed in 3.0.
  */
 export type ConsentHookType = 'onAccept' | 'onReject' | 'onLoad'
 
-/** @deprecated Use the declarative `integrations` config instead. */
 export interface ConsentHook {
     id: string
     category: CookieCategory
@@ -68,7 +67,6 @@ export interface ConsentHook {
     description?: string
 }
 
-/** @deprecated Use the declarative `integrations` config instead. */
 export interface ConsentHookContext {
     category: CookieCategory
     consentState: Record<CookieCategory, boolean>
@@ -153,7 +151,7 @@ export interface CookieConsentBannerConfig {
     cookiesValidForDays?: number
 }
 
-export interface CookieConsentBannerConfigWithDefaults extends CookieConsentBannerConfig {
+export interface CookieConsentBannerConfigWithDefaults extends Omit<CookieConsentBannerConfig, 'cookiesValidForDays'> {
     cookiesValidForDays: number
 }
 
