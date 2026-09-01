@@ -3,6 +3,7 @@ import { ConsentState, ConsentStateProviderContext } from './components/consent/
 import { resolveConsentCookieName } from './consentState'
 import { DEFAULT_COOKIE_VALIDITY, DEFAULT_LANGUAGE } from './constants'
 import { getLabel } from './functions'
+import { legacyFieldsOf } from './legacyConfig'
 import { ConsentSnapshot } from './store'
 import { DefaultTheme } from './themes'
 import {
@@ -49,14 +50,14 @@ export function useSetStrictlyNecessaryCookiesOnly() {
 export function useConfig(parentHookName?: string): CookieConsentBannerConfigWithDefaults {
     const { config } = useCookieConsentContext(parentHookName || 'useConfig')
 
-    return useMemo(
-        () => ({
+    return useMemo(() => {
+        const { cookiesValidForDays } = legacyFieldsOf(config)
+        return {
             ...config,
             lang: config.lang || DEFAULT_LANGUAGE,
-            cookiesValidForDays: config.cookiesValidForDays || DEFAULT_COOKIE_VALIDITY
-        }),
-        [config]
-    )
+            cookiesValidForDays: cookiesValidForDays || DEFAULT_COOKIE_VALIDITY
+        }
+    }, [config])
 }
 
 /**
@@ -130,12 +131,12 @@ export function useCookieState({ cookieProvider }: { cookieProvider: CookieProvi
         setManualValue(null)
     }
 
-    const isEnabled = manualValue === null ? consentGiven : manualValue
+    const isEnabled = manualValue ?? consentGiven
 
     const setIsEnabled = (value: boolean | ((prev: boolean) => boolean)) => {
         if (typeof value === 'function') {
             setManualValue(prev => {
-                const currentValue = prev === null ? consentGiven : prev
+                const currentValue = prev ?? consentGiven
                 const newValue = value(currentValue)
                 if (newValue === consentGiven) {
                     return null

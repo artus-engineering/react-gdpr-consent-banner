@@ -1,6 +1,7 @@
 import { type ReactElement, useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { getLabel, getLocalizedCookieText, getUnit, hexToRGBA } from '../../functions'
 import { useConfig, useConsentSnapshot, useCookieConsentContext, useCookieProviders, useStyle } from '../../hooks'
+import { legacyFieldsOf } from '../../legacyConfig'
 import { CookieCategory, CookieConsentState, CookieProviderConfig } from '../../types'
 import { SwitchButton } from '../general'
 
@@ -134,9 +135,10 @@ export function CookieConsentBanner(): ReactElement | null {
 
     function getDomainsText(): string {
         if (config.cookieDomain) {
-            return `*${config.cookieDomain.startsWith('.') ? config.cookieDomain : `.${config.cookieDomain}`}`
+            const domain = config.cookieDomain.startsWith('.') ? config.cookieDomain : `.${config.cookieDomain}`
+            return `*${domain}`
         }
-        const domains = config.crossSubDomainConsent || [config.domain]
+        const domains = legacyFieldsOf(config).crossSubDomainConsent || [config.domain]
         return domains.join(', ')
     }
 

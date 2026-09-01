@@ -1,5 +1,18 @@
 export * from './components'
-export * from './consentHooks'
+export {
+    /**
+     * @deprecated Use the declarative `integrations` config (see `IntegrationRegistry`)
+     * instead. Consent hooks remain functional throughout 2.x and will be removed in 3.0.
+     */
+    ConsentHookManager,
+    createCookieUtils,
+    createCustomToolHook,
+    createFacebookPixelHook,
+    createGoogleAdsHook,
+    createGoogleAnalyticsHook,
+    createGoogleTagManagerHook,
+    createGranularGoogleTagManagerHook
+} from './consentHooks'
 export {
     type ConsentCookiePayload,
     type ConsentDecisions,
@@ -27,9 +40,6 @@ export { type ConsentSnapshot, type ConsentStatusKind, ConsentStore } from './st
 export * from './themes'
 
 export type {
-    ConsentHook,
-    ConsentHookContext,
-    ConsentHookType,
     CookieBannerTheme,
     CookieCategory,
     CookieConsentBannerConfig,
@@ -37,3 +47,18 @@ export type {
     PartialCookieConsentLabels,
     SupportedLanguage
 } from './types'
+
+/**
+ * @deprecated Use the declarative `integrations` config instead. Consent hooks
+ * remain functional throughout 2.x and will be removed in 3.0.
+ */
+export type ConsentHook = import('./types').ConsentHook
+/**
+ * @deprecated Use the declarative `integrations` config instead.
+ */
+export type ConsentHookContext = import('./types').ConsentHookContext
+/**
+ * @deprecated Use the declarative `integrations` config instead. Consent hooks
+ * remain functional throughout 2.x and will be removed in 3.0.
+ */
+export type ConsentHookType = import('./types').ConsentHookType

@@ -56,7 +56,7 @@ export type IntegrationDescriptor =
 
 export type IntegrationType = IntegrationDescriptor['type']
 
-const GOOGLE_INTEGRATION_TYPES: readonly IntegrationType[] = ['gtm', 'ga4', 'google-ads']
+const GOOGLE_INTEGRATION_TYPES = new Set<IntegrationType>(['gtm', 'ga4', 'google-ads'])
 
 type GoogleConsentSignals = Record<string, 'granted' | 'denied' | number>
 
@@ -77,7 +77,7 @@ function ensureGtag(): void {
 const BLOCKED_SCRIPT_ATTRS = /^(src|href|srcdoc)$|^on/i
 
 function injectScriptOnce(src: string, attrs: Record<string, string | boolean> = {}): void {
-    const escaped = src.replaceAll('"', '\\"')
+    const escaped = src.replaceAll('"', String.raw`\"`)
     if (document.querySelector(`script[src="${escaped}"]`)) {
         return
     }
@@ -165,7 +165,7 @@ export class IntegrationRegistry {
             return
         }
         const hasGoogleIntegration = this.integrations.some(integration =>
-            GOOGLE_INTEGRATION_TYPES.includes(integration.type)
+            GOOGLE_INTEGRATION_TYPES.has(integration.type)
         )
         if (hasGoogleIntegration) {
             this.googleSignalsActive = true

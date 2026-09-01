@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ConsentHookManager, createCookieUtils } from '../../consentHooks'
 import { isServer } from '../../functions'
 import { IntegrationRegistry } from '../../integrations'
+import { legacyFieldsOf } from '../../legacyConfig'
 import { ConsentSnapshot, ConsentStore } from '../../store'
 import { ConsentHookContext, CookieCategory, CookieConsentBannerConfig } from '../../types'
 import { CookieConsentBanner } from './ConsentBanner'
@@ -78,8 +79,9 @@ export function CookieConsentProvider({
         // Register without clearing: registration is idempotent per hook id and
         // preserves the onLoad dedup, so config identity churn never re-fires
         // already executed onLoad hooks.
-        if (currentConfig.consentHooks) {
-            hookManager.registerHooks(currentConfig.consentHooks)
+        const { consentHooks } = legacyFieldsOf(currentConfig)
+        if (consentHooks) {
+            hookManager.registerHooks(consentHooks)
         }
         const snapshot = store.getSnapshot()
         registry.apply({
