@@ -63,7 +63,7 @@ jobs:
         run: |
           docker run --rm --ipc=host -e CI=true -v "$PWD":/work -w /work \
             mcr.microsoft.com/playwright:v1.62.0-noble bash -lc \
-            "npm i -g pnpm@11.24.0 >/dev/null && pnpm install --frozen-lockfile && \
+            "npm i -g pnpm@11.25.0 >/dev/null && pnpm install --frozen-lockfile && \
              pnpm run build-storybook && pnpm run test:visual"
 
       - name: Upload Unit Test Coverage (lcov) for SonarQube

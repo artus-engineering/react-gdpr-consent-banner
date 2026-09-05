@@ -2,6 +2,7 @@ packages:
   - .
   - example
 allowBuilds:
+  '@parcel/watcher': true
   esbuild: false
   lefthook: true
   sharp: false
