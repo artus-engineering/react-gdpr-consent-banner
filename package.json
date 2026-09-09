@@ -1,6 +1,6 @@
 {
     "name": "@artus-engineering/react-gdpr-cookie-consent",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "packageManager": "pnpm@11.25.0+sha512.5cde925b4f075f725eb71fbae18a42ffe784524789f19b61c731cb8721ec28aaee160e01a8d5af4fedb2a42cdbf300efe23db356b0d4a17b4d63e11f8ab7c956",
     "type": "module",
     "description": "A simple and customizable GDPR cookie consent component for React.",
@@ -44,7 +44,7 @@
     },
     "keywords": ["gdpr", "cookie", "consent", "react", "privacy", "compliance"],
     "author": "Artus Engineering GmbH",
-    "homepage": "https://github.com/artus-engineering/react-gdpr-consent-banner#readme",
+    "homepage": "https://react-gdpr-consent-banner.artus-engineering.de",
     "license": "PolyForm-Noncommercial-1.0.0",
     "peerDependencies": {
         "react": ">=19.0.0",
