@@ -74,53 +74,49 @@ yarn add @artus-engineering/react-gdpr-cookie-consent
 Wrap your application with `CookieConsentProvider` and configure your cookie providers:
 
 ```tsx
-import { CookieConsentProvider } from "@artus-engineering/react-gdpr-cookie-consent";
+import { CookieConsentProvider } from '@artus-engineering/react-gdpr-cookie-consent'
 
 const config = {
-  cookiePolicyLink: "/privacy-policy",
-  websiteName: "My Website",
-  domain: "example.com",
-  lang: "enUS",
-  providers: [
-    {
-      id: "google-analytics",
-      name: "Google Analytics",
-      category: "Analytics",
-      description: {
-        enUS: "We use Google Analytics to understand how visitors use our site.",
-        deDE: "Wir verwenden Google Analytics, um zu verstehen, wie Besucher unsere Website nutzen.",
-      },
-      dataProtectionLink: "https://policies.google.com/privacy",
-      serviceProvider: "Google",
-      cookies: [
+    cookiePolicyLink: '/privacy-policy',
+    websiteName: 'My Website',
+    domain: 'example.com',
+    lang: 'enUS',
+    providers: [
         {
-          name: "_ga",
-          duration: 2,
-          unit: "years",
-          purpose: {
-            enUS: "Used to distinguish users",
-            deDE: "Wird verwendet, um Benutzer zu unterscheiden",
-          },
-        },
-      ],
-    },
-  ],
-  integrations: [
-    {
-      id: "int_ga4",
-      type: "ga4",
-      providerId: "google-analytics",
-      params: { measurementId: "G-XXXXXXXXXX" },
-    },
-  ],
-};
+            id: 'google-analytics',
+            name: 'Google Analytics',
+            category: 'Analytics',
+            description: {
+                enUS: 'We use Google Analytics to understand how visitors use our site.',
+                deDE: 'Wir verwenden Google Analytics, um zu verstehen, wie Besucher unsere Website nutzen.'
+            },
+            dataProtectionLink: 'https://policies.google.com/privacy',
+            serviceProvider: 'Google',
+            cookies: [
+                {
+                    name: '_ga',
+                    duration: 2,
+                    unit: 'years',
+                    purpose: {
+                        enUS: 'Used to distinguish users',
+                        deDE: 'Wird verwendet, um Benutzer zu unterscheiden'
+                    }
+                }
+            ]
+        }
+    ],
+    integrations: [
+        {
+            id: 'int_ga4',
+            type: 'ga4',
+            providerId: 'google-analytics',
+            params: { measurementId: 'G-XXXXXXXXXX' }
+        }
+    ]
+}
 
 export function App({ children }: { children: React.ReactNode }) {
-  return (
-    <CookieConsentProvider config={config}>
-      {children}
-    </CookieConsentProvider>
-  );
+    return <CookieConsentProvider config={config}>{children}</CookieConsentProvider>
 }
 ```
 
@@ -130,22 +126,22 @@ The provider renders the consent banner automatically. Re-open it later with `us
 
 `CookieConsentProvider` accepts a `config` object of type `CookieConsentBannerConfig`:
 
-| Option | Type | Description |
-| --- | --- | --- |
-| `providers` | `CookieProvider[]` | Cookie providers grouped by category (Essential, Functional, Analytics, Marketing) |
-| `websiteName` | `string` | Display name shown in the banner |
-| `domain` | `string` | Primary domain of the website |
-| `cookieDomain` | `string?` | Cookie `Domain=` attribute for subdomain-wide consent (e.g. `.example.com`) |
-| `cookieName` | `string?` | Name of the consent cookie (default: `artus_consent`) |
-| `purposesHash` | `string?` | Hex hash identifying the material configuration; a mismatch with the stored cookie triggers re-consent. Without it, a local fingerprint over provider ids and categories is used |
-| `integrations` | `IntegrationDescriptor[]?` | Declarative tool integrations, injected only after consent |
-| `cookiePolicyLink` | `string` | Link to your privacy / cookie policy |
-| `lang` | `SupportedLanguage` | Banner locale (`enUS`, `deDE`) |
-| `theme` | `CookieConsentStyle` | Optional color overrides |
-| `labels` | `PartialCookieConsentLabels?` | Partial overrides of any banner copy |
-| `consentHooks` | `ConsentHook[]?` | **Deprecated** — use `integrations`; removed in 3.0 |
-| `crossSubDomainConsent` | `string[]?` | **Deprecated** — display-only; use `cookieDomain` |
-| `cookiesValidForDays` | `number?` | **Deprecated** — the v2 cookie has a fixed max age (400 days) and is renewed on every visit |
+| Option                  | Type                          | Description                                                                                                                                                                      |
+| ----------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `providers`             | `CookieProvider[]`            | Cookie providers grouped by category (Essential, Functional, Analytics, Marketing)                                                                                               |
+| `websiteName`           | `string`                      | Display name shown in the banner                                                                                                                                                 |
+| `domain`                | `string`                      | Primary domain of the website                                                                                                                                                    |
+| `cookieDomain`          | `string?`                     | Cookie `Domain=` attribute for subdomain-wide consent (e.g. `.example.com`)                                                                                                      |
+| `cookieName`            | `string?`                     | Name of the consent cookie (default: `artus_consent`)                                                                                                                            |
+| `purposesHash`          | `string?`                     | Hex hash identifying the material configuration; a mismatch with the stored cookie triggers re-consent. Without it, a local fingerprint over provider ids and categories is used |
+| `integrations`          | `IntegrationDescriptor[]?`    | Declarative tool integrations, injected only after consent                                                                                                                       |
+| `cookiePolicyLink`      | `string`                      | Link to your privacy / cookie policy                                                                                                                                             |
+| `lang`                  | `SupportedLanguage`           | Banner locale (`enUS`, `deDE`)                                                                                                                                                   |
+| `theme`                 | `CookieConsentStyle`          | Optional color overrides                                                                                                                                                         |
+| `labels`                | `PartialCookieConsentLabels?` | Partial overrides of any banner copy                                                                                                                                             |
+| `consentHooks`          | `ConsentHook[]?`              | **Deprecated** — use `integrations`; removed in 3.0                                                                                                                              |
+| `crossSubDomainConsent` | `string[]?`                   | **Deprecated** — display-only; use `cookieDomain`                                                                                                                                |
+| `cookiesValidForDays`   | `number?`                     | **Deprecated** — the v2 cookie has a fixed max age (400 days) and is renewed on every visit                                                                                      |
 
 Set `includeCookieBanner={false}` on the provider if you only need context and hooks without rendering the banner.
 
@@ -171,31 +167,28 @@ removed afterwards.
 
 ## Components
 
-| Component | Description |
-| --- | --- |
+| Component               | Description                                                      |
+| ----------------------- | ---------------------------------------------------------------- |
 | `CookieConsentProvider` | Root provider; manages consent state, hooks, and optional banner |
-| `CookieConsentBanner` | Standalone banner (usually rendered by the provider) |
-| `CookieConsentGate` | Blocks content until consent is granted for a given provider |
-| `CookiePolicy` | Renders a cookie policy table from configured providers |
+| `CookieConsentBanner`   | Standalone banner (usually rendered by the provider)             |
+| `CookieConsentGate`     | Blocks content until consent is granted for a given provider     |
+| `CookiePolicy`          | Renders a cookie policy table from configured providers          |
 
 ### Consent gate example
 
 ```tsx
-import {
-  CookieConsentGate,
-  useCookieProviders,
-} from "@artus-engineering/react-gdpr-cookie-consent";
+import { CookieConsentGate, useCookieProviders } from '@artus-engineering/react-gdpr-cookie-consent'
 
 function PaymentSection() {
-  const providers = useCookieProviders();
-  const stripe = providers.find((p) => p.id === "stripe");
-  if (!stripe) return null;
+    const providers = useCookieProviders()
+    const stripe = providers.find(p => p.id === 'stripe')
+    if (!stripe) return null
 
-  return (
-    <CookieConsentGate cookieProvider={stripe}>
-      <EmbeddedCheckout />
-    </CookieConsentGate>
-  );
+    return (
+        <CookieConsentGate cookieProvider={stripe}>
+            <EmbeddedCheckout />
+        </CookieConsentGate>
+    )
 }
 ```
 
@@ -206,22 +199,22 @@ has been granted (strict loading); for Google tools, Consent Mode v2 defaults ar
 before anything loads and updated from the visitor's category decisions. On revocation, the cookies
 declared for the provider (wildcards like `_ga_*` supported) are deleted.
 
-| Type | Params | Integrates |
-| --- | --- | --- |
-| `gtm` | `containerId` | Google Tag Manager |
-| `ga4` | `measurementId`, `anonymizeIp?` | Google Analytics 4 |
-| `google-ads` | `conversionId` | Google Ads conversion tracking |
-| `meta-pixel` | `pixelId` | Meta Pixel |
-| `custom-script` | `src` (https only), `attrs?` | Any third-party script |
+| Type            | Params                          | Integrates                     |
+| --------------- | ------------------------------- | ------------------------------ |
+| `gtm`           | `containerId`                   | Google Tag Manager             |
+| `ga4`           | `measurementId`, `anonymizeIp?` | Google Analytics 4             |
+| `google-ads`    | `conversionId`                  | Google Ads conversion tracking |
+| `meta-pixel`    | `pixelId`                       | Meta Pixel                     |
+| `custom-script` | `src` (https only), `attrs?`    | Any third-party script         |
 
 ```tsx
 const config = {
-  // …other config
-  integrations: [
-    { id: "int_gtm", type: "gtm", providerId: "gtm", params: { containerId: "GTM-XXXXXXX" } },
-    { id: "int_meta", type: "meta-pixel", providerId: "meta", params: { pixelId: "1234567890" } },
-  ],
-};
+    // …other config
+    integrations: [
+        { id: 'int_gtm', type: 'gtm', providerId: 'gtm', params: { containerId: 'GTM-XXXXXXX' } },
+        { id: 'int_meta', type: 'meta-pixel', providerId: 'meta', params: { pixelId: '1234567890' } }
+    ]
+}
 ```
 
 ### Headless entry point
@@ -235,10 +228,7 @@ down to these: it re-exports components whose module scope calls `createContext`
 must treat as a side effect.
 
 ```ts
-import {
-  getConsentStatus,
-  IntegrationRegistry,
-} from "@artus_engineering/react-gdpr-cookie-consent/headless";
+import { getConsentStatus, IntegrationRegistry } from '@artus_engineering/react-gdpr-cookie-consent/headless'
 ```
 
 The v1 `consentHooks` factories (`createGoogleAnalyticsHook`, `createGoogleTagManagerHook`,
@@ -249,15 +239,15 @@ pre-consent.
 
 ## Hooks
 
-| Hook | Description |
-| --- | --- |
-| `useCookieConsentContext` | Banner open state and provider context |
-| `useOpenCookieBanner` | Programmatically open the consent banner |
-| `useConsentSnapshot` | Subscribe to the consent status (`none`/`partial`/`stale`/`valid`) and per-provider decisions |
-| `useCookieProviders` | Access configured providers (optionally filtered) |
-| `useCookieState` | Read whether a provider has consent |
-| `useConfig` | Read the resolved banner configuration |
-| `useStyle` | Read the resolved theme styles |
+| Hook                      | Description                                                                                   |
+| ------------------------- | --------------------------------------------------------------------------------------------- |
+| `useCookieConsentContext` | Banner open state and provider context                                                        |
+| `useOpenCookieBanner`     | Programmatically open the consent banner                                                      |
+| `useConsentSnapshot`      | Subscribe to the consent status (`none`/`partial`/`stale`/`valid`) and per-provider decisions |
+| `useCookieProviders`      | Access configured providers (optionally filtered)                                             |
+| `useCookieState`          | Read whether a provider has consent                                                           |
+| `useConfig`               | Read the resolved banner configuration                                                        |
+| `useStyle`                | Read the resolved theme styles                                                                |
 
 ## WordPress Plugin
 
