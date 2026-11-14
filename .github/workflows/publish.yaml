@@ -1,61 +1,61 @@
 name: Publish NPM Package
 
 on:
-  release:
-    types:
-      - published
+    release:
+        types:
+            - published
 
 jobs:
-  publish:
-    name: Publish to npm
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v7
+    publish:
+        name: Publish to npm
+        runs-on: ubuntu-latest
+        permissions:
+            id-token: write
+            contents: read
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v6
+            - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24.x"
-          cache: "pnpm"
-          cache-dependency-path: "pnpm-lock.yaml"
-          registry-url: "https://registry.npmjs.org"
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: "24.x"
+                  cache: "pnpm"
+                  cache-dependency-path: "pnpm-lock.yaml"
+                  registry-url: "https://registry.npmjs.org"
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
 
-      - name: Linting
-        run: pnpm run lint
+            - name: Linting
+              run: pnpm run lint
 
-      - name: Update package.json version
-        run: |
-          VERSION="${{ github.event.release.tag_name }}"
-          VERSION="${VERSION#v}"
-          npm version "$VERSION" --no-git-tag-version --allow-same-version
+            - name: Update package.json version
+              run: |
+                  VERSION="${{ github.event.release.tag_name }}"
+                  VERSION="${VERSION#v}"
+                  npm version "$VERSION" --no-git-tag-version --allow-same-version
 
-      - name: Build
-        run: pnpm run build
+            - name: Build
+              run: pnpm run build
 
-      - name: Import test (dist)
-        run: pnpm run test:import
+            - name: Import test (dist)
+              run: pnpm run test:import
 
-      - name: Unit Tests
-        run: pnpm run test:unit
+            - name: Unit Tests
+              run: pnpm run test:unit
 
-      # Baselines live under *-chromium-linux.png and must match the Playwright
-      # Docker image (see AGENTS.md). The hosted runner's bundled Chromium/fonts
-      # differ from that image, so we run the suite inside the same container
-      # used for `test:visual:update`.
-      - name: Run visual regression tests (Playwright Docker)
-        run: |
-          docker run --rm --ipc=host -e CI=true -v "$PWD":/work -w /work \
-            mcr.microsoft.com/playwright:v1.62.0-noble bash -lc \
-            "npm i -g pnpm@11.25.0 >/dev/null && pnpm install --frozen-lockfile && \
-             pnpm run build-storybook && pnpm run test:visual"
+            # Baselines live under *-chromium-linux.png and must match the Playwright
+            # Docker image (see AGENTS.md). The hosted runner's bundled Chromium/fonts
+            # differ from that image, so we run the suite inside the same container
+            # used for `test:visual:update`.
+            - name: Run visual regression tests (Playwright Docker)
+              run: |
+                  docker run --rm --ipc=host -e CI=true -v "$PWD":/work -w /work \
+                    mcr.microsoft.com/playwright:v1.65.0-noble bash -lc \
+                    "npm i -g pnpm@12.18.0 >/dev/null && pnpm install --frozen-lockfile && \
+                     pnpm run build-storybook && pnpm run test:visual"
 
-      - name: Publish to npm
-        run: npm publish --provenance --access public
+            - name: Publish to npm
+              run: npm publish --provenance --access public

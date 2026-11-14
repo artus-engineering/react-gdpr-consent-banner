@@ -3,124 +3,124 @@ name: "Branch"
 # Runner: ubuntu-latest (public repo) — see docs/ci.md.
 
 on:
-  push:
-    branches:
-      - main
-  # pull_request (not pull_request_target): checkout and analyze the PR head.
-  # pull_request_target checks out the base branch, so the scanner treated the
-  # run as branch=main and failed the quality gate on the unfixed base.
-  pull_request:
+    push:
+        branches:
+            - main
+    # pull_request (not pull_request_target): checkout and analyze the PR head.
+    # pull_request_target checks out the base branch, so the scanner treated the
+    # run as branch=main and failed the quality gate on the unfixed base.
+    pull_request:
 
 concurrency:
-  group: branch-${{ github.head_ref || github.ref }}
-  cancel-in-progress: true
+    group: branch-${{ github.head_ref || github.ref }}
+    cancel-in-progress: true
 
 jobs:
-  tests:
-    name: Tests
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      actions: write # upload/download coverage artifact between jobs
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+    tests:
+        name: Tests
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            actions: write # upload/download coverage artifact between jobs
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v7
+              with:
+                  ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
-      - uses: pnpm/action-setup@v6
+            - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24.x"
-          cache: "pnpm"
-          cache-dependency-path: "pnpm-lock.yaml"
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: "24.x"
+                  cache: "pnpm"
+                  cache-dependency-path: "pnpm-lock.yaml"
 
-      - name: Install dependencies
-        run: |
-          pnpm install --frozen-lockfile
+            - name: Install dependencies
+              run: |
+                  pnpm install --frozen-lockfile
 
-      - name: Linting
-        run: pnpm run lint
+            - name: Linting
+              run: pnpm run lint
 
-      - name: Build package
-        run: pnpm run build
+            - name: Build package
+              run: pnpm run build
 
-      - name: Build example for GitHub Pages
-        run: pnpm --dir example run build:pages
+            - name: Build example for GitHub Pages
+              run: pnpm --dir example run build:pages
 
-      - name: Import test (dist)
-        run: pnpm run test:import
+            - name: Import test (dist)
+              run: pnpm run test:import
 
-      - name: Unit Tests
-        run: pnpm run test:unit
+            - name: Unit Tests
+              run: pnpm run test:unit
 
-      # Baselines live under *-chromium-linux.png and must match the Playwright
-      # Docker image (see AGENTS.md). The hosted runner’s bundled Chromium/fonts
-      # differ from that image, so we run the suite inside the same container
-      # used for `test:visual:update`.
-      - name: Run visual regression tests (Playwright Docker)
-        run: |
-          docker run --rm --ipc=host -e CI=true -v "$PWD":/work -w /work \
-            mcr.microsoft.com/playwright:v1.62.0-noble bash -lc \
-            "npm i -g pnpm@11.25.0 >/dev/null && pnpm install --frozen-lockfile && \
-             pnpm run build-storybook && pnpm run test:visual"
+            # Baselines live under *-chromium-linux.png and must match the Playwright
+            # Docker image (see AGENTS.md). The hosted runner’s bundled Chromium/fonts
+            # differ from that image, so we run the suite inside the same container
+            # used for `test:visual:update`.
+            - name: Run visual regression tests (Playwright Docker)
+              run: |
+                  docker run --rm --ipc=host -e CI=true -v "$PWD":/work -w /work \
+                    mcr.microsoft.com/playwright:v1.65.0-noble bash -lc \
+                    "npm i -g pnpm@12.18.0 >/dev/null && pnpm install --frozen-lockfile && \
+                     pnpm run build-storybook && pnpm run test:visual"
 
-      - name: Upload Unit Test Coverage (lcov) for SonarQube
-        uses: actions/upload-artifact@v7
-        with:
-          name: coverage-lcov
-          path: coverage/lcov.info
-          if-no-files-found: error
+            - name: Upload Unit Test Coverage (lcov) for SonarQube
+              uses: actions/upload-artifact@v7
+              with:
+                  name: coverage-lcov
+                  path: coverage/lcov.info
+                  if-no-files-found: error
 
-      - name: Upload Playwright report
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: playwright-report
-          path: playwright-report
-          retention-days: 7
+            - name: Upload Playwright report
+              if: failure()
+              uses: actions/upload-artifact@v7
+              with:
+                  name: playwright-report
+                  path: playwright-report
+                  retention-days: 7
 
-      - name: Upload Playwright diff artifacts on failure
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: playwright-diffs
-          path: test-results
-          retention-days: 7
+            - name: Upload Playwright diff artifacts on failure
+              if: failure()
+              uses: actions/upload-artifact@v7
+              with:
+                  name: playwright-diffs
+                  path: test-results
+                  retention-days: 7
 
-  scan:
-    name: SonarQube Scan
-    runs-on: ubuntu-latest
-    needs: tests
-    permissions:
-      contents: read
-      pull-requests: read # allows SonarQube to decorate PRs with analysis results
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+    scan:
+        name: SonarQube Scan
+        runs-on: ubuntu-latest
+        needs: tests
+        permissions:
+            contents: read
+            pull-requests: read # allows SonarQube to decorate PRs with analysis results
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+                  ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
-      - name: Download coverage report
-        uses: actions/download-artifact@v8
-        with:
-          name: coverage-lcov
-          path: coverage
+            - name: Download coverage report
+              uses: actions/download-artifact@v8
+              with:
+                  name: coverage-lcov
+                  path: coverage
 
-      - name: Analyze with SonarQube
-        uses: SonarSource/sonarqube-scan-action@v8
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        with:
-          args: ${{ github.event_name == 'pull_request' && format('-Dsonar.pullrequest.key={0} -Dsonar.pullrequest.branch={1} -Dsonar.pullrequest.base={2}', github.event.pull_request.number, github.event.pull_request.head.ref, github.event.pull_request.base.ref) || '' }}
+            - name: Analyze with SonarQube
+              uses: SonarSource/sonarqube-scan-action@v8
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+                  SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+              with:
+                  args: ${{ github.event_name == 'pull_request' && format('-Dsonar.pullrequest.key={0} -Dsonar.pullrequest.branch={1} -Dsonar.pullrequest.base={2}', github.event.pull_request.number, github.event.pull_request.head.ref, github.event.pull_request.base.ref) || '' }}
 
-      - name: SonarQube Quality Gate
-        uses: SonarSource/sonarqube-quality-gate-action@v1
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+            - name: SonarQube Quality Gate
+              uses: SonarSource/sonarqube-quality-gate-action@v1
+              timeout-minutes: 5
+              env:
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+                  SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
