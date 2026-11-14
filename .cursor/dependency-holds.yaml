@@ -1,0 +1,46 @@
+holds:
+    - package: "@babel/preset-env"
+      root: /
+      current: 7.29.x
+      blocked: ">=8.0.0"
+      reason: "Babel 8.0.x does not strip TS call/new type args (useState<T>(), createContext<T>()), which breaks babel-jest. Revisit when @babel/preset-typescript > 8.0.1 ships a fix."
+      source: automation
+      since: 2026-11-14
+      last_checked: 2026-11-14
+      migration_pr: null
+    - package: "@babel/preset-react"
+      root: /
+      current: 7.29.x
+      blocked: ">=8.0.0"
+      reason: "Babel 8.0.x does not strip TS call/new type args (useState<T>(), createContext<T>()), which breaks babel-jest. Revisit when @babel/preset-typescript > 8.0.1 ships a fix."
+      source: automation
+      since: 2026-11-14
+      last_checked: 2026-11-14
+      migration_pr: null
+    - package: "@babel/preset-typescript"
+      root: /
+      current: 7.29.x
+      blocked: ">=8.0.0"
+      reason: "Babel 8.0.x does not strip TS call/new type args (useState<T>(), createContext<T>()), which breaks babel-jest. Revisit when @babel/preset-typescript > 8.0.1 ships a fix."
+      source: automation
+      since: 2026-11-14
+      last_checked: 2026-11-14
+      migration_pr: null
+    - package: typescript
+      root: /
+      current: 6.0.x
+      blocked: ">=7.0.0"
+      reason: "TypeScript 7 is the Go-native compiler and no longer ships the JS Compiler API (ModuleKind, createProgram, …). @rollup/plugin-typescript and Storybook tooling still require that API. Revisit when those tools support typescript@7 / typescript/unstable."
+      source: automation
+      since: 2026-11-14
+      last_checked: 2026-11-14
+      migration_pr: null
+    - package: baseline-browser-mapping
+      root: /
+      current: 2.11.6
+      blocked: ">2.11.6"
+      reason: "baseline-browser-mapping publishes almost daily. The caret range already allows lockfile bumps, so grouped pnpm updates throw NoChangeError and fail the whole Dependabot job. Revisit if Dependabot maps that as skip."
+      source: automation
+      since: 2026-11-14
+      last_checked: 2026-11-14
+      migration_pr: null
