@@ -15,16 +15,19 @@ The live demo at [react-gdpr-consent-banner.artus-engineering.de](https://react-
 ## Setup
 
 1. Install dependencies:
+
    ```bash
    npm install
    ```
 
 2. Set up the database:
+
    ```bash
    npm run db:init
    ```
 
 3. Start the development server:
+
    ```bash
    npm run dev
    ```

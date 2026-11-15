@@ -1,58 +1,58 @@
 name: Example GitHub Pages
 
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+    contents: read
+    pages: write
+    id-token: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+    group: pages
+    cancel-in-progress: false
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
+    deploy:
+        runs-on: ubuntu-latest
+        environment:
+            name: github-pages
+            url: ${{ steps.deploy.outputs.page_url }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v6
+            - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24.x"
-          cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: "24.x"
+                  cache: pnpm
+                  cache-dependency-path: pnpm-lock.yaml
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
 
-      - name: Build library
-        run: pnpm run build
+            - name: Build library
+              run: pnpm run build
 
-      - name: Build example for GitHub Pages
-        run: pnpm --dir example run build:pages
-        env:
-          # Custom domain (react-gdpr-consent-banner.artus-engineering.de) serves from /.
-          # Set NEXT_BASE_PATH=/react-gdpr-consent-banner for the default *.github.io/<repo>/ URL.
-          NEXT_BASE_PATH: ""
+            - name: Build example for GitHub Pages
+              run: pnpm --dir example run build:pages
+              env:
+                  # Custom domain (react-gdpr-consent-banner.artus-engineering.de) serves from /.
+                  # Set NEXT_BASE_PATH=/react-gdpr-consent-banner for the default *.github.io/<repo>/ URL.
+                  NEXT_BASE_PATH: ""
 
-      - name: Disable Jekyll processing
-        run: touch example/out/.nojekyll
+            - name: Disable Jekyll processing
+              run: touch example/out/.nojekyll
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: example/out
+            - name: Upload Pages artifact
+              uses: actions/upload-pages-artifact@v5
+              with:
+                  path: example/out
 
-      - id: deploy
-        name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v5
+            - id: deploy
+              name: Deploy to GitHub Pages
+              uses: actions/deploy-pages@v5

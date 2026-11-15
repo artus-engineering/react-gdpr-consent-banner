@@ -4,8 +4,8 @@ Runner: `ubuntu-latest` (public repo). Cross-project tooling: [Repository Toolin
 
 ## Workflows
 
-| File | Purpose |
-| --- | --- |
+| File                            | Purpose                                                               |
+| ------------------------------- | --------------------------------------------------------------------- |
 | `.github/workflows/branch.yaml` | Lint, build, tests, visual regression → SonarQube scan → quality gate |
 
 ## Required checks
