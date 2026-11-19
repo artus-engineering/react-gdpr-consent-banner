@@ -4,7 +4,10 @@
   "components": {
     "consent-banner": {
       "name": "React GDPR Consent Banner",
-      "kind": "FRONTEND"
+      "kind": "FRONTEND",
+      "integrations": {
+        "sonarqube": "artus-engineering_react-gdpr-consent-banner_77b80343-758e-46a6-aaa4-a2f681f7d05d"
+      }
     }
   }
 }
