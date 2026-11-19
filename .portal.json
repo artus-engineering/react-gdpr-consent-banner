@@ -1,0 +1,10 @@
+{
+    "$schema": "https://portal.artus.engineering/schemas/portal.json",
+    "projectId": "cmt9dhir4000801evp4o5jn8i",
+    "components": {
+        "consent-banner": {
+            "name": "React GDPR Consent Banner",
+            "kind": "FRONTEND"
+        }
+    }
+}
