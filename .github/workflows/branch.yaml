@@ -6,9 +6,9 @@ on:
     push:
         branches:
             - main
-    # pull_request (not pull_request_target): checkout and analyze the PR head.
-    # pull_request_target checks out the base branch, so the scanner treated the
-    # run as branch=main and failed the quality gate on the unfixed base.
+        # pull_request (not pull_request_target): checkout and analyze the PR head.
+        # pull_request_target checks out the base branch, so the scanner treated the
+        # run as branch=main and failed the quality gate on the unfixed base.
     pull_request:
 
 concurrency:
@@ -16,12 +16,11 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
-    tests:
-        name: Tests
+    lint:
+        name: Lint and format
         runs-on: ubuntu-latest
         permissions:
             contents: read
-            actions: write # upload/download coverage artifact between jobs
         steps:
             - name: Checkout Repository
               uses: actions/checkout@v7
@@ -43,6 +42,29 @@ jobs:
             - name: Linting
               run: pnpm run lint
 
+    build:
+        name: Build and package import
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v7
+              with:
+                  ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+            - uses: artus-engineering/.github/actions/setup-pnpm@feb73e3bc8a16c61582dd578627ba5d6dc07e2ca
+
+            - uses: actions/setup-node@v7
+              with:
+                  check-latest: false
+                  package-manager-cache: false
+                  node-version: "24.x"
+
+            - name: Install dependencies
+              run: |
+                  pnpm install --frozen-lockfile
+
             - name: Build package
               run: pnpm run build
 
@@ -52,26 +74,79 @@ jobs:
             - name: Import test (dist)
               run: pnpm run test:import
 
+            - name: Disable Jekyll processing
+              run: touch example/out/.nojekyll
+            - name: Retain Pages output
+              if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+              uses: actions/upload-pages-artifact@v5
+              with:
+                  path: example/out
+    tests:
+        name: Unit tests
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v7
+              with:
+                  ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+            - uses: artus-engineering/.github/actions/setup-pnpm@feb73e3bc8a16c61582dd578627ba5d6dc07e2ca
+
+            - uses: actions/setup-node@v7
+              with:
+                  check-latest: false
+                  package-manager-cache: false
+                  node-version: "24.x"
+
+            - name: Install dependencies
+              run: |
+                  pnpm install --frozen-lockfile
+
             - name: Unit Tests
               run: pnpm run test:unit
 
-            # Baselines live under *-chromium-linux.png and must match the Playwright
-            # Docker image (see AGENTS.md). The hosted runner’s bundled Chromium/fonts
-            # differ from that image, so we run the suite inside the same container
-            # used for `test:visual:update`.
-            - name: Run visual regression tests (Playwright Docker)
-              run: |
-                  docker run --rm --ipc=host -e CI=true -e PNPM_CONFIG_PM_ON_FAIL=ignore -v "$PWD":/work -w /work \
-                    mcr.microsoft.com/playwright:v1.65.1-noble bash -lc \
-                    "npm i -g pnpm@12 >/dev/null && pnpm install --frozen-lockfile && \
-                     pnpm run build-storybook && pnpm run test:visual"
-
+                  # Baselines live under *-chromium-linux.png and must match the Playwright
+                  # Docker image (see AGENTS.md). The hosted runner’s bundled Chromium/fonts
+                  # differ from that image, so we run the suite inside the same container
+                  # used for `test:visual:update`.
             - name: Upload Unit Test Coverage (lcov) for SonarQube
               uses: actions/upload-artifact@v7
               with:
                   name: coverage-lcov
                   path: coverage/lcov.info
                   if-no-files-found: error
+
+    visual:
+        name: Visual regression
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v7
+              with:
+                  ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+            - uses: artus-engineering/.github/actions/setup-pnpm@feb73e3bc8a16c61582dd578627ba5d6dc07e2ca
+
+            - uses: actions/setup-node@v7
+              with:
+                  check-latest: false
+                  package-manager-cache: false
+                  node-version: "24.x"
+
+            - name: Install dependencies
+              run: |
+                  pnpm install --frozen-lockfile
+
+            - name: Run visual regression tests (Playwright Docker)
+              run: |
+                  docker run --rm --ipc=host -e CI=true -e PNPM_CONFIG_PM_ON_FAIL=ignore -v "$PWD":/work -w /work \
+                    mcr.microsoft.com/playwright:v1.65.1-noble bash -lc \
+                    "npm i -g pnpm@12 >/dev/null && pnpm install --frozen-lockfile && \
+                     pnpm run build-storybook && pnpm run test:visual"
 
             - name: Upload Playwright report
               if: failure()
@@ -124,3 +199,27 @@ jobs:
               env:
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
                   SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        if: ${{ github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]') }}
+    deploy-pages:
+        runs-on: ubuntu-latest
+        environment:
+            name: github-pages
+            url: ${{ steps.deploy.outputs.page_url }}
+        steps:
+            - id: deploy
+              name: Deploy to GitHub Pages
+              uses: actions/deploy-pages@v5
+        needs:
+            - lint
+            - build
+            - tests
+            - visual
+            - scan
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        permissions:
+            contents: read
+            pages: write
+            id-token: write
+        concurrency:
+            group: pages
+            cancel-in-progress: false
