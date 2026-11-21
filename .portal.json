@@ -4,7 +4,10 @@
     "components": {
         "consent-banner": {
             "name": "React GDPR Consent Banner",
-            "kind": "FRONTEND"
+            "kind": "FRONTEND",
+            "environments": {
+                "local": {}
+            }
         }
     }
 }
