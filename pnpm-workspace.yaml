@@ -8,7 +8,9 @@ allowBuilds:
     sharp: false
     unrs-resolver: false
 overrides:
+    # GHSA-3g3m-2fjr-6pw4: jest → test-exclude still resolves glob <=14.0.1 without override.
     glob@>=9.0.0 <=14.0.1: ^14.0.2
+    # GHSA minimatch DoS: jest → test-exclude chain; remove when jest/test-exclude depend on >=11.0.1.
     minimatch@>=7.0.0 <11.0.1: ^11.0.9
     # 1.2.0 peers only on emnapi 2.x-alpha; 1.2.3 accepts 1.x (oxc/unrs) and 2.x (rolldown).
     "@napi-rs/wasm-runtime": 1.2.3
