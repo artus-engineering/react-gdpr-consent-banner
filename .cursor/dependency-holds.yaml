@@ -3,37 +3,37 @@ holds:
       root: /
       current: 7.29.x
       blocked: ">=8.0.0"
-      reason: "Babel 8 migration (2026-11-23): jest still fails — Cannot find module ./types (legacyConfig.ts) and broader suite failures via babel-jest despite @babel/preset-typescript 8.0.7."
+      reason: "Babel 8 migration (2026-11-24): jest suite failures (14/16 failed) after @babel/preset-* 8.x; babel-jest coverage/transform not applied."
       source: automation
       since: 2026-11-14
-      last_checked: 2026-11-23
+      last_checked: 2026-11-24
       migration_pr: null
     - package: "@babel/preset-react"
       root: /
       current: 7.29.x
       blocked: ">=8.0.0"
-      reason: "Babel 8 migration (2026-11-23): jest still fails — Cannot find module ./types (legacyConfig.ts) and broader suite failures via babel-jest despite @babel/preset-typescript 8.0.7."
+      reason: "Babel 8 migration (2026-11-24): jest suite failures (14/16 failed) after @babel/preset-* 8.x; babel-jest coverage/transform not applied."
       source: automation
       since: 2026-11-14
-      last_checked: 2026-11-23
+      last_checked: 2026-11-24
       migration_pr: null
     - package: "@babel/preset-typescript"
       root: /
       current: 7.29.x
       blocked: ">=8.0.0"
-      reason: "Babel 8 migration (2026-11-23): jest still fails — Cannot find module ./types (legacyConfig.ts) and broader suite failures via babel-jest despite @babel/preset-typescript 8.0.7."
+      reason: "Babel 8 migration (2026-11-24): jest suite failures (14/16 failed) after @babel/preset-* 8.x; babel-jest coverage/transform not applied."
       source: automation
       since: 2026-11-14
-      last_checked: 2026-11-23
+      last_checked: 2026-11-24
       migration_pr: null
     - package: typescript
       root: /
       current: 6.0.x
       blocked: ">=7.0.0"
-      reason: "TypeScript 7 migration (2026-11-23): rollup build still fails — @rollup/plugin-typescript Cannot read properties of undefined (reading 'ES2015')."
+      reason: "TypeScript 7 migration (2026-11-24): rollup build still fails — @rollup/plugin-typescript Cannot read properties of undefined (reading 'ES2015') with typescript@7.0.2."
       source: automation
       since: 2026-11-14
-      last_checked: 2026-11-23
+      last_checked: 2026-11-24
       migration_pr: null
     - package: baseline-browser-mapping
       root: /
@@ -42,5 +42,5 @@ holds:
       reason: "baseline-browser-mapping publishes almost daily. Pin blocks grouped Dependabot NoChangeError noise; caret already allows routine lockfile bumps within range."
       source: automation
       since: 2026-11-14
-      last_checked: 2026-11-23
+      last_checked: 2026-11-24
       migration_pr: null
